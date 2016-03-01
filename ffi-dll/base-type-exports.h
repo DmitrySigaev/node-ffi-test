@@ -26,15 +26,15 @@ FFIEXPORT struct tagffiAPI
 	const int size = (sizeof(struct tagffiAPI) - sizeof(const int)) / sizeof(void *);
 };
 
-struct tagffiAPI testStructFFIAPI;
+// struct tagffiAPI testStructFFIAPI;
 
 FFIEXPORT struct tagffiAPIStatic
 {
-	struct { FFIPROC func = voidFunc; char *name = "voidFunc"; } voidF;
-	struct { char(*func)(char inChar, char *outChar) = charFunc; char *name = "charFunc"; } charF;
+	struct { FFIPROC func; char *name = "voidFunc"; } voidF;
+	struct { char(*func)(char inChar, char *outChar); char *name = "charFunc"; } charF;
 };
 
-struct tagffiAPIStatic testStructFFIAPIStatic;
+// struct tagffiAPIStatic testStructFFIAPIStatic;
 
 FFIEXPORT struct tagffiAPIStatic LoadFFI(void);
 

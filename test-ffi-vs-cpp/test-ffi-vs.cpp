@@ -8,6 +8,7 @@
 #include <windows.h> 
 #include "base-type-exports.h"
 
+#if defined (DEL_REF)
 bool testFFIAPI(void)
 {
 	struct tagffiAPI ffiAPI;
@@ -16,11 +17,11 @@ bool testFFIAPI(void)
 	memcpy(p_ffiAPI, &testStructFFIAPI, sizeof(struct tagffiAPI));
 	assert(ffiAPI.size == ((sizeof(ffiAPI) - sizeof(ffiAPI.size)) / sizeof(void *)));
 	assert(ffiAPI.size + 1 == ((int)(&(ffiAPI.size)) - (int)(&(ffiAPI.voidFunc)) + sizeof(void *)) / sizeof(void *));
-	voidFunc();
+//	voidFunc();
 	printf("testFFIAPI: ok");
 	return true;
 }
-
+#endif /* defined (DEL_REF) */
 /* main */
 int main(int argc, char **argv)
 {
@@ -28,7 +29,10 @@ int main(int argc, char **argv)
 	struct tagffiAPI ffiAPI;
 	BOOL fFreeResult, fRunTimeLinkSuccess = FALSE;
 
+#if defined (DEL_REF)
 	assert(true == testFFIAPI());
+#endif /* defined (DEL_REF) */
+
 	// Get a handle to the DLL module.
 
 	hinstLib = LoadLibrary(TEXT("ffi-dll.dll"));

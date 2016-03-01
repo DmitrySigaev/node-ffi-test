@@ -149,11 +149,6 @@
   <ItemGroup>
     <ClCompile Include="test-ffi-vs.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ffi-dll\ffi-dll.vcxproj">
-      <Project>{fec12a8d-38a0-4da6-af47-eafae25cd3bc}</Project>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -21,6 +21,8 @@ char charFunc(char inChar, char *outChar)
 struct tagffiAPIStatic LoadFFI(void)
 {
 	struct tagffiAPIStatic FFI;
+	FFI.voidF.func = voidFunc;
+	FFI.charF.func = charFunc;
 	printf("[ffi-dll] call LoadFFI in f: %s,l: %d\n", __FILE__, __LINE__);
 	return FFI;
 }
