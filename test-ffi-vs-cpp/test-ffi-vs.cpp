@@ -68,14 +68,15 @@ int main(int argc, char **argv)
 
 	if (hinstLib != NULL)
 	{
-		char s1 = 12, s2 = 2, s3;
+		char c1 = 12, c2 = 2, c3;
+		float f1 = 12., f2 = 2., f3;
 		struct tagffiAPIStatic ffiAPI;
 		struct tagffiAPIStatic (* lffi)(void);
 		lffi = (struct tagffiAPIStatic(*)(void))GetProcAddress(hinstLib, "LoadFFI");
-
 		ffiAPI = lffi();
-		ffiAPI.charF.func(s1, &s3);
-		
+		ffiAPI.charF.func(c1, &c3);
+		ffiAPI.floatF.func(f1, &f3);
+
 		fFreeResult = FreeLibrary(hinstLib);
 
 	}

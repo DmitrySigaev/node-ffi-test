@@ -7,14 +7,16 @@
 var ref = require('ref');
 
 var char_ptr = ref.refType('char');
+var float_ptr = ref.refType('float');
 
 module.exports = {
 	api: {
 		"voidFunc": ["void", []],
-		"charFunc": ["char", ["char", char_ptr]]
+		"charFunc": ["char", ["char", char_ptr]],
+		"floatFunc": ["float", ["float", float_ptr]]
 	},
 	out: {
-		"char": ref.alloc('char')
+		"char": ref.alloc('char'),
+		"float": ref.alloc('float')
 	}
-
 };

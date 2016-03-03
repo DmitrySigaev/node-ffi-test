@@ -27,7 +27,13 @@ test_ffi.prototype.voidFunc = function () {
 test_ffi.prototype.charFunc = function (char, array) {
 	char = char.charCodeAt(0)&255;
 	var ret = String.fromCharCode(this._lib.charFunc(char, this._out.char));
-	array.push(String.fromCharCode(this._out.char[0]));
+	array.push(String.fromCharCode(this._out.char.deref()));
+	return ret;
+};
+
+test_ffi.prototype.floatFunc = function (float, array) {
+	var ret = this._lib.floatFunc(float, this._out.float);
+	array.push(this._out.float.deref());
 	return ret;
 };
 

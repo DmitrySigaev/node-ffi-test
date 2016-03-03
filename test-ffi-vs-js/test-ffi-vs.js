@@ -10,4 +10,6 @@ var test = require(local('test-ffi'));
 test.voidFunc();
 var out = [];
 var char = test.charFunc('\u263B', out);
+var float = test.floatFunc(12.13, out);
+
 console.log(out);

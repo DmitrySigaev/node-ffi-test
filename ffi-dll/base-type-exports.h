@@ -15,6 +15,7 @@
 
 FFIEXPORT void voidFunc( void );
 FFIEXPORT char charFunc(char inChar, char *outChar);
+FFIEXPORT float floatFunc(float inFloat, float *outFloat);
 
 #define CALLBACKFFI
 typedef void (CALLBACKFFI *FFIPROC)(void);
@@ -31,7 +32,8 @@ FFIEXPORT struct tagffiAPI
 FFIEXPORT struct tagffiAPIStatic
 {
 	struct { FFIPROC func; char *name = "voidFunc"; } voidF;
-	struct { char(*func)(char inChar, char *outChar); char *name = "charFunc"; } charF;
+	struct { char(*func)(char, char *); char *name = "charFunc"; } charF;
+	struct { float(*func)(float, float *); char *name = "charFunc"; } floatF;
 };
 
 // struct tagffiAPIStatic testStructFFIAPIStatic;
