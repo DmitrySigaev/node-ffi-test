@@ -5,33 +5,52 @@
  */
 #include <stdio.h>
 #include <assert.h>
+#include <math.h>
 #include <windows.h> 
 #include "base-type-exports.h"
 
-#if defined (DEL_REF)
-bool testFFIAPI(void)
+#define EPSILON 0.00001
+#define EXPECT(test, x) ((x))?(printf(#x":ok\n"), test&=1):(printf(#x":false, f: %s, l: %d\n", __FILE__, __LINE__), test&=0)
+
+bool testFFIAPI(struct tagffiAPI *ffiAPIin)
 {
+	bool t = true;
 	struct tagffiAPI ffiAPI;
-	struct tagffiAPI *p_ffiAPI = &ffiAPI;
-	// ffiAPI = testStructFFIAPI; // error
-	memcpy(p_ffiAPI, &testStructFFIAPI, sizeof(struct tagffiAPI));
-	assert(ffiAPI.size == ((sizeof(ffiAPI) - sizeof(ffiAPI.size)) / sizeof(void *)));
-	assert(ffiAPI.size + 1 == ((int)(&(ffiAPI.size)) - (int)(&(ffiAPI.voidFunc)) + sizeof(void *)) / sizeof(void *));
-//	voidFunc();
-	printf("testFFIAPI: ok");
+	struct tagffiAPI *pffiAPI = &ffiAPI;
+	char cout;
+	float fout;
+	memcpy(pffiAPI, ffiAPIin, sizeof(struct tagffiAPI));
+	EXPECT(t,ffiAPI.size == (const int)((sizeof(ffiAPI) - sizeof(ffiAPI.size)) / sizeof(void *)));
+	EXPECT(t, ffiAPI.size + 1 == (const int)(((int)(&(ffiAPI.size)) - (int)(&(ffiAPI.voidFunc)) + sizeof(void *)) / sizeof(void *)));
+	EXPECT(t, '#' == (ffiAPI.charFunc.func)('#', &cout));
+	EXPECT(t, '#' == cout);
+	EXPECT(t, fabs(12.13 - ffiAPI.floatFunc.func(12.13, &fout)) < EPSILON);
+	EXPECT(t, fabs(12.13 - fout) < EPSILON);
+	EXPECT(t, t == true);
 	return true;
 }
-#endif /* defined (DEL_REF) */
+
+bool testFFIAPIs(struct tagffiAPIStatic *ffiAPIin)
+{
+	bool t = true;
+	struct tagffiAPIStatic ffiAPI;
+	struct tagffiAPIStatic *pffiAPI = &ffiAPI;
+	memcpy(pffiAPI, ffiAPIin, sizeof(struct tagffiAPIStatic));
+	char cout;
+	float fout;
+	EXPECT(t, '#' == (ffiAPI.charF.func)('#', &cout));
+	EXPECT(t, '#' == cout);
+	EXPECT(t, fabs(12.13 - (ffiAPI.floatF.func)(12.13, &fout)) < EPSILON);
+	EXPECT(t, fabs(12.13 - fout) < EPSILON);
+	EXPECT(t, t == true);
+	return true;
+}
+
 /* main */
 int main(int argc, char **argv)
 {
 	HINSTANCE hinstLib;
-	struct tagffiAPI ffiAPI;
 	BOOL fFreeResult, fRunTimeLinkSuccess = FALSE;
-
-#if defined (DEL_REF)
-	assert(true == testFFIAPI());
-#endif /* defined (DEL_REF) */
 
 	// Get a handle to the DLL module.
 
@@ -41,6 +60,7 @@ int main(int argc, char **argv)
 
 	if (hinstLib != NULL) 
 	{
+		struct tagffiAPI ffiAPI;
 		FFIPROC *stp = (FFIPROC *)(&ffiAPI.voidFunc);
 		// long * stp = (long *)(&ffiAPI.voidFunc); // if size of long type equel to size of addressing mode
 		for (int i = 0; i < ffiAPI.size; i++)
@@ -49,13 +69,10 @@ int main(int argc, char **argv)
 //			*(stp + i) = (long)GetProcAddress(hinstLib, (char *)(*(stp + i)));
 		}
 		// If the function address is valid, call the function.
-
-		if (NULL != ffiAPI.voidFunc.func)
+		if (NULL != stp)
 		{
-			char s1 = 12, s2 = 2, s3;
 			fRunTimeLinkSuccess = TRUE;
-			s2 = (ffiAPI.charFunc.func)(s1, &s3);
-			printf("in %c, out: %c", s1, s2);
+			testFFIAPI(&ffiAPI);
 		}
 		// Free the DLL module.
 
@@ -68,15 +85,10 @@ int main(int argc, char **argv)
 
 	if (hinstLib != NULL)
 	{
-		char c1 = 12, c2 = 2, c3;
-		float f1 = 12., f2 = 2., f3;
 		struct tagffiAPIStatic ffiAPI;
 		struct tagffiAPIStatic (* lffi)(void);
 		lffi = (struct tagffiAPIStatic(*)(void))GetProcAddress(hinstLib, "LoadFFI");
-		ffiAPI = lffi();
-		ffiAPI.charF.func(c1, &c3);
-		ffiAPI.floatF.func(f1, &f3);
-
+		testFFIAPIs(&(lffi()));
 		fFreeResult = FreeLibrary(hinstLib);
 
 	}

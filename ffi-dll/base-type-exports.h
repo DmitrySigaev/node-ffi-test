@@ -23,7 +23,8 @@ typedef void (CALLBACKFFI *FFIPROC)(void);
 FFIEXPORT struct tagffiAPI
 {
 	union { FFIPROC func; char *name = "voidFunc"; } voidFunc;
-	union { char(*func)(char inChar, char *outChar); char *name = "charFunc"; } charFunc;
+	union { char(*func)(char, char *); char *name = "charFunc"; } charFunc;
+	union { char(*func)(float, float *); char *name = "floatFunc"; } floatFunc;
 	const int size = (sizeof(struct tagffiAPI) - sizeof(const int)) / sizeof(void *);
 };
 
