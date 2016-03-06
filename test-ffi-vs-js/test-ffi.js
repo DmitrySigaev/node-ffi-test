@@ -11,7 +11,7 @@ var lib_api = require(local('lib-ffi-api'));
 
 var test_ffi = function (options) {
 	options = options || {};
-	var mode = options.mode || 'Debug';
+	var mode = options.mode || 'Release';
 	var libpath = local('../out/' + process.platform + '/' + process.arch + '/' + mode + '/ffi-dll');
 	this.libpath = options.libpath || libpath;
 	this.logger = options.logger || console;
