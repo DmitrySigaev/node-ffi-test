@@ -11,5 +11,14 @@ test.voidFunc();
 var out = [];
 var char = test.charFunc('\u263B', out);
 var float = test.floatFunc(12.13, out);
-
+var double = test.doubleFunc(12.13, out);
+var out2 = [];
+test.EXPECT("';' == test.charFunc('\u263B', out)", out2);
+test.EXPECT("';' == out.pop()", out2);
+test.EXPECT("'@' == test.charFunc('\u263B', out)", out2);
+test.EXPECT("'@' == out.pop()", out2);
+test.EXPECT("Math.abs(12.13 - test.floatFunc(12.13, out)) < 0.00001", out2);
+test.EXPECT("Math.abs(12.13 - out.pop()) < 0.00001", out2);
+test.EXPECT("Math.abs(12.13 - test.doubleFunc(12.13, out)) < 0.00001", out2);
+test.EXPECT("Math.abs(12.13 - out.pop()) < 0.00001", out2);
 console.log(out);

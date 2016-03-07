@@ -20,9 +20,16 @@ char charFunc(char inChar, char *outChar)
 
 float floatFunc(float inFloat, float *outFloat)
 {
-	printf("[ffi-dll] call charFunc %f, in f: %s,l: %d\n", inFloat, __FILE__, __LINE__);
+	printf("[ffi-dll] call floatFunc %f, in f: %s,l: %d\n", inFloat, __FILE__, __LINE__);
 	*outFloat = inFloat;
 	return inFloat;
+}
+
+double doubleFunc(double inDouble, double *outDouble)
+{
+	printf("[ffi-dll] call doubleFunc %f, in f: %s,l: %d\n", inDouble, __FILE__, __LINE__);
+	*outDouble = inDouble;
+	return inDouble;
 }
 
 struct tagffiAPIStatic LoadFFI(void)
@@ -31,6 +38,7 @@ struct tagffiAPIStatic LoadFFI(void)
 	FFI.voidF.func = voidFunc;
 	FFI.charF.func = charFunc;
 	FFI.floatF.func = floatFunc;
+	FFI.doubleF.func = doubleFunc;
 	printf("[ffi-dll] call LoadFFI in f: %s,l: %d\n", __FILE__, __LINE__);
 	return FFI;
 }

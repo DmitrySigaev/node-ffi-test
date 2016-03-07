@@ -37,4 +37,16 @@ test_ffi.prototype.floatFunc = function (float, array) {
 	return ret;
 };
 
+test_ffi.prototype.doubleFunc = function (double, array) {
+	var ret = this._lib.doubleFunc(double, this._out.double);
+	array.push(this._out.double.deref());
+	return ret;
+};
+
+test_ffi.prototype.EXPECT = function (x, out) {
+	var out = out || [];
+	var code = new Function('test', 'out', "return (" + x + ");");
+	var status = (code(this, out))?'passed': 'fault';
+	this.logger.log(x + ':' + status);
+}
 module.exports = new test_ffi();

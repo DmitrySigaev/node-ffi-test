@@ -10,7 +10,7 @@
 #include "base-type-exports.h"
 
 #define EPSILON 0.00001
-#define EXPECT(test, x) ((x))?(printf(#x":ok\n"), test&=1):(printf(#x":false, f: %s, l: %d\n", __FILE__, __LINE__), test&=0)
+#define EXPECT(test, x) ((x))?(printf(#x":passed\n"), test&=1):(printf(#x":fault, f: %s, l: %d\n", __FILE__, __LINE__), test&=0)
 
 bool testFFIAPI(struct tagffiAPI *ffiAPIin)
 {
@@ -19,6 +19,7 @@ bool testFFIAPI(struct tagffiAPI *ffiAPIin)
 	struct tagffiAPI *pffiAPI = &ffiAPI;
 	char cout;
 	float fout;
+	double dout;
 	memcpy(pffiAPI, ffiAPIin, sizeof(struct tagffiAPI));
 	EXPECT(t,ffiAPI.size == (const int)((sizeof(ffiAPI) - sizeof(ffiAPI.size)) / sizeof(void *)));
 	EXPECT(t, ffiAPI.size + 1 == (const int)(((int)(&(ffiAPI.size)) - (int)(&(ffiAPI.voidFunc)) + sizeof(void *)) / sizeof(void *)));
@@ -26,6 +27,8 @@ bool testFFIAPI(struct tagffiAPI *ffiAPIin)
 	EXPECT(t, '#' == cout);
 	EXPECT(t, fabs(12.13 - ffiAPI.floatFunc.func(12.13, &fout)) < EPSILON);
 	EXPECT(t, fabs(12.13 - fout) < EPSILON);
+	EXPECT(t, fabs(12.13 - ffiAPI.doubleFunc.func(12.13, &dout)) < EPSILON);
+	EXPECT(t, fabs(12.13 - dout) < EPSILON);
 	EXPECT(t, t == true);
 	return true;
 }
@@ -38,10 +41,14 @@ bool testFFIAPIs(struct tagffiAPIStatic *ffiAPIin)
 	memcpy(pffiAPI, ffiAPIin, sizeof(struct tagffiAPIStatic));
 	char cout;
 	float fout;
+	double dout;
+
 	EXPECT(t, '#' == (ffiAPI.charF.func)('#', &cout));
 	EXPECT(t, '#' == cout);
 	EXPECT(t, fabs(12.13 - (ffiAPI.floatF.func)(12.13, &fout)) < EPSILON);
 	EXPECT(t, fabs(12.13 - fout) < EPSILON);
+	EXPECT(t, fabs(12.13 - (ffiAPI.doubleF.func)(12.13, &dout)) < EPSILON);
+	EXPECT(t, fabs(12.13 - dout) < EPSILON);
 	EXPECT(t, t == true);
 	return true;
 }
@@ -95,7 +102,7 @@ int main(int argc, char **argv)
 
 	// If unable to call the DLL function, use an alternative.
 	if (!fRunTimeLinkSuccess)
-		printf("tests: ok\n");
+		printf("end of tests\n");
 
 	return 0;
 
