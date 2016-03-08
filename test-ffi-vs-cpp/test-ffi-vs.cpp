@@ -7,7 +7,7 @@
 #include <assert.h>
 #include <math.h>
 #include <windows.h> 
-#include "base-type-exports.h"
+#include "base-type-exports-cpp.h"
 
 #define EPSILON 0.00001
 #define EXPECT(test, x) ((x))?(printf(#x":passed\n"), test&=1):(printf(#x":fault, f: %s, l: %d\n", __FILE__, __LINE__), test&=0)
@@ -61,7 +61,7 @@ int main(int argc, char **argv)
 
 	// Get a handle to the DLL module.
 
-	hinstLib = LoadLibrary(TEXT("ffi-dll.dll"));
+	hinstLib = LoadLibrary(TEXT("ffi-dll-cpp.dll"));
 
 	// If the handle is valid, try to get the function address.
 
@@ -86,7 +86,7 @@ int main(int argc, char **argv)
 		fFreeResult = FreeLibrary(hinstLib);
 	}
 
-	hinstLib = LoadLibrary(TEXT("ffi-dll.dll"));
+	hinstLib = LoadLibrary(TEXT("ffi-dll-cpp.dll"));
 
 	// If the handle is valid, try to get the function address.
 
@@ -105,5 +105,4 @@ int main(int argc, char **argv)
 		printf("end of tests\n");
 
 	return 0;
-
 }

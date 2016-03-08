@@ -15,13 +15,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="base-type-exports.cpp">
+    <ClCompile Include="base-type-exports.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="base-type-exports.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="base-type-exports-c.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

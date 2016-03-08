@@ -4,7 +4,7 @@
  * Released under the MIT license -- see MIT-LICENSE for details
  */
 #include <stdio.h>
-#include "base-type-exports.h"
+#include "base-type-exports-c.h"
 
 void voidFunc( void )
 {
@@ -32,13 +32,13 @@ double doubleFunc(double inDouble, double *outDouble)
 	return inDouble;
 }
 
-struct tagffiAPIStatic LoadFFI(void)
+struct tagffiAPI LoadFFI(void)
 {
-	struct tagffiAPIStatic FFI;
-	FFI.voidF.func = voidFunc;
-	FFI.charF.func = charFunc;
-	FFI.floatF.func = floatFunc;
-	FFI.doubleF.func = doubleFunc;
+	struct tagffiAPI FFI;
+	FFI.voidFunc = voidFunc;
+	FFI.charFunc = charFunc;
+	FFI.floatFunc = floatFunc;
+	FFI.doubleFunc = doubleFunc;
 	printf("[ffi-dll] call LoadFFI in f: %s,l: %d\n", __FILE__, __LINE__);
 	return FFI;
 }

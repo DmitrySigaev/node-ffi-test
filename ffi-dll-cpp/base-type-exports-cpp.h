@@ -4,8 +4,8 @@
  * Released under the MIT license -- see MIT-LICENSE for details
  */
 
-#if !defined(__BASE_TYPE_EXPORTS_H__)
-#define __BASE_TYPE_EXPORTS_H__ 
+#if !defined(__BASE_TYPE_EXPORTS_CPP_H__)
+#define __BASE_TYPE_EXPORTS_CPP_H__ 
 
 #if defined(FFIDLL_EXPORTS)
 	#define FFIEXPORT extern "C" __declspec(dllexport)
@@ -30,8 +30,6 @@ FFIEXPORT struct tagffiAPI
 	const int size = (sizeof(struct tagffiAPI) - sizeof(const int)) / sizeof(void *);
 };
 
-// struct tagffiAPI testStructFFIAPI;
-
 FFIEXPORT struct tagffiAPIStatic
 {
 	struct { FFIPROC func; char *name = "voidFunc"; } voidF;
@@ -39,8 +37,6 @@ FFIEXPORT struct tagffiAPIStatic
 	struct { float(*func)(float, float *); char *name = "floatFunc"; } floatF;
 	struct { double(*func)(double, double *); char *name = "doubleFunc"; } doubleF;
 };
-
-// struct tagffiAPIStatic testStructFFIAPIStatic;
 
 FFIEXPORT struct tagffiAPIStatic LoadFFI(void);
 

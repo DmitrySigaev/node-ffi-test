@@ -3,14 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test-ffi-vs-cpp", "test-ffi-vs-cpp.vcxproj", "{AA5A575D-0A37-4B3D-A556-9262473D2A60}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test-ffi-vs-cpp", "test-ffi-vs-cpp\test-ffi-vs-cpp.vcxproj", "{AA5A575D-0A37-4B3D-A556-9262473D2A60}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1126BA8A-91E5-46B5-93C4-876B29BEDADE} = {1126BA8A-91E5-46B5-93C4-876B29BEDADE}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ffi-dll-c", "ffi-dll-c\ffi-dll.vcxproj", "{FEC12A8D-38A0-4DA6-AF47-EAFAE25CD3BC}"
+EndProject
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "test-ffi-vs-js", "test-ffi-vs-js\test-ffi-vs-js.njsproj", "{181A0593-28BE-4524-A78B-09727D43D580}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ffi-dll-cpp", "ffi-dll-cpp\ffi-dll-cpp.vcxproj", "{1126BA8A-91E5-46B5-93C4-876B29BEDADE}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test-ffi-vs-c", "test-ffi-vs-c\test-ffi-vs-c.vcxproj", "{7D32B387-DB92-4B6F-AD6B-A309CD5AA510}"
 	ProjectSection(ProjectDependencies) = postProject
 		{FEC12A8D-38A0-4DA6-AF47-EAFAE25CD3BC} = {FEC12A8D-38A0-4DA6-AF47-EAFAE25CD3BC}
 	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ffi-dll", "..\ffi-dll\ffi-dll.vcxproj", "{FEC12A8D-38A0-4DA6-AF47-EAFAE25CD3BC}"
-EndProject
-Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "test-ffi-vs-js", "..\test-ffi-vs-js\test-ffi-vs-js.njsproj", "{181A0593-28BE-4524-A78B-09727D43D580}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,6 +62,26 @@ Global
 		{181A0593-28BE-4524-A78B-09727D43D580}.Release|x64.Build.0 = Release|Any CPU
 		{181A0593-28BE-4524-A78B-09727D43D580}.Release|x86.ActiveCfg = Release|Any CPU
 		{181A0593-28BE-4524-A78B-09727D43D580}.Release|x86.Build.0 = Release|Any CPU
+		{1126BA8A-91E5-46B5-93C4-876B29BEDADE}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{1126BA8A-91E5-46B5-93C4-876B29BEDADE}.Debug|x64.ActiveCfg = Debug|x64
+		{1126BA8A-91E5-46B5-93C4-876B29BEDADE}.Debug|x64.Build.0 = Debug|x64
+		{1126BA8A-91E5-46B5-93C4-876B29BEDADE}.Debug|x86.ActiveCfg = Debug|Win32
+		{1126BA8A-91E5-46B5-93C4-876B29BEDADE}.Debug|x86.Build.0 = Debug|Win32
+		{1126BA8A-91E5-46B5-93C4-876B29BEDADE}.Release|Any CPU.ActiveCfg = Release|Win32
+		{1126BA8A-91E5-46B5-93C4-876B29BEDADE}.Release|x64.ActiveCfg = Release|x64
+		{1126BA8A-91E5-46B5-93C4-876B29BEDADE}.Release|x64.Build.0 = Release|x64
+		{1126BA8A-91E5-46B5-93C4-876B29BEDADE}.Release|x86.ActiveCfg = Release|Win32
+		{1126BA8A-91E5-46B5-93C4-876B29BEDADE}.Release|x86.Build.0 = Release|Win32
+		{7D32B387-DB92-4B6F-AD6B-A309CD5AA510}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{7D32B387-DB92-4B6F-AD6B-A309CD5AA510}.Debug|x64.ActiveCfg = Debug|x64
+		{7D32B387-DB92-4B6F-AD6B-A309CD5AA510}.Debug|x64.Build.0 = Debug|x64
+		{7D32B387-DB92-4B6F-AD6B-A309CD5AA510}.Debug|x86.ActiveCfg = Debug|Win32
+		{7D32B387-DB92-4B6F-AD6B-A309CD5AA510}.Debug|x86.Build.0 = Debug|Win32
+		{7D32B387-DB92-4B6F-AD6B-A309CD5AA510}.Release|Any CPU.ActiveCfg = Release|Win32
+		{7D32B387-DB92-4B6F-AD6B-A309CD5AA510}.Release|x64.ActiveCfg = Release|x64
+		{7D32B387-DB92-4B6F-AD6B-A309CD5AA510}.Release|x64.Build.0 = Release|x64
+		{7D32B387-DB92-4B6F-AD6B-A309CD5AA510}.Release|x86.ActiveCfg = Release|Win32
+		{7D32B387-DB92-4B6F-AD6B-A309CD5AA510}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
