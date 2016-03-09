@@ -15,7 +15,7 @@ module.exports = {
 		"voidFunc": ["void", []],
 		"charFunc": ["char", ["char", char_ptr]],
 		"floatFunc": ["float", ["float", float_ptr]],
-		"doubleFunc": ["float", ["float", double_ptr]]
+		"doubleFunc": ["double", ["double", double_ptr]]
 	},
 	out: {
 		"char": ref.alloc('char'),
