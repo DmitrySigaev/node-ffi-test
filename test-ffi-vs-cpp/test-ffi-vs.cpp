@@ -20,6 +20,8 @@ bool testFFIAPI(struct tagffiAPI *ffiAPIin)
 	char cout;
 	float fout;
 	double dout;
+	bool bout;
+
 	memcpy(pffiAPI, ffiAPIin, sizeof(struct tagffiAPI));
 	EXPECT(t,ffiAPI.size == (const int)((sizeof(ffiAPI) - sizeof(ffiAPI.size)) / sizeof(void *)));
 	EXPECT(t, ffiAPI.size + 1 == (const int)(((int)(&(ffiAPI.size)) - (int)(&(ffiAPI.voidFunc)) + sizeof(void *)) / sizeof(void *)));
@@ -29,6 +31,8 @@ bool testFFIAPI(struct tagffiAPI *ffiAPIin)
 	EXPECT(t, fabs(12.13 - fout) < EPSILON);
 	EXPECT(t, fabs(12.13 - ffiAPI.doubleFunc.func(12.13, &dout)) < EPSILON);
 	EXPECT(t, fabs(12.13 - dout) < EPSILON);
+	EXPECT(t, true == ffiAPI.boolFunc.func(true, &bout));
+	EXPECT(t, true == bout);
 	EXPECT(t, t == true);
 	return true;
 }
@@ -42,6 +46,7 @@ bool testFFIAPIs(struct tagffiAPIStatic *ffiAPIin)
 	char cout;
 	float fout;
 	double dout;
+	bool bout;
 
 	EXPECT(t, '#' == (ffiAPI.charF.func)('#', &cout));
 	EXPECT(t, '#' == cout);
@@ -49,6 +54,8 @@ bool testFFIAPIs(struct tagffiAPIStatic *ffiAPIin)
 	EXPECT(t, fabs(12.13 - fout) < EPSILON);
 	EXPECT(t, fabs(12.13 - (ffiAPI.doubleF.func)(12.13, &dout)) < EPSILON);
 	EXPECT(t, fabs(12.13 - dout) < EPSILON);
+	EXPECT(t, true == ffiAPI.boolF.func(true, &bout));
+	EXPECT(t, true == bout);
 	EXPECT(t, t == true);
 	return true;
 }

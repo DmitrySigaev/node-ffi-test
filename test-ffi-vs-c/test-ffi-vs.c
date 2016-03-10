@@ -1,4 +1,4 @@
-/* test-ffi-vs.cpp
+/* test-ffi-vs.c
  * Copyright 2016 Dmitry Sigaev
  *
  * Released under the MIT license -- see MIT-LICENSE for details
@@ -21,6 +21,7 @@ bool testFFIAPI(struct tagffiAPI*ffiAPIin)
 	char cout;
 	float fout;
 	double dout;
+	bool bout;
 	memcpy(pffiAPI, ffiAPIin, sizeof(struct tagffiAPI));
 	EXPECT(t, '#' == (ffiAPI.charFunc)('#', &cout));
 	EXPECT(t, '#' == cout);
@@ -28,6 +29,8 @@ bool testFFIAPI(struct tagffiAPI*ffiAPIin)
 	EXPECT(t, fabs(12.13 - fout) < EPSILON);
 	EXPECT(t, fabs(12.13 - ffiAPI.doubleFunc(12.13, &dout)) < EPSILON);
 	EXPECT(t, fabs(12.13 - dout) < EPSILON);
+	EXPECT(t, true == ffiAPI.boolFunc(true, &bout));
+	EXPECT(t, true == bout);
 	EXPECT(t, t == true);
 	return true;
 }

@@ -1,4 +1,4 @@
-/* base-type-exports.h
+/* base-type-exports-cpp.h
  * Copyright 2016 Dmitry Sigaev
  *
  * Released under the MIT license -- see MIT-LICENSE for details
@@ -17,6 +17,8 @@ FFIEXPORT void voidFunc( void );
 FFIEXPORT char charFunc(char inChar, char *outChar);
 FFIEXPORT float floatFunc(float inFloat, float *outFloat);
 FFIEXPORT double doubleFunc(double inDouble, double *outDouble);
+FFIEXPORT bool boolFunc(bool inBool, bool *outBool);
+
 
 #define CALLBACKFFI
 typedef void (CALLBACKFFI *FFIPROC)(void);
@@ -27,6 +29,7 @@ FFIEXPORT struct tagffiAPI
 	union { char(*func)(char, char *); char *name = "charFunc"; } charFunc;
 	union { float(*func)(float, float *); char *name = "floatFunc"; } floatFunc;
 	union { double(*func)(double, double *); char *name = "doubleFunc"; } doubleFunc;
+	union { bool(*func)(bool, bool *); char *name = "boolFunc"; } boolFunc;
 	const int size = (sizeof(struct tagffiAPI) - sizeof(const int)) / sizeof(void *);
 };
 
@@ -36,6 +39,7 @@ FFIEXPORT struct tagffiAPIStatic
 	struct { char(*func)(char, char *); char *name = "charFunc"; } charF;
 	struct { float(*func)(float, float *); char *name = "floatFunc"; } floatF;
 	struct { double(*func)(double, double *); char *name = "doubleFunc"; } doubleF;
+	struct { bool(*func)(bool, bool *); char *name = "boolFunc"; } boolF;
 };
 
 FFIEXPORT struct tagffiAPIStatic LoadFFI(void);

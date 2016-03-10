@@ -43,6 +43,12 @@ test_ffi.prototype.doubleFunc = function (double, array) {
 	return ret;
 };
 
+test_ffi.prototype.boolFunc = function (bool, array) {
+	var ret = this._lib.boolFunc(bool, this._out.bool);
+	array.push(this._out.bool.deref());
+	return ret;
+};
+
 test_ffi.prototype.EXPECT = function (x, out) {
 	var out = out || [];
 	var code = new Function('test', 'out', "return (" + x + ");");

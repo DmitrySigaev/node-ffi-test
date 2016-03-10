@@ -1,4 +1,4 @@
-/* base-type-exports.h
+/* base-type-exports-c.h
  * Copyright 2016 Dmitry Sigaev
  *
  * Released under the MIT license -- see MIT-LICENSE for details
@@ -17,6 +17,7 @@ FFIEXPORT void voidFunc( void );
 FFIEXPORT char charFunc(char inChar, char *outChar);
 FFIEXPORT float floatFunc(float inFloat, float *outFloat);
 FFIEXPORT double doubleFunc(double inDouble, double *outDouble);
+FFIEXPORT bool boolFunc(bool inBool, bool *outBool);
 
 #define CALLBACKFFI
 typedef void (CALLBACKFFI *FFIPROC)(void);
@@ -27,6 +28,7 @@ struct tagffiAPI
 	char(*charFunc)(char, char *);
 	float(*floatFunc)(float, float *);
 	double (*doubleFunc)(double, double *);
+	bool (*boolFunc)(bool, bool *);
 };
 FFIEXPORT struct tagffiAPI LoadFFI(void);
 

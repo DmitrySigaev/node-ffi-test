@@ -21,4 +21,6 @@ test.EXPECT("Math.abs(12.13 - test.floatFunc(12.13, out)) < 0.00001", out2);
 test.EXPECT("Math.abs(12.13 - out.pop()) < 0.00001", out2);
 test.EXPECT("Math.abs(12.13 - test.doubleFunc(12.13, out)) < 0.00001", out2);
 test.EXPECT("Math.abs(12.13 - out.pop()) < 0.00001", out2);
+test.EXPECT("true == test.boolFunc(true, out)", out2);
+test.EXPECT("true == out.pop()", out2);
 console.log(out);

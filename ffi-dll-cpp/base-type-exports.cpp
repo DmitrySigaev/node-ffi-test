@@ -32,6 +32,12 @@ double doubleFunc(double inDouble, double *outDouble)
 	return inDouble;
 }
 
+bool boolFunc(bool inBool, bool *outBool)
+{
+	printf("[ffi-dll] call boolFunc %d, in f: %s,l: %d\n", inBool, __FILE__, __LINE__);
+	*outBool = inBool;
+	return inBool;
+}
 struct tagffiAPIStatic LoadFFI(void)
 {
 	struct tagffiAPIStatic FFI;
@@ -39,6 +45,7 @@ struct tagffiAPIStatic LoadFFI(void)
 	FFI.charF.func = charFunc;
 	FFI.floatF.func = floatFunc;
 	FFI.doubleF.func = doubleFunc;
+	FFI.boolF.func = boolFunc;
 	printf("[ffi-dll] call LoadFFI in f: %s,l: %d\n", __FILE__, __LINE__);
 	return FFI;
 }
