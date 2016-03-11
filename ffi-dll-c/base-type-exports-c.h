@@ -18,6 +18,7 @@ FFIEXPORT char charFunc(char inChar, char *outChar);
 FFIEXPORT float floatFunc(float inFloat, float *outFloat);
 FFIEXPORT double doubleFunc(double inDouble, double *outDouble);
 FFIEXPORT bool boolFunc(bool inBool, bool *outBool);
+FFIEXPORT wchar_t wcharFunc(wchar_t inWchar, wchar_t *outWchar);
 
 #define CALLBACKFFI
 typedef void (CALLBACKFFI *FFIPROC)(void);
@@ -28,7 +29,8 @@ struct tagffiAPI
 	char(*charFunc)(char, char *);
 	float(*floatFunc)(float, float *);
 	double (*doubleFunc)(double, double *);
-	bool (*boolFunc)(bool, bool *);
+	bool(*boolFunc)(bool, bool *);
+	wchar_t(*wcharFunc)(wchar_t, wchar_t *);
 };
 FFIEXPORT struct tagffiAPI LoadFFI(void);
 

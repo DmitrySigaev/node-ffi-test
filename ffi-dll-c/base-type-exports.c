@@ -40,6 +40,13 @@ bool boolFunc(bool inBool, bool *outBool)
 	return inBool;
 }
 
+wchar_t wcharFunc(wchar_t inWchar, wchar_t *outWchar)
+{
+	wprintf(L"[ffi-dll-c] call wcharFunc %C, in f: %s, l: %d\n", inWchar, __FILE__, __LINE__);
+	*outWchar = inWchar;
+	return inWchar;
+}
+
 struct tagffiAPI LoadFFI(void)
 {
 	struct tagffiAPI FFI;
@@ -48,6 +55,7 @@ struct tagffiAPI LoadFFI(void)
 	FFI.floatFunc = floatFunc;
 	FFI.doubleFunc = doubleFunc;
 	FFI.boolFunc = boolFunc;
+	FFI.wcharFunc = wcharFunc;
 	printf("[ffi-dll] call LoadFFI in f: %s,l: %d\n", __FILE__, __LINE__);
 	return FFI;
 }

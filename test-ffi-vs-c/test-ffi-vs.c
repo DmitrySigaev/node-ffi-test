@@ -1,4 +1,4 @@
-/* test-ffi-vs.c
+﻿/* test-ffi-vs.c
  * Copyright 2016 Dmitry Sigaev
  *
  * Released under the MIT license -- see MIT-LICENSE for details
@@ -12,6 +12,7 @@
 
 #define EPSILON 0.00001
 #define EXPECT(test, x) ((x))?(printf(#x":passed\n"), test&=1):(printf(#x":fault, f: %s, l: %d\n", __FILE__, __LINE__), test&=0)
+#define WEXPECT(test, x) ((x))?(wprintf(L#x":passed\n"), test&=1):(wprintf(L#x":fault, f: %s, l: %d\n", __FILE__, __LINE__), test&=0)
 
 bool testFFIAPI(struct tagffiAPI*ffiAPIin)
 {
@@ -19,6 +20,7 @@ bool testFFIAPI(struct tagffiAPI*ffiAPIin)
 	struct tagffiAPI ffiAPI;
 	struct tagffiAPI *pffiAPI = &ffiAPI;
 	char cout;
+	wchar_t wout;
 	float fout;
 	double dout;
 	bool bout;
@@ -30,6 +32,8 @@ bool testFFIAPI(struct tagffiAPI*ffiAPIin)
 	EXPECT(t, fabs(12.13 - ffiAPI.doubleFunc(12.13, &dout)) < EPSILON);
 	EXPECT(t, fabs(12.13 - dout) < EPSILON);
 	EXPECT(t, true == ffiAPI.boolFunc(true, &bout));
+	WEXPECT(t, 0x263B == (ffiAPI.wcharFunc)(0x263B, &wout)); // '☻'
+	WEXPECT(t, 0x263B == wout);
 	EXPECT(t, true == bout);
 	EXPECT(t, t == true);
 	return true;

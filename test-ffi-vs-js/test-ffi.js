@@ -49,6 +49,13 @@ test_ffi.prototype.boolFunc = function (bool, array) {
 	return ret;
 };
 
+test_ffi.prototype.wcharFunc = function (wchar, array) {
+	wchar = wchar.charCodeAt(0);
+	var ret = String.fromCharCode(this._lib.wcharFunc(wchar, this._out.wchar));
+	array.push(String.fromCharCode(this._out.wchar.deref()));
+	return ret;
+};
+
 test_ffi.prototype.EXPECT = function (x, out) {
 	var out = out || [];
 	var code = new Function('test', 'out', "return (" + x + ");");

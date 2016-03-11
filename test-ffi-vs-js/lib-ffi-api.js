@@ -10,6 +10,8 @@ var char_ptr = ref.refType('char');
 var float_ptr = ref.refType('float');
 var double_ptr = ref.refType('double');
 var bool_ptr = ref.refType('bool');
+var wchar = ('win32' == process.platform)?('uint16'):('uint32');
+var wchar_ptr = ref.refType(wchar);
 
 module.exports = {
 	api: {
@@ -17,12 +19,14 @@ module.exports = {
 		"charFunc": ["char", ["char", char_ptr]],
 		"floatFunc": ["float", ["float", float_ptr]],
 		"doubleFunc": ["double", ["double", double_ptr]],
-		"boolFunc": ["bool", ["bool", bool_ptr]]
+		"boolFunc": ["bool", ["bool", bool_ptr]],
+		"wcharFunc": [wchar, [wchar, wchar_ptr]]
 	},
 	out: {
 		"char": ref.alloc('char'),
 		"float": ref.alloc('float'),
 		"double": ref.alloc('double'),
-		"bool": ref.alloc('bool')
+		"bool": ref.alloc('bool'),
+		"wchar": ref.alloc(wchar)
 	}
 };
