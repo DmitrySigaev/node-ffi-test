@@ -18,9 +18,24 @@
     <ClCompile Include="base-type-exports.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="exception.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="base-type-exports-cpp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="array.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tmp-thread-obj.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tmp-thread-obj.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="defs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

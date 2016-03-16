@@ -5,6 +5,7 @@
  */
 var path = require('path');
 var ffi = require('ffi');
+var ref = require('ref');
 var local = path.join.bind(path, __dirname);
 
 var lib_api = require(local('lib-ffi-api'));
@@ -12,11 +13,12 @@ var lib_api = require(local('lib-ffi-api'));
 var test_ffi = function (options) {
 	options = options || {};
 	var mode = options.mode || 'Release';
-	var libpath = local('../out/' + process.platform + '/' + process.arch + '/' + mode + '/ffi-dll-c');
+	var libpath = local('../out/' + process.platform + '/' + process.arch + '/' + mode + '/ffi-dll-cpp');
 	this.libpath = options.libpath || libpath;
 	this.logger = options.logger || console;
 	this._lib = ffi.Library(libpath, lib_api.api);
 	this._out = lib_api.out;
+	this._type = lib_api.type;
 };
 
 
@@ -55,6 +57,17 @@ test_ffi.prototype.wcharFunc = function (wchar, array) {
 	array.push(String.fromCharCode(this._out.wchar.deref()));
 	return ret;
 };
+
+test_ffi.prototype.tmpXYZ = function (x, y, z) {
+	var out = [];
+	var ref_test = this._lib.tmpXYZ(x, y, z);
+	var testv = ref_test.deref();
+	out.push(testv.x);
+	out.push(testv.y);
+	out.push(testv.z);
+	return out;
+};
+
 
 test_ffi.prototype.EXPECT = function (x, out) {
 	var out = out || [];

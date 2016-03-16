@@ -18,6 +18,9 @@ FFIEXPORT char charFunc(char inChar, char *outChar);
 FFIEXPORT float floatFunc(float inFloat, float *outFloat);
 FFIEXPORT double doubleFunc(double inDouble, double *outDouble);
 FFIEXPORT bool boolFunc(bool inBool, bool *outBool);
+FFIEXPORT wchar_t wcharFunc(wchar_t inWchar, wchar_t *outWchar);
+FFIEXPORT float * tmpXYZ(float x, float y, float z);
+
 
 
 #define CALLBACKFFI
@@ -30,6 +33,7 @@ FFIEXPORT struct tagffiAPI
 	union { float(*func)(float, float *); char *name = "floatFunc"; } floatFunc;
 	union { double(*func)(double, double *); char *name = "doubleFunc"; } doubleFunc;
 	union { bool(*func)(bool, bool *); char *name = "boolFunc"; } boolFunc;
+	union { wchar_t(*func)(wchar_t, wchar_t *); char *name = "wcharFunc"; } wcharFunc;
 	const int size = (sizeof(struct tagffiAPI) - sizeof(const int)) / sizeof(void *);
 };
 
@@ -40,6 +44,8 @@ FFIEXPORT struct tagffiAPIStatic
 	struct { float(*func)(float, float *); char *name = "floatFunc"; } floatF;
 	struct { double(*func)(double, double *); char *name = "doubleFunc"; } doubleF;
 	struct { bool(*func)(bool, bool *); char *name = "boolFunc"; } boolF;
+	struct { wchar_t(*func)(wchar_t, wchar_t *); char *name = "wcharFunc"; } wcharF;
+	struct { float * (*func)(float x, float y, float z); char *name = "tmpXYZ"; } tmpXYZ;
 };
 
 FFIEXPORT struct tagffiAPIStatic LoadFFI(void);

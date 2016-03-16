@@ -5,6 +5,8 @@
  */
 #include <stdio.h>
 #include "base-type-exports-cpp.h"
+#include "array.h"
+#include "tmp-thread-obj.h"
 
 void voidFunc( void )
 {
@@ -38,6 +40,36 @@ bool boolFunc(bool inBool, bool *outBool)
 	*outBool = inBool;
 	return inBool;
 }
+
+wchar_t wcharFunc(wchar_t inWchar, wchar_t *outWchar)
+{
+	wprintf(L"[ffi-dll] call wcharFunc %C, in f: %s, l: %d\n", inWchar, __FILE__, __LINE__);
+	*outWchar = inWchar;
+	return inWchar;
+}
+
+struct TmpData
+{
+	dnest::Array<char> string;
+	float xyz[3];
+};
+
+static dnest::TemporaryThreadObjManager<TmpData> _temporary_obj_manager;
+TmpData& getThreadTmpData(void)
+{
+	return _temporary_obj_manager.getObject();
+}
+
+float * tmpXYZ(float x, float y, float z)
+{
+	auto &tmp = getThreadTmpData();
+	tmp.xyz[0] = x;
+	tmp.xyz[1] = y;
+	tmp.xyz[2] = z;
+	printf("[ffi-dll] call tmpXYZ (%f,%f,%f) in f: %s,l: %d\n", x, y, z, __FILE__, __LINE__);
+	return tmp.xyz;
+}
+
 struct tagffiAPIStatic LoadFFI(void)
 {
 	struct tagffiAPIStatic FFI;
@@ -46,6 +78,8 @@ struct tagffiAPIStatic LoadFFI(void)
 	FFI.floatF.func = floatFunc;
 	FFI.doubleF.func = doubleFunc;
 	FFI.boolF.func = boolFunc;
+	FFI.wcharF.func = wcharFunc;
+	FFI.tmpXYZ.func = tmpXYZ;
 	printf("[ffi-dll] call LoadFFI in f: %s,l: %d\n", __FILE__, __LINE__);
 	return FFI;
 }

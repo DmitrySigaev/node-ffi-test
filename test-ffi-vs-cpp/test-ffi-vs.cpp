@@ -1,4 +1,4 @@
-/* test-ffi-vs.cpp
+﻿/* test-ffi-vs.cpp
  * Copyright 2016 Dmitry Sigaev
  *
  * Released under the MIT license -- see MIT-LICENSE for details
@@ -11,6 +11,7 @@
 
 #define EPSILON 0.00001
 #define EXPECT(test, x) ((x))?(printf(#x":passed\n"), test&=1):(printf(#x":fault, f: %s, l: %d\n", __FILE__, __LINE__), test&=0)
+#define WEXPECT(test, x) ((x))?(wprintf(L#x":passed\n"), test&=1):(wprintf(L#x":fault, f: %s, l: %d\n", __FILE__, __LINE__), test&=0)
 
 bool testFFIAPI(struct tagffiAPI *ffiAPIin)
 {
@@ -18,6 +19,7 @@ bool testFFIAPI(struct tagffiAPI *ffiAPIin)
 	struct tagffiAPI ffiAPI;
 	struct tagffiAPI *pffiAPI = &ffiAPI;
 	char cout;
+	wchar_t wout;
 	float fout;
 	double dout;
 	bool bout;
@@ -33,6 +35,8 @@ bool testFFIAPI(struct tagffiAPI *ffiAPIin)
 	EXPECT(t, fabs(12.13 - dout) < EPSILON);
 	EXPECT(t, true == ffiAPI.boolFunc.func(true, &bout));
 	EXPECT(t, true == bout);
+	WEXPECT(t, 0x263B == ffiAPI.wcharFunc.func(0x263B, &wout)); // '☻'
+	WEXPECT(t, 0x263B == wout);
 	EXPECT(t, t == true);
 	return true;
 }
@@ -44,9 +48,11 @@ bool testFFIAPIs(struct tagffiAPIStatic *ffiAPIin)
 	struct tagffiAPIStatic *pffiAPI = &ffiAPI;
 	memcpy(pffiAPI, ffiAPIin, sizeof(struct tagffiAPIStatic));
 	char cout;
+	wchar_t wout;
 	float fout;
 	double dout;
 	bool bout;
+	float *tmp = ffiAPI.tmpXYZ.func(0.01, 2.02, 0.03);
 
 	EXPECT(t, '#' == (ffiAPI.charF.func)('#', &cout));
 	EXPECT(t, '#' == cout);
@@ -56,6 +62,11 @@ bool testFFIAPIs(struct tagffiAPIStatic *ffiAPIin)
 	EXPECT(t, fabs(12.13 - dout) < EPSILON);
 	EXPECT(t, true == ffiAPI.boolF.func(true, &bout));
 	EXPECT(t, true == bout);
+	WEXPECT(t, 0x263B == ffiAPI.wcharF.func(0x263B, &wout)); // '☻'
+	WEXPECT(t, 0x263B == wout);
+	EXPECT(t, fabs(0.01 - ffiAPI.tmpXYZ.func(0.01, 2.02, 0.03)[0]) < EPSILON);
+	EXPECT(t, fabs(2.02 - ffiAPI.tmpXYZ.func(0.01, 2.02, 0.03)[1]) < EPSILON);
+	EXPECT(t, fabs(0.03 - ffiAPI.tmpXYZ.func(0.01, 2.02, 0.03)[2]) < EPSILON);
 	EXPECT(t, t == true);
 	return true;
 }
