@@ -67,6 +67,14 @@ bool testFFIAPIs(struct tagffiAPIStatic *ffiAPIin)
 	EXPECT(t, fabs(0.01 - ffiAPI.tmpXYZ.func(0.01, 2.02, 0.03)[0]) < EPSILON);
 	EXPECT(t, fabs(2.02 - ffiAPI.tmpXYZ.func(0.01, 2.02, 0.03)[1]) < EPSILON);
 	EXPECT(t, fabs(0.03 - ffiAPI.tmpXYZ.func(0.01, 2.02, 0.03)[2]) < EPSILON);
+	char *str;
+	byte ** buf = (byte **)&str;
+	int size_s;
+	EXPECT(t, 1 == ffiAPI.testSerialize.func("Hello world!", buf, &size_s));
+	EXPECT(t, str == ffiAPI.tmpUnserialize.func());
+	byte *sbuf = (byte *)str;
+	char *chout = ffiAPI.testUnserialize.func(sbuf, size_s);
+
 	EXPECT(t, t == true);
 	return true;
 }

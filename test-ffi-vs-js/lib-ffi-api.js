@@ -5,16 +5,18 @@
  */
 
 var ref = require('ref');
-var ref_arr = require('ref-array');
 var ref_struct = require('ref-struct');
 
+var byte_ptr = ref.refType('byte');
 var char_ptr = ref.refType('char');
+var int_ptr = ref.refType('int');
 var float_ptr = ref.refType('float');
 var double_ptr = ref.refType('double');
 var bool_ptr = ref.refType('bool');
 var wchar = ('win32' == process.platform)?('uint16'):('uint32');
 var wchar_ptr = ref.refType(wchar);
-var float_arr = ref_arr('float');
+
+var byte_p_ptr = ref.refType(byte_ptr);
 
 var xyz = ref_struct({
 	x: 'float',
@@ -32,17 +34,24 @@ module.exports = {
 		"doubleFunc": ["double", ["double", double_ptr]],
 		"boolFunc": ["bool", ["bool", bool_ptr]],
 		"wcharFunc": [wchar, [wchar, wchar_ptr]],
-		"tmpXYZ": [xyz_ptr, ["float", "float", "float"]]
+		"tmpXYZ": [xyz_ptr, ["float", "float", "float"]], 
+		"testSerialize": ["int", ["string", byte_p_ptr, int_ptr]], 
+		"testUnserialize": ["string", [byte_ptr, "int"]], 
+		"tmpUnserialize": ["string", []]
 	},
 	out: {
-		"char": ref.alloc('char'),
-		"float": ref.alloc('float'),
-		"double": ref.alloc('double'),
-		"bool": ref.alloc('bool'),
-		"wchar": ref.alloc(wchar),
+		"achar": ref.alloc('char'),
+		"afloat": ref.alloc('float'),
+		"adouble": ref.alloc('double'),
+		"abool": ref.alloc('bool'),
+		"awchar": ref.alloc(wchar),
+		"aint": ref.alloc('int'),
+		"apint": ref.alloc(int_ptr),
+		"apbyte": ref.alloc(byte_ptr)
 	},
 	type: {
 		"wchar": wchar,
-		"xyz": xyz
+		"xyz": xyz, 
+		"byte_ptr": byte_ptr
 	}
 };

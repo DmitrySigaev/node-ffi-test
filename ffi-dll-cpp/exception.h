@@ -97,7 +97,7 @@ private:
    }                                                                                   \
 
 #define IMPL_EXCEPTION(Namespace, ExceptionName, prefix) \
-   IMPL_EXCEPTION2(Namespace, ExceptionName, indigo::Exception, prefix)
+   IMPL_EXCEPTION2(Namespace, ExceptionName, dnest::Exception, prefix)
 
 #define DECL_ERROR2(Parent) DECL_EXCEPTION2(Error, Parent)
 #define DECL_ERROR DECL_ERROR2(indigo::Exception)

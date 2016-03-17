@@ -7,3 +7,4 @@
 *.sdf
 *.cachefile
 *.VC.opendb
+/Debug/

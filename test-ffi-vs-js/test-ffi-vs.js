@@ -13,6 +13,10 @@ var char = test.charFunc('\u263B', out);
 var float = test.floatFunc(12.13, out);
 var double = test.doubleFunc(12.13, out);
 var floatxyz = test.tmpXYZ(0.01, 2.02, 4.004);
+var arr = test.serialize("Hello world!");
+var str = test.unserialize(arr);
+
+
 var out2 = [];
 test.EXPECT("';' == test.charFunc('\u263B', out)", out2);
 test.EXPECT("';' == out.pop()", out2);

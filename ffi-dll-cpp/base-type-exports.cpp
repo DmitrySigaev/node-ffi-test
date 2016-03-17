@@ -48,6 +48,8 @@ wchar_t wcharFunc(wchar_t inWchar, wchar_t *outWchar)
 	return inWchar;
 }
 
+IMPL_EXCEPTION(dnest, ArrayError, "array");
+
 struct TmpData
 {
 	dnest::Array<char> string;
@@ -70,6 +72,51 @@ float * tmpXYZ(float x, float y, float z)
 	return tmp.xyz;
 }
 
+int testSerialize(const char *str, byte **buf, int *size)
+{
+	auto &tmp = getThreadTmpData();
+	tmp.string.appendString(str, 0);
+
+	*buf = (byte *)tmp.string.ptr();
+	*size = tmp.string.size();
+	printf("[ffi-dll] call testSerialize (%s) in f: %s,l: %d\n", str, __FILE__, __LINE__);
+	printf("[ffi-dll] (cell 1) address  of address : (%x)\n", buf);
+	printf("[ffi-dll] (cell 1) address  of address in char 1: (%d)\n", ((unsigned long)buf) & 255);
+	printf("[ffi-dll] (cell 1) address  of address in char 2: (%d)\n", (((unsigned long)buf)>>8) & 255);
+	printf("[ffi-dll] (cell 2) aderess of size : (%x)\n", size);
+	printf("[ffi-dll] (cell 2) aderess of size in char 1 :(%d)\n", ((unsigned long)size) & 255);
+	printf("[ffi-dll] (cell 2) aderess of size in char 2 :(%d)\n", (((unsigned long)size)>>8) & 255);
+	printf("[ffi-dll] size (%x)\n", *size);
+	printf("[ffi-dll] aderess of string (%x)\n", (byte *)tmp.string.ptr());
+	printf("[ffi-dll] aderess of string in char 1: (%x)\n", ((unsigned long)(*buf)) & 255);
+	printf("[ffi-dll] aderess of string in char 2: (%x)\n", (((unsigned long)(*buf)) >> 8) & 255);
+	printf("[ffi-dll] fist char : (%d)\n", **buf);
+	printf("[ffi-dll] fist char : (%c)\n", **buf);
+	printf("[ffi-dll] second char : (%d)\n", *((byte *)(*buf) + 1));
+	printf("[ffi-dll] second char : (%c)\n", *((byte *)(*buf) + 1));
+	return 1;
+
+}
+
+char* testUnserialize(const byte *buf, int size)
+{
+	dnest::Array<byte> string;
+	string.copy(buf, size);
+	string.push(0);
+	auto &tmp = getThreadTmpData();
+	printf("[ffi-dll] call testUnserialize (%s) in f: %s,l: %d\n", string.ptr(), __FILE__, __LINE__);
+	return ( char *)buf;
+}
+
+char* tmpUnserialize()
+{
+	auto &tmp = getThreadTmpData();
+	char *buf = (char *)tmp.string.ptr();
+	tmp.string.push(0);
+	printf("[ffi-dll] call tmpUnserialize (%s) in f: %s,l: %d\n", buf, __FILE__, __LINE__);
+	return buf;
+}
+
 struct tagffiAPIStatic LoadFFI(void)
 {
 	struct tagffiAPIStatic FFI;
@@ -80,6 +127,9 @@ struct tagffiAPIStatic LoadFFI(void)
 	FFI.boolF.func = boolFunc;
 	FFI.wcharF.func = wcharFunc;
 	FFI.tmpXYZ.func = tmpXYZ;
+	FFI.testSerialize.func = testSerialize;
+	FFI.testUnserialize.func = testUnserialize;
+	FFI.tmpUnserialize.func = tmpUnserialize;
 	printf("[ffi-dll] call LoadFFI in f: %s,l: %d\n", __FILE__, __LINE__);
 	return FFI;
 }
