@@ -117,6 +117,15 @@ char* tmpUnserialize()
 	return buf;
 }
 
+int intArray(int length, int *inArray)
+{
+	printf("[ffi-dll] call intArray el:");
+	for (int i = 0; i < length; i++)
+		printf(" %d,", inArray[i]);
+	printf("\n in f: %s,l: %d\n", __FILE__, __LINE__);
+	return length;
+}
+
 struct tagffiAPIStatic LoadFFI(void)
 {
 	struct tagffiAPIStatic FFI;
@@ -130,6 +139,7 @@ struct tagffiAPIStatic LoadFFI(void)
 	FFI.testSerialize.func = testSerialize;
 	FFI.testUnserialize.func = testUnserialize;
 	FFI.tmpUnserialize.func = tmpUnserialize;
+	FFI.intArray.func = intArray;
 	printf("[ffi-dll] call LoadFFI in f: %s,l: %d\n", __FILE__, __LINE__);
 	return FFI;
 }

@@ -28,6 +28,7 @@ FFIEXPORT float * tmpXYZ(float x, float y, float z);
 FFIEXPORT int testSerialize(const char *str, byte **buf, int *size);
 FFIEXPORT char* testUnserialize(const byte *buf, int size);
 FFIEXPORT char* tmpUnserialize(void);
+FFIEXPORT int intArray(int length, int *inArray);
 
 
 #define CALLBACKFFI
@@ -52,10 +53,11 @@ FFIEXPORT struct tagffiAPIStatic
 	struct { double(*func)(double, double *); char *name = "doubleFunc"; } doubleF;
 	struct { bool(*func)(bool, bool *); char *name = "boolFunc"; } boolF;
 	struct { wchar_t(*func)(wchar_t, wchar_t *); char *name = "wcharFunc"; } wcharF;
-	struct { float * (*func)(float x, float y, float z); char *name = "tmpXYZ"; } tmpXYZ;
-	struct { int(*func)(const char *str, byte **buf, int *size); char *name = "testSerialize"; } testSerialize;
-	struct { char* (*func)(const byte *buf, int size); char *name = "testUnserialize"; } testUnserialize;
+	struct { float * (*func)(float, float, float); char *name = "tmpXYZ"; } tmpXYZ;
+	struct { int(*func)(const char *, byte **, int *); char *name = "testSerialize"; } testSerialize;
+	struct { char* (*func)(const byte *, int); char *name = "testUnserialize"; } testUnserialize;
 	struct { char* (*func)(void); char *name = "tmpUnserialize"; } tmpUnserialize;
+	struct { int (*func)(int, int *); char *name = "intArray"; } intArray;
 };
 
 FFIEXPORT struct tagffiAPIStatic LoadFFI(void);

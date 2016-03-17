@@ -16,7 +16,6 @@ var floatxyz = test.tmpXYZ(0.01, 2.02, 4.004);
 var arr = test.serialize("Hello world!");
 var str = test.unserialize(arr);
 
-
 var out2 = [];
 test.EXPECT("';' == test.charFunc('\u263B', out)", out2);
 test.EXPECT("';' == out.pop()", out2);
@@ -31,4 +30,7 @@ test.EXPECT("true == out.pop()", out2);
 test.EXPECT("'\u263B' == test.wcharFunc('\u263B', out)", out2);
 test.EXPECT("'\u263B' == out.pop()", out2);
 test.EXPECT("'\u263B' == test.wcharFunc('\u263B', out)", out2);
+test.EXPECT("72 == test.serialize('Hello world!')[0]", out2);
+test.EXPECT("4 == test.testIntArray([1,2,65000,7])", out2);
+
 console.log(out);

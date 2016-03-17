@@ -6,7 +6,8 @@
 
 var ref = require('ref');
 var ref_struct = require('ref-struct');
-
+var ArrayType = require('ref-array');
+var IntArray = ArrayType('int');
 var byte_ptr = ref.refType('byte');
 var char_ptr = ref.refType('char');
 var int_ptr = ref.refType('int');
@@ -37,7 +38,8 @@ module.exports = {
 		"tmpXYZ": [xyz_ptr, ["float", "float", "float"]], 
 		"testSerialize": ["int", ["string", byte_p_ptr, int_ptr]], 
 		"testUnserialize": ["string", [byte_ptr, "int"]], 
-		"tmpUnserialize": ["string", []]
+		"tmpUnserialize": ["string", []],
+		"intArray": ["int", ["int", IntArray]]
 	},
 	out: {
 		"achar": ref.alloc('char'),
@@ -47,11 +49,14 @@ module.exports = {
 		"awchar": ref.alloc(wchar),
 		"aint": ref.alloc('int'),
 		"apint": ref.alloc(int_ptr),
-		"apbyte": ref.alloc(byte_ptr)
+		"apbyte": ref.alloc(byte_ptr),
+		"read": ref.readPointer,
+		"alloc": ref.alloc
 	},
 	type: {
 		"wchar": wchar,
 		"xyz": xyz, 
-		"byte_ptr": byte_ptr
+		"byte_ptr": byte_ptr,
+		"IntArray": IntArray
 	}
 };

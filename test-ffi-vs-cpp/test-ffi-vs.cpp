@@ -74,7 +74,8 @@ bool testFFIAPIs(struct tagffiAPIStatic *ffiAPIin)
 	EXPECT(t, str == ffiAPI.tmpUnserialize.func());
 	byte *sbuf = (byte *)str;
 	char *chout = ffiAPI.testUnserialize.func(sbuf, size_s);
-
+	int arr[] = { 1, 6, 7, 9 };
+	EXPECT(t, 4 == ffiAPI.intArray.func(sizeof(arr)/sizeof(int), arr));
 	EXPECT(t, t == true);
 	return true;
 }

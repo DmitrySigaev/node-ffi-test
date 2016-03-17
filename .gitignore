@@ -8,3 +8,4 @@
 *.cachefile
 *.VC.opendb
 /Debug/
+*.VC.db

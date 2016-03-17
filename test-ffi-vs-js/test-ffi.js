@@ -70,7 +70,7 @@ test_ffi.prototype.tmpXYZ = function (x, y, z) {
 
 test_ffi.prototype.serialize = function (string) {
 	var res = [];
-	var size = this._out.aint; 
+	var size = this._out.aint;
 	var pointer = this._out.apbyte;
 	var status = this._lib.testSerialize(string, pointer, size);
 	var buf = ref.readPointer(pointer, 0, size.deref());
@@ -78,14 +78,18 @@ test_ffi.prototype.serialize = function (string) {
 		res.push(buf[i]);
 	}
 	return res;
-}
+};
+
+test_ffi.prototype.testIntArray = function (array) {
+	return this._lib.intArray(array.length, array);
+};
 
 test_ffi.prototype.unserialize = function (array) {
 	var buf = new Buffer(array);
 	var pointer = ref.alloc(this._type.byte_ptr, buf);
 	var res = this._lib.testUnserialize(pointer.deref(), buf.length);
 	return res;
-}
+};
 
 
 test_ffi.prototype.EXPECT = function (x, out) {
@@ -93,5 +97,5 @@ test_ffi.prototype.EXPECT = function (x, out) {
 	var code = new Function('test', 'out', "return (" + x + ");");
 	var status = (code(this, out))?'passed': 'fault';
 	this.logger.log(x + ':' + status);
-}
+};
 module.exports = new test_ffi();
