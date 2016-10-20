@@ -15,6 +15,7 @@ var double = test.doubleFunc(12.13, out);
 var floatxyz = test.tmpXYZ(0.01, 2.02, 4.004);
 var arr = test.serialize("Hello world!");
 var str = test.unserialize(arr);
+var str2 = test.tmp_unserialize();
 
 var out2 = [];
 test.EXPECT("';' == test.charFunc('\u263B', out)", out2);

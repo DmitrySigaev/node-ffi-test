@@ -91,6 +91,11 @@ test_ffi.prototype.unserialize = function (array) {
 	return res;
 };
 
+test_ffi.prototype.tmp_unserialize = function () {
+    var res = this._lib.tmpUnserialize();
+    return res;
+};
+
 
 test_ffi.prototype.EXPECT = function (x, out) {
 	var out = out || [];
