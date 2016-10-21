@@ -9,3 +9,4 @@
 *.VC.opendb
 /Debug/
 *.VC.db
+/node_modules/

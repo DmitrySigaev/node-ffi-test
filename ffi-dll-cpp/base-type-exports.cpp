@@ -105,7 +105,7 @@ char* testUnserialize(const byte *buf, int size)
 	string.push(0);
 	auto &tmp = getThreadTmpData();
 	printf("[ffi-dll] call testUnserialize (%s) in f: %s,l: %d\n", string.ptr(), __FILE__, __LINE__);
-	return ( char *)buf;
+	return ( char *)buf; /*as I suspect string var is a copy of input buf! but it doesn't matter, because function returns input pointer   */
 }
 
 char* tmpUnserialize()

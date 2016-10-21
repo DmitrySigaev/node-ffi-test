@@ -2,3 +2,4 @@
 /obj/
 *.ntvs_analysis.dat
 /bin/
+/typings/
