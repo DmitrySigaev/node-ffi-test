@@ -56,6 +56,7 @@ struct tagffiAPI LoadFFI(void)
 	FFI.doubleFunc = doubleFunc;
 	FFI.boolFunc = boolFunc;
 	FFI.wcharFunc = wcharFunc;
+	FFI.read_scoring_matrix_func = read_scoring_matrix;
 	printf("[ffi-dll] call LoadFFI in f: %s,l: %d\n", __FILE__, __LINE__);
 	return FFI;
 }

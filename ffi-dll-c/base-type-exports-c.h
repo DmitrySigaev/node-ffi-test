@@ -19,6 +19,7 @@ FFIEXPORT float floatFunc(float inFloat, float *outFloat);
 FFIEXPORT double doubleFunc(double inDouble, double *outDouble);
 FFIEXPORT bool boolFunc(bool inBool, bool *outBool);
 FFIEXPORT wchar_t wcharFunc(wchar_t inWchar, wchar_t *outWchar);
+FFIEXPORT int read_scoring_matrix(struct tag_scoring_matrix_t *mtx, const char *matrixstring, size_t len);
 
 #define CALLBACKFFI
 typedef void (CALLBACKFFI *FFIPROC)(void);
@@ -31,6 +32,7 @@ struct tagffiAPI
 	double (*doubleFunc)(double, double *);
 	bool(*boolFunc)(bool, bool *);
 	wchar_t(*wcharFunc)(wchar_t, wchar_t *);
+	int (* read_scoring_matrix_func)(struct tag_scoring_matrix_t *mtx, const char *matrixstring, size_t len);
 };
 FFIEXPORT struct tagffiAPI LoadFFI(void);
 
