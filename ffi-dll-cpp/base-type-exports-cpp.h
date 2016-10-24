@@ -29,6 +29,7 @@ FFIEXPORT int testSerialize(const char *str, byte **buf, int *size);
 FFIEXPORT char* testUnserialize(const byte *buf, int size);
 FFIEXPORT char* tmpUnserialize(void);
 FFIEXPORT int intArray(int length, int *inArray);
+FFIEXPORT int read_scoring_matrix(struct tag_scoring_matrix_t *mtx, const char *matrixstring, size_t len);
 
 
 #define CALLBACKFFI
@@ -42,6 +43,7 @@ FFIEXPORT struct tagffiAPI
 	union { double(*func)(double, double *); char *name = "doubleFunc"; } doubleFunc;
 	union { bool(*func)(bool, bool *); char *name = "boolFunc"; } boolFunc;
 	union { wchar_t(*func)(wchar_t, wchar_t *); char *name = "wcharFunc"; } wcharFunc;
+	union { int(*func)(struct tag_scoring_matrix_t *, const char *, size_t); char *name = "read_scoring_matrix"; } read_scoring_matrix;
 	const int size = (sizeof(struct tagffiAPI) - sizeof(const int)) / sizeof(void *);
 };
 
@@ -58,6 +60,7 @@ FFIEXPORT struct tagffiAPIStatic
 	struct { char* (*func)(const byte *, int); char *name = "testUnserialize"; } testUnserialize;
 	struct { char* (*func)(void); char *name = "tmpUnserialize"; } tmpUnserialize;
 	struct { int (*func)(int, int *); char *name = "intArray"; } intArray;
+	struct { int(*func)(struct tag_scoring_matrix_t *, const char *, size_t); char *name = "read_scoring_matrix"; } read_scoring_matrix;
 };
 
 FFIEXPORT struct tagffiAPIStatic LoadFFI(void);

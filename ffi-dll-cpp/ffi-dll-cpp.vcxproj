@@ -129,11 +129,18 @@
   <ItemGroup>
     <ClCompile Include="base-type-exports.cpp" />
     <ClCompile Include="exception.cpp" />
+    <ClCompile Include="lal_matrix.c" />
+    <ClCompile Include="lal_scoring_matrix.c" />
+    <ClCompile Include="lal_tables.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="array.h" />
     <ClInclude Include="base-type-exports-cpp.h" />
     <ClInclude Include="defs.h" />
+    <ClInclude Include="lal_matrix.h" />
+    <ClInclude Include="lal_report.h" />
+    <ClInclude Include="lal_scoring_matrix.h" />
+    <ClInclude Include="lal_tables.h" />
     <ClInclude Include="tmp-thread-obj.h" />
     <ClInclude Include="tmp-thread-obj.hpp" />
   </ItemGroup>

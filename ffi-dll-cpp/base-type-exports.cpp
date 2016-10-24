@@ -7,6 +7,9 @@
 #include "base-type-exports-cpp.h"
 #include "array.h"
 #include "tmp-thread-obj.h"
+#include "lal_scoring_matrix.h"
+
+int read_scoring_matrix(scoring_matrix_t *mtx, const char *matrixstring, size_t len);
 
 void voidFunc( void )
 {
@@ -26,6 +29,7 @@ float floatFunc(float inFloat, float *outFloat)
 	*outFloat = inFloat;
 	return inFloat;
 }
+
 
 double doubleFunc(double inDouble, double *outDouble)
 {
@@ -126,6 +130,7 @@ int intArray(int length, int *inArray)
 	return length;
 }
 
+
 struct tagffiAPIStatic LoadFFI(void)
 {
 	struct tagffiAPIStatic FFI;
@@ -140,6 +145,7 @@ struct tagffiAPIStatic LoadFFI(void)
 	FFI.testUnserialize.func = testUnserialize;
 	FFI.tmpUnserialize.func = tmpUnserialize;
 	FFI.intArray.func = intArray;
+	FFI.read_scoring_matrix.func = read_scoring_matrix;
 	printf("[ffi-dll] call LoadFFI in f: %s,l: %d\n", __FILE__, __LINE__);
 	return FFI;
 }
