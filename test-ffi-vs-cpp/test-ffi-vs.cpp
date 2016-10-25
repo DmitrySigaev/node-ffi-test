@@ -6,12 +6,63 @@
 #include <stdio.h>
 #include <assert.h>
 #include <math.h>
+#include <stdint.h>
 #include <windows.h> 
 #include "base-type-exports-cpp.h"
 
 #define EPSILON 0.00001
 #define EXPECT(test, x) ((x))?(printf(#x":passed\n"), test&=1):(printf(#x":fault, f: %s, l: %d\n", __FILE__, __LINE__), test&=0)
 #define WEXPECT(test, x) ((x))?(wprintf(L#x":passed\n"), test&=1):(wprintf(L#x":fault, f: %s, l: %d\n", __FILE__, __LINE__), test&=0)
+
+enum MATTYPE_UTEST { VOIDTYPE, DOUBLETYPE, INTTYPE, FLOATTYPE, CHARTYPE };
+/**
+*  Structure of a matrix[nrows][ncols]
+*  @typedef {struct} matrix_t
+*  @field data  matrix data
+*  @field nrows the number of rows
+*  @field ncols the number of columns
+*/
+typedef struct tag_matrix_utest {
+	union {
+		double **ddata;
+		int64_t **idata;
+		int8_t  **cdata;
+	};
+	size_t nrows;
+	size_t ncols;
+	enum MATTYPE_UTEST type;
+} matrix_utest;
+
+#define MAX_LINE_LEN_UTEST  1024
+#define MAX_DOC_LEN_UTEST   (MAX_LINE_LEN_UTEST*4)
+
+typedef struct tag_scoring_matrix_utest {
+	matrix_utest sc_double_matrix;
+	matrix_utest sc_int_matrix;
+	double scale;
+	double scaleback;  /* 1.0/scale */
+	double man2mip[3];
+	double gapOpen, gapExtend;
+	char Doc[MAX_DOC_LEN_UTEST];
+} scoring_matrix_utest;
+
+char gaptest_utest[] = { " #gaptest1.table                                          \n \
+    A    B    C    D    G    H    K    M    R    S    T    U    V    W    Y    \n \
+A  2.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0   \n \
+B -1.0  2.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0   \n \
+C -1.0 -1.0  2.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0   \n \
+D -1.0 -1.0 -1.0  2.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0   \n \
+G -1.0 -1.0 -1.0 -1.0  2.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0   \n \
+H -1.0 -1.0 -1.0 -1.0 -1.0  2.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0   \n \
+K -1.0 -1.0 -1.0 -1.0 -1.0 -1.0  2.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0   \n \
+M -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0  2.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0   \n \
+R -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0  2.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0   \n \
+S -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0  2.0 -1.0 -1.0 -1.0 -1.0 -1.0   \n \
+T -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0  2.0  1.0 -1.0 -1.0 -1.0   \n \
+U -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0  1.0  2.0 -1.0 -1.0 -1.0   \n \
+V -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0  2.0 -1.0 -1.0   \n \
+W -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0  2.0 -1.0   \n \
+Y -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0  2.0" };
 
 bool testFFIAPI(struct tagffiAPI *ffiAPIin)
 {
@@ -23,6 +74,7 @@ bool testFFIAPI(struct tagffiAPI *ffiAPIin)
 	float fout;
 	double dout;
 	bool bout;
+	scoring_matrix_utest mtx;
 
 	memcpy(pffiAPI, ffiAPIin, sizeof(struct tagffiAPI));
 	EXPECT(t,ffiAPI.size == (const int)((sizeof(ffiAPI) - sizeof(ffiAPI.size)) / sizeof(void *)));
@@ -37,6 +89,7 @@ bool testFFIAPI(struct tagffiAPI *ffiAPIin)
 	EXPECT(t, true == bout);
 	WEXPECT(t, 0x263B == ffiAPI.wcharFunc.func(0x263B, &wout)); // '☻'
 	WEXPECT(t, 0x263B == wout);
+//	EXPECT(t, true == ffiAPI.read_scoring_matrix.func((struct tag_scoring_matrix_t *)&mtx, gaptest_utest, strlen(gaptest_utest)));
 	EXPECT(t, t == true);
 	return true;
 }
@@ -52,6 +105,7 @@ bool testFFIAPIs(struct tagffiAPIStatic *ffiAPIin)
 	float fout;
 	double dout;
 	bool bout;
+	scoring_matrix_utest mtx;
 	float *tmp = ffiAPI.tmpXYZ.func(0.01, 2.02, 0.03);
 
 	EXPECT(t, '#' == (ffiAPI.charF.func)('#', &cout));
@@ -78,6 +132,7 @@ bool testFFIAPIs(struct tagffiAPIStatic *ffiAPIin)
 	EXPECT(t, (uintptr_t)chout == (uintptr_t)str); /* http://www.viva64.com/ru/a/0050/ */ /* size_t и ptrdiff_t */
 	int arr[] = { 1, 6, 7, 9 };
 	EXPECT(t, 4 == ffiAPI.intArray.func(sizeof(arr)/sizeof(int), arr));
+	EXPECT(t, true == ffiAPI.read_scoring_matrix.func((struct tag_scoring_matrix_t *)&mtx, gaptest_utest, strlen(gaptest_utest)));
 	EXPECT(t, t == true);
 	return true;
 }
