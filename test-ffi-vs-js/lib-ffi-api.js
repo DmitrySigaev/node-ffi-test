@@ -5,7 +5,7 @@
  */
 
 var ref = require('ref');
-var ref_struct = require('ref-struct');
+var StructType = require('ref-struct');
 var ArrayType = require('ref-array');
 var IntArray = ArrayType('int');
 var byte_ptr = ref.refType('byte');
@@ -19,13 +19,42 @@ var wchar_ptr = ref.refType(wchar);
 
 var byte_p_ptr = ref.refType(byte_ptr);
 
-var xyz = ref_struct({
+var void_ptr = ref.refType('void');
+var void_p_ptr = ref.refType(void_ptr);
+var doubleArrayThree = ArrayType('double', 3);
+var DocArray = ArrayType('char', 1024 * 4);
+
+
+var xyz = StructType({
 	x: 'float',
 	y: 'float',
 	z: 'float'
 });
 
 var xyz_ptr = ref.refType(xyz);
+
+var matrix_utest = StructType({
+    data: void_p_ptr,
+    nrows: 'size_t',
+    ncols: 'size_t',
+    type: 'int32'
+});
+
+
+
+var scoring_matrix_utest = StructType({
+    sc_double_matrix: matrix_utest,
+    sc_int_matrix: matrix_utest,
+    scale: 'double',
+    scaleback: 'double',
+    man2mip: doubleArrayThree,
+    gapOpen: 'double',
+    gapExtend: 'double',
+    Doc:DocArray
+});
+
+
+var scoring_matrix_utest_ptr = ref.refType(scoring_matrix_utest);
 
 module.exports = {
 	api: {
@@ -39,7 +68,8 @@ module.exports = {
 		"testSerialize": ["int", ["string", byte_p_ptr, int_ptr]], 
 		"testUnserialize": ["string", [byte_ptr, "int"]], 
 		"tmpUnserialize": ["string", []],
-		"intArray": ["int", ["int", IntArray]]
+		"intArray": ["int", ["int", IntArray]],
+/*        "read_scoring_matrix": ["int", [scoring_matrix_utest_ptr, "string", int_ptr]] */
 	},
 	out: {
 		"achar": ref.alloc('char'),
@@ -51,12 +81,14 @@ module.exports = {
 		"apint": ref.alloc(int_ptr),
 		"apbyte": ref.alloc(byte_ptr),
 		"read": ref.readPointer,
-		"alloc": ref.alloc
+        "alloc": ref.alloc,
+        "scoring_matrix_alloc": ref.alloc(scoring_matrix_utest_ptr)
 	},
 	type: {
 		"wchar": wchar,
 		"xyz": xyz, 
 		"byte_ptr": byte_ptr,
-		"IntArray": IntArray
+        "IntArray": IntArray,
+        "scoring_matrix": scoring_matrix_utest
 	}
 };

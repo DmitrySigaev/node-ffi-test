@@ -12,7 +12,7 @@ var lib_api = require(local('lib-ffi-api'));
 
 var test_ffi = function (options) {
 	options = options || {};
-	var mode = options.mode || 'Release';
+	var mode = options.mode || 'Debug';
 	var libpath = local('../out/' + process.platform + '/' + process.arch + '/' + mode + '/ffi-dll-cpp');
 	this.libpath = options.libpath || libpath;
 	this.logger = options.logger || console;
@@ -89,6 +89,12 @@ test_ffi.prototype.unserialize = function (array) {
 	var pointer = ref.alloc(this._type.byte_ptr, buf);
 	var res = this._lib.testUnserialize(pointer.deref(), buf.length);
 	return res;
+};
+
+test_ffi.prototype.read_scoring_matrix = function (string) {
+    var sm = new this._type.scoring_matrix;
+    var res = this._lib.read_scoring_matrix(sm.ref(), string, string.length);
+    return res;
 };
 
 test_ffi.prototype.tmp_unserialize = function () {
