@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "base-type-exports-c.h"
+#include "lal_scoring_matrix.h"
 
 void voidFunc( void )
 {
@@ -45,6 +46,11 @@ wchar_t wcharFunc(wchar_t inWchar, wchar_t *outWchar)
 	wprintf(L"[ffi-dll-c] call wcharFunc %C, in f: %s, l: %d\n", inWchar, __FILE__, __LINE__);
 	*outWchar = inWchar;
 	return inWchar;
+}
+
+int read_scoring_matrix_js(ptrdiff_t *mtx, const char *matrixstring, size_t len)
+{
+	return read_scoring_matrix((scoring_matrix_t *)mtx, matrixstring, len);
 }
 
 struct tagffiAPI LoadFFI(void)

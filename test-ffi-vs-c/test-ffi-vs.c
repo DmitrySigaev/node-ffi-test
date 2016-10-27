@@ -17,6 +17,7 @@
 #define WEXPECT(test, x) ((x))?(wprintf(L#x":passed\n"), test&=1):(wprintf(L#x":fault, f: %s, l: %d\n", __FILE__, __LINE__), test&=0)
 
 int(*read_scoring_matrix_f)(struct tag_scoring_matrix_t *mtx, const char *matrixstring, size_t len);
+int(*read_scoring_matrix_f_js)(ptrdiff_t *mtx, const char *matrixstring, size_t len);
 
 enum MATTYPE_UTEST { VOIDTYPE, DOUBLETYPE, INTTYPE, FLOATTYPE, CHARTYPE };
 /**
@@ -84,7 +85,7 @@ bool testFFIAPI(struct tagffiAPI*ffiAPIin)
 	memcpy(pffiAPI, ffiAPIin, sizeof(struct tagffiAPI));
 	EXPECT(t, '#' == (ffiAPI.charFunc)('#', &cout));
 	EXPECT(t, '#' == cout);
-	EXPECT(t, fabs(12.13 - ffiAPI.floatFunc(12.13, &fout)) < EPSILON);
+	EXPECT(t, fabs(12.13 - ffiAPI.floatFunc((float)12.13, &fout)) < EPSILON);
 	EXPECT(t, fabs(12.13 - fout) < EPSILON);
 	EXPECT(t, fabs(12.13 - ffiAPI.doubleFunc(12.13, &dout)) < EPSILON);
 	EXPECT(t, fabs(12.13 - dout) < EPSILON);
@@ -95,6 +96,8 @@ bool testFFIAPI(struct tagffiAPI*ffiAPIin)
 	EXPECT(t, true == ffiAPI.read_scoring_matrix_func((struct tag_scoring_matrix_t *)&mtx, gaptest_utest, strlen(gaptest_utest)));
 	if(read_scoring_matrix_f)
 		EXPECT(t, true == read_scoring_matrix_f((struct tag_scoring_matrix_t *)&mtx, gaptest_utest, strlen(gaptest_utest)));
+	if (read_scoring_matrix_f_js)
+		EXPECT(t, true == read_scoring_matrix_f_js((ptrdiff_t *)&mtx, gaptest_utest, strlen(gaptest_utest)));
 	EXPECT(t, t == true);
 	return true;
 }
@@ -117,6 +120,7 @@ int main(int argc, char **argv)
 	    lffi = (struct tagffiAPI(*)(void))GetProcAddress(hinstLib, "LoadFFI");
 		ffiAPI = lffi();
 		read_scoring_matrix_f = (FFIPROC)GetProcAddress(hinstLib, "read_scoring_matrix");
+		read_scoring_matrix_f_js = (FFIPROC)GetProcAddress(hinstLib, "read_scoring_matrix_js");
 		testFFIAPI(&ffiAPI);
 		fFreeResult = FreeLibrary(hinstLib);
 	}
