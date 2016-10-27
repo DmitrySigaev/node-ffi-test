@@ -34,10 +34,10 @@ double * score_matrix_d = NULL; // long
   */
 static void prepare_matrices() {
 
-	score_matrix_8 = malloc(SCORE_MATRIX_DIM * SCORE_MATRIX_DIM * sizeof(int8_t));
-	score_matrix_16 = malloc(SCORE_MATRIX_DIM * SCORE_MATRIX_DIM * sizeof(int16_t));
-	score_matrix_64 = malloc(SCORE_MATRIX_DIM * SCORE_MATRIX_DIM * sizeof(int64_t));
-	score_matrix_d = malloc(SCORE_MATRIX_DIM * SCORE_MATRIX_DIM * sizeof(double));
+	score_matrix_8 = (int8_t *)malloc(SCORE_MATRIX_DIM * SCORE_MATRIX_DIM * sizeof(int8_t));
+	score_matrix_16 = (int16_t *)malloc(SCORE_MATRIX_DIM * SCORE_MATRIX_DIM * sizeof(int16_t));
+	score_matrix_64 = (int64_t *)malloc(SCORE_MATRIX_DIM * SCORE_MATRIX_DIM * sizeof(int64_t));
+	score_matrix_d = (double *)malloc(SCORE_MATRIX_DIM * SCORE_MATRIX_DIM * sizeof(double));
 	memset(score_matrix_64, -1, SCORE_MATRIX_DIM * SCORE_MATRIX_DIM * sizeof(int64_t));
 }
 
@@ -120,7 +120,7 @@ typedef struct tag_descritor
 descritor_t create_descritor(const char *matrixstring, size_t len)
 {
 	descritor_t dsc;
-	dsc.data = malloc(len + 1);
+	dsc.data = (char *)malloc(len + 1);
 	memcpy(dsc.data, matrixstring, len + 1); /*+1 \null simbol for string data*/
 	char *Letters = strtok(dsc.data, "\t\n");
 	size_t rows = 0;

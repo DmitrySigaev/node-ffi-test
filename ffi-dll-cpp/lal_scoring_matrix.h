@@ -30,8 +30,7 @@ typedef struct tag_scoring_matrix {
 	char Doc[MAX_DOC_LEN];
 } scoring_matrix_t;
 
-
-
+int read_scoring_matrix(scoring_matrix_t *mtx, const char *matrixstring, size_t len);
 void free_scoring_matrix(scoring_matrix_t *scmat);
 void update_gap_scoring_matrix(scoring_matrix_t *mtx, double gapOpen, double gapExtend);
 void gencore_mat_init_constant_scoring(scoring_matrix_t *scmat);
