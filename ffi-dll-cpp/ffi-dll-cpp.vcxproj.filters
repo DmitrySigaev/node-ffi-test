@@ -21,10 +21,10 @@
     <ClCompile Include="exception.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="lal_scoring_matrix.c">
+    <ClCompile Include="lal_matrix.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="lal_matrix.c">
+    <ClCompile Include="lal_scoring_matrix.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="lal_tables.c">
