@@ -69,7 +69,7 @@ module.exports = {
 		"testUnserialize": ["string", [byte_ptr, "int"]], 
 		"tmpUnserialize": ["string", []],
 		"intArray": ["int", ["int", IntArray]],
-        "read_scoring_matrix": ["int", [scoring_matrix_utest_ptr, "string", int_ptr]] 
+        "read_scoring_matrix_js": ["int", [scoring_matrix_utest_ptr, "string", int_ptr]] 
 	},
 	out: {
 		"achar": ref.alloc('char'),
