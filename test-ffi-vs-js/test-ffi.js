@@ -92,8 +92,9 @@ test_ffi.prototype.unserialize = function (array) {
 };
 
 test_ffi.prototype.read_scoring_matrix = function (string) {
-    var sm = new this._type.scoring_matrix;
-    var res = this._lib.read_scoring_matrix(sm.ref(), string, string.length);
+	var sm = new this._type.scoring_matrix;
+	var pointer = this._out.scoring_matrix_alloc;
+    var res = this._lib.read_scoring_matrix_js(pointer, string, string.length);
     return res;
 };
 
