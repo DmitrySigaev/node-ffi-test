@@ -38,6 +38,18 @@ typedef struct tag_matrix_utest {
 	enum MATTYPE_UTEST type;
 } matrix_utest;
 
+typedef struct tag_mat {
+	double **ddata;
+	size_t nrows;
+	size_t ncols;
+	int type;
+}mat_t;
+
+mat_t (*matrix_f_js)(const size_t nrows, const size_t ncols, int type);
+matrix_utest (*matrix_f_js2)(const size_t nrows, const size_t ncols, int type);
+matrix_utest * (*matrix_fd_js)(const size_t nrows, const size_t ncols, int type);
+int * (*matrix_fi_js)(const size_t nrows, const size_t ncols, int type);
+
 #define MAX_LINE_LEN_UTEST  1024
 #define MAX_DOC_LEN_UTEST   (MAX_LINE_LEN_UTEST*4)
 
@@ -81,6 +93,10 @@ bool testFFIAPI(struct tagffiAPI*ffiAPIin)
 	bool bout;
 	scoring_matrix_utest mtx;
 	size_t szofenum = sizeof(enum MATTYPE_UTEST);
+	matrix_utest mx = matrix_f_js2(10, 10, 1);
+	mat_t mmm = matrix_f_js(10, 10, 1);
+	matrix_utest *dmx = matrix_fd_js(10, 10, 1);
+	int *imx = matrix_fi_js(10, 10, 1);
 
 	memcpy(pffiAPI, ffiAPIin, sizeof(struct tagffiAPI));
 	EXPECT(t, '#' == (ffiAPI.charFunc)('#', &cout));
@@ -121,6 +137,10 @@ int main(int argc, char **argv)
 		ffiAPI = lffi();
 		read_scoring_matrix_f = (FFIPROC)GetProcAddress(hinstLib, "read_scoring_matrix");
 		read_scoring_matrix_f_js = (FFIPROC)GetProcAddress(hinstLib, "read_scoring_matrix_js");
+		matrix_f_js2 = (FFIPROC)GetProcAddress(hinstLib, "matrix_js");
+		matrix_f_js = (FFIPROC)GetProcAddress(hinstLib, "matrix_js");
+		matrix_fd_js = (FFIPROC)GetProcAddress(hinstLib, "matrix_js_d");
+		matrix_fi_js = (FFIPROC)GetProcAddress(hinstLib, "matrix_js_i");
 		testFFIAPI(&ffiAPI);
 		fFreeResult = FreeLibrary(hinstLib);
 	}

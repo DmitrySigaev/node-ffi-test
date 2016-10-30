@@ -75,7 +75,7 @@ bool testFFIAPI(struct tagffiAPI *ffiAPIin)
 	double dout;
 	bool bout;
 	scoring_matrix_utest mtx;
-
+	
 	memcpy(pffiAPI, ffiAPIin, sizeof(struct tagffiAPI));
 	EXPECT(t,ffiAPI.size == (const int)((sizeof(ffiAPI) - sizeof(ffiAPI.size)) / sizeof(void *)));
 	EXPECT(t, ffiAPI.size + 1 == (const int)(((int)(&(ffiAPI.size)) - (int)(&(ffiAPI.voidFunc)) + sizeof(void *)) / sizeof(void *)));

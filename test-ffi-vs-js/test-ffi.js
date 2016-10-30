@@ -14,9 +14,10 @@ var test_ffi = function (options) {
 	options = options || {};
 	var mode = options.mode || 'Debug';
 	var libpath = local('../out/' + process.platform + '/' + process.arch + '/' + mode + '/ffi-dll-cpp');
-	this.libpath = options.libpath || libpath;
+    var libpath_c = local('../out/' + process.platform + '/' + process.arch + '/' + mode + '/ffi-dll-c');
+	this.libpath = options.libpath || libpath_c;
 	this.logger = options.logger || console;
-	this._lib = ffi.Library(libpath, lib_api.api);
+    this._lib = ffi.Library(this.libpath, lib_api.api_c);
 	this._out = lib_api.out;
 	this._type = lib_api.type;
 };
@@ -59,48 +60,67 @@ test_ffi.prototype.wcharFunc = function (wchar, array) {
 };
 
 test_ffi.prototype.tmpXYZ = function (x, y, z) {
-	var out = [];
-	var ref_test = this._lib.tmpXYZ(x, y, z);
-	var testv = ref_test.deref();
-	out.push(testv.x);
-	out.push(testv.y);
-	out.push(testv.z);
+    var out = [];
+    if (this._lib.tmpXYZ) {
+        var ref_test = this._lib.tmpXYZ(x, y, z);
+        var testv = ref_test.deref();
+        out.push(testv.x);
+        out.push(testv.y);
+        out.push(testv.z);
+    }
 	return out;
 };
 
 test_ffi.prototype.serialize = function (string) {
-	var res = [];
-	var size = this._out.aint;
-	var pointer = this._out.apbyte;
-	var status = this._lib.testSerialize(string, pointer, size);
-	var buf = ref.readPointer(pointer, 0, size.deref());
-	for (i = 0; i < size.deref(); i++) {
-		res.push(buf[i]);
-	}
+    var res = [];
+    if (this._lib.testSerialize) {
+        var size = this._out.aint;
+        var pointer = this._out.apbyte;
+        var status = this._lib.testSerialize(string, pointer, size);
+        var buf = ref.readPointer(pointer, 0, size.deref());
+        for (i = 0; i < size.deref(); i++) {
+            res.push(buf[i]);
+        }
+    }
 	return res;
 };
 
 test_ffi.prototype.testIntArray = function (array) {
-	return this._lib.intArray(array.length, array);
+    if (this._lib.intArray)
+        return this._lib.intArray(array.length, array);
+    else
+        return [];
 };
 
 test_ffi.prototype.unserialize = function (array) {
-	var buf = new Buffer(array);
-	var pointer = ref.alloc(this._type.byte_ptr, buf);
-	var res = this._lib.testUnserialize(pointer.deref(), buf.length);
+    if (this._lib.intArray) {
+        var buf = new Buffer(array);
+        var pointer = ref.alloc(this._type.byte_ptr, buf);
+        var res = this._lib.testUnserialize(pointer.deref(), buf.length);
+    } else {
+        var res = [];
+    }
 	return res;
 };
 
 test_ffi.prototype.read_scoring_matrix = function (string) {
-	var sm = new this._type.scoring_matrix;
-	var pointer = this._out.scoring_matrix_alloc;
-    var res = this._lib.read_scoring_matrix_js(pointer, string, string.length);
-    return res;
+    if (this._lib.read_scoring_matrix_js) {
+        var sm = new this._type.scoring_matrix;
+        var pointer = this._out.scoring_matrix_alloc;
+        var res = this._lib.read_scoring_matrix_js(pointer, string, string.length);
+        return res;
+    } else {
+        return 0;
+    }
 };
 
 test_ffi.prototype.tmp_unserialize = function () {
-    var res = this._lib.tmpUnserialize();
-    return res;
+    if (this._lib.tmpUnserialize) {
+        var res = this._lib.tmpUnserialize();
+        return res;
+    } else {
+        return 0;
+    }
 };
 
 

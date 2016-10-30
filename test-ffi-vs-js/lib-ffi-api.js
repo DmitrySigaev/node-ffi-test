@@ -14,6 +14,8 @@ var int_ptr = ref.refType('int');
 var float_ptr = ref.refType('float');
 var double_ptr = ref.refType('double');
 var bool_ptr = ref.refType('bool');
+var size_t_ptr = ref.refType('size_t');
+
 var wchar = ('win32' == process.platform)?('uint16'):('uint32');
 var wchar_ptr = ref.refType(wchar);
 
@@ -55,9 +57,10 @@ var scoring_matrix_utest = StructType({
 
 
 var scoring_matrix_utest_ptr = ref.refType(scoring_matrix_utest);
+var matrix_utest_ptr = ref.refType(matrix_utest);
 
 module.exports = {
-	api: {
+	api_cpp: {
 		"voidFunc": ["void", []],
 		"charFunc": ["char", ["char", char_ptr]],
 		"floatFunc": ["float", ["float", float_ptr]],
@@ -71,6 +74,17 @@ module.exports = {
 		"intArray": ["int", ["int", IntArray]],
         "read_scoring_matrix_js": ["int", [scoring_matrix_utest_ptr, "string", int_ptr]] 
 	},
+    api_c: {
+        "voidFunc": ["void", []],
+        "charFunc": ["char", ["char", char_ptr]],
+        "floatFunc": ["float", ["float", float_ptr]],
+        "doubleFunc": ["double", ["double", double_ptr]],
+        "boolFunc": ["bool", ["bool", bool_ptr]],
+        "wcharFunc": [wchar, [wchar, wchar_ptr]],
+        "matrix_js_i": [int_ptr, ["size_t", "size_t", "int32"]],
+        "matrix_js_d": [matrix_utest_ptr, ["size_t", "size_t", "int32"]],
+        "matrix_js": [matrix_utest, ["size_t", "size_t", "int32"]] 
+    },
 	out: {
 		"achar": ref.alloc('char'),
 		"afloat": ref.alloc('float'),

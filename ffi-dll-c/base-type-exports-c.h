@@ -22,6 +22,18 @@ FFIEXPORT wchar_t wcharFunc(wchar_t inWchar, wchar_t *outWchar);
 FFIEXPORT int read_scoring_matrix(struct tag_scoring_matrix_t *mtx, const char *matrixstring, size_t len);
 FFIEXPORT int read_scoring_matrix_js(ptrdiff_t *mtx, const char *matrixstring, size_t len);
 
+struct tag_matrix_api {
+	double **ddata;
+	size_t nrows;
+	size_t ncols;
+	int type;
+};
+
+FFIEXPORT struct tag_matrix_api matrix_js(const size_t nrows, const size_t ncols, int type);
+FFIEXPORT struct tag_matrix_api *matrix_js_d(const size_t nrows, const size_t ncols, int type);
+FFIEXPORT int *matrix_js_i(const size_t nrows, const size_t ncols, int type);
+
+
 #define CALLBACKFFI
 typedef void (CALLBACKFFI *FFIPROC)(void);
 

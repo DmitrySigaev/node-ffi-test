@@ -5,6 +5,8 @@
  */
 #include <stdio.h>
 #include <stdbool.h>
+#include <malloc.h>
+#include <string.h>
 #include "base-type-exports-c.h"
 #include "lal_scoring_matrix.h"
 
@@ -53,6 +55,30 @@ int read_scoring_matrix_js(ptrdiff_t *mtx, const char *matrixstring, size_t len)
 	return read_scoring_matrix((scoring_matrix_t *)mtx, matrixstring, len);
 }
 
+
+struct tag_matrix_api matrix_js(const size_t nrows, const size_t ncols, int type)
+{
+	struct tag_matrix_api *mat;
+	matrix_t mx = matrix(nrows, ncols, type);
+	mat = (struct tag_matrix_api *)&mx;
+	return *mat;
+}
+
+struct tag_matrix_api * matrix_js_d(const size_t nrows, const size_t ncols, int type)
+{
+	struct tag_matrix_api *mat = malloc(sizeof(matrix_t));
+	matrix_t mx = matrix(nrows, ncols, type);
+	memcpy(mat, &mx, sizeof(matrix_t));
+	return mat; 
+}
+
+int * matrix_js_i(const size_t nrows, const size_t ncols, int type)
+{
+	int *mat = malloc(sizeof(matrix_t));
+	matrix_t mx = matrix(nrows, ncols, type);
+	memcpy(mat, &mx, sizeof(matrix_t));
+	return mat;
+}
 struct tagffiAPI LoadFFI(void)
 {
 	struct tagffiAPI FFI;
