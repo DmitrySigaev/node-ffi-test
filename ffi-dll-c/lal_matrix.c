@@ -75,9 +75,13 @@ matrix_t matrix(const size_t nrows, const size_t ncols, enum MATTYPE type)
 
 int matrix_set(matrix_t *matrix, element_t value)
 {
+	printf("[ffi-dll-c] call matrix_set, type %d, in f: %s,l: %d\n", value.type, __FILE__, __LINE__);
 	if (!matrix) return 0;
+	printf("[ffi-dll-c] call matrix_set, mx %d, in f: %s,l: %d\n", !matrix, __FILE__, __LINE__);
 	if (!matrix->ddata) return  0;
+	printf("[ffi-dll-c] call matrix_set, mx->d %d, in f: %s,l: %d\n", !matrix->ddata, __FILE__, __LINE__);
 	if (matrix->type != value.type) return 0;
+	printf("[ffi-dll-c] call matrix_set, mx->t %d, in f: %s,l: %d\n", !matrix->type != value.type, __FILE__, __LINE__);
 
 	switch (matrix->type) {
 	case DOUBLETYPE: {

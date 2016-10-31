@@ -17,6 +17,10 @@ var arr = test.serialize("Hello world!");
 var str = test.unserialize(arr);
 var str2 = test.tmp_unserialize();
 
+var str2 = test.matrix_js();
+var str2 = test.matrix_js_d();
+var str2 = test.matrix_js_i();
+
 var out2 = [];
 
 var gaptest_utest=  " #gaptest1.table                                          \n \

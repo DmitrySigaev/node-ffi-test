@@ -61,6 +61,7 @@ struct tag_matrix_api matrix_js(const size_t nrows, const size_t ncols, int type
 	struct tag_matrix_api *mat;
 	matrix_t mx = matrix(nrows, ncols, type);
 	mat = (struct tag_matrix_api *)&mx;
+	printf("[ffi-dll-c] call matrix_js:type %d, in f: %s,l: %d\n", type, __FILE__, __LINE__);
 	return *mat;
 }
 
@@ -79,6 +80,22 @@ int * matrix_js_i(const size_t nrows, const size_t ncols, int type)
 	memcpy(mat, &mx, sizeof(matrix_t));
 	return mat;
 }
+
+int matrix_set_int(struct tag_matrix_api *matrix, const int value)
+{
+	printf("[ffi-dll-c] call matrix_set_int:val %d, in f: %s,l: %d\n", value, __FILE__, __LINE__);
+	element_t el = { 0, INTTYPE };
+	el.i = value;
+	return matrix_set((matrix_t *)matrix, el);
+}
+
+int matrix_set_double(struct tag_matrix_api *matrix, const double value)
+{
+	element_t el = { 0, DOUBLETYPE };
+	el.d = value;
+	return matrix_set((matrix_t *)matrix, el);
+}
+
 struct tagffiAPI LoadFFI(void)
 {
 	struct tagffiAPI FFI;

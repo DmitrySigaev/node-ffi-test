@@ -32,7 +32,8 @@ struct tag_matrix_api {
 FFIEXPORT struct tag_matrix_api matrix_js(const size_t nrows, const size_t ncols, int type);
 FFIEXPORT struct tag_matrix_api *matrix_js_d(const size_t nrows, const size_t ncols, int type);
 FFIEXPORT int *matrix_js_i(const size_t nrows, const size_t ncols, int type);
-
+FFIEXPORT int matrix_set_int(struct tag_matrix_api *matrix, const int value);
+FFIEXPORT int matrix_set_double(struct tag_matrix_api *matrix, const double value);
 
 #define CALLBACKFFI
 typedef void (CALLBACKFFI *FFIPROC)(void);

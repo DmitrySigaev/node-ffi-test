@@ -8,6 +8,7 @@ var ref = require('ref');
 var StructType = require('ref-struct');
 var ArrayType = require('ref-array');
 var IntArray = ArrayType('int');
+var DoubleArray = ArrayType('double');
 var byte_ptr = ref.refType('byte');
 var char_ptr = ref.refType('char');
 var int_ptr = ref.refType('int');
@@ -42,7 +43,7 @@ var matrix_utest = StructType({
     type: 'int32'
 });
 
-
+var matrix_utest_ptr = ref.refType(matrix_utest);
 
 var scoring_matrix_utest = StructType({
     sc_double_matrix: matrix_utest,
@@ -83,7 +84,9 @@ module.exports = {
         "wcharFunc": [wchar, [wchar, wchar_ptr]],
         "matrix_js_i": [int_ptr, ["size_t", "size_t", "int32"]],
         "matrix_js_d": [matrix_utest_ptr, ["size_t", "size_t", "int32"]],
-        "matrix_js": [matrix_utest, ["size_t", "size_t", "int32"]] 
+        "matrix_js": [matrix_utest, ["size_t", "size_t", "int32"]],
+        "matrix_set_int": ["int", [matrix_utest_ptr,  "int"]],
+        "matrix_set_double": ["int", [matrix_utest_ptr, "double"]] 
     },
 	out: {
 		"achar": ref.alloc('char'),
@@ -103,6 +106,7 @@ module.exports = {
 		"xyz": xyz, 
 		"byte_ptr": byte_ptr,
         "IntArray": IntArray,
+        "DoubleArray": DoubleArray,
         "scoring_matrix": scoring_matrix_utest
 	}
 };

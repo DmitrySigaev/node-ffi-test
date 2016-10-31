@@ -123,6 +123,42 @@ test_ffi.prototype.tmp_unserialize = function () {
     }
 };
 
+test_ffi.prototype.matrix_js = function () {
+    if (this._lib.matrix_js) {
+        var res = this._lib.matrix_js(10, 10, 1);
+        var out = this._lib.matrix_set_int(res.ref(), -1);
+        var out2 = this._lib.matrix_set_double(res.ref(), -1.0);
+        var ttt = res.type;
+        var mat_pointer = ref.readPointer(res.data, 0, res.nrows);
+        var ar = new Float64Array(ncols);
+        for (i = 0; i < res.nrows; i++)
+            ref.readObject(mat_pointer[0])
+        var tncols = res.ncols;
+        var tnrows = res.nrows;
+        ref.get()
+        return res;
+    } else {
+        return 0;
+    }
+};
+
+test_ffi.prototype.matrix_js_i = function () {
+    if (this._lib.matrix_js) {
+        var res = this._lib.matrix_js_i(10, 10, 1);
+        return res;
+    } else {
+        return 0;
+    }
+};
+
+test_ffi.prototype.matrix_js_d = function () {
+    if (this._lib.matrix_js) {
+        var res = this._lib.matrix_js_d(10, 10, 1);
+        return res;
+    } else {
+        return 0;
+    }
+};
 
 test_ffi.prototype.EXPECT = function (x, out) {
 	var out = out || [];
