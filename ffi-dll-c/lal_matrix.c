@@ -79,20 +79,25 @@ int matrix_set(matrix_t *matrix, element_t value)
 	if (!matrix) return 0;
 	printf("[ffi-dll-c] call matrix_set, mx %d, in f: %s,l: %d\n", !matrix, __FILE__, __LINE__);
 	if (!matrix->ddata) return  0;
-	printf("[ffi-dll-c] call matrix_set, mx->d %d, in f: %s,l: %d\n", !matrix->ddata, __FILE__, __LINE__);
+	printf("[ffi-dll-c] call matrix_set, mx->d %d, address: %x in f: %s,l: %d\n", !matrix->ddata, matrix->ddata, __FILE__, __LINE__);
 	if (matrix->type != value.type) return 0;
 	printf("[ffi-dll-c] call matrix_set, mx->t %d, in f: %s,l: %d\n", !matrix->type != value.type, __FILE__, __LINE__);
 
 	switch (matrix->type) {
 	case DOUBLETYPE: {
+		printf("[ffi-dll-c] ");
+		double dd = value.d;
 		for (size_t i = 0; i < matrix->nrows; i++) {
+			printf("%x ", matrix->ddata[i]);
 			if(!value.d)
 				memset(matrix->ddata[i], 0, sizeof(double)*matrix->ncols);
 			else
 				for (size_t j = 0; j < matrix->ncols; j++) {
-					matrix->ddata[i][j] = value.d;
+					matrix->ddata[i][j] = dd;// value.d;
+					dd--;
 				}
 		}
+		printf("\n");
 		return 1;
 	}
 	case INTTYPE: {

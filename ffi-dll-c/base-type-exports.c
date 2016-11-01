@@ -61,7 +61,7 @@ struct tag_matrix_api matrix_js(const size_t nrows, const size_t ncols, int type
 	struct tag_matrix_api *mat;
 	matrix_t mx = matrix(nrows, ncols, type);
 	mat = (struct tag_matrix_api *)&mx;
-	printf("[ffi-dll-c] call matrix_js:type %d, in f: %s,l: %d\n", type, __FILE__, __LINE__);
+	printf("[ffi-dll-c] call matrix_js:type %d, address %x,  in f: %s,l: %d\n", type, mx.ddata, __FILE__, __LINE__);
 	return *mat;
 }
 

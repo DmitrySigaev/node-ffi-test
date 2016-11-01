@@ -6,6 +6,7 @@
 var path = require('path');
 var ffi = require('ffi');
 var ref = require('ref');
+var ArrayType = require('ref-array');
 var local = path.join.bind(path, __dirname);
 
 var lib_api = require(local('lib-ffi-api'));
@@ -125,13 +126,36 @@ test_ffi.prototype.tmp_unserialize = function () {
 
 test_ffi.prototype.matrix_js = function () {
     if (this._lib.matrix_js) {
-        var res = this._lib.matrix_js(10, 10, 1);
+        var res = this._lib.matrix_js(5, 3, 1);
         var out = this._lib.matrix_set_int(res.ref(), -1);
         var out2 = this._lib.matrix_set_double(res.ref(), -1.0);
-        var ttt = res.type;
+		switch (res.type) {
+			case 1:
+				console.log('data address: ' + res.data.address().toString(16));
+				var doubleArrayR = ArrayType('double *', res.nrows);
+				var obj1 = ref.get(res.data, 0, ref.refType(doubleArrayR));
+				var f64View = new Float64Array(obj1.buffer);
+				var obj2 = ref.get(res.data, 1, ref.refType(doubleArrayR));
+				var f64View2 = new Float64Array(obj2.buffer);
+				var doubleArrayRR = ArrayType(ref.refType(doubleArrayR), res.ncols);
+				//res.data.type = ref.refType(doubleArrayRR);
+				var obj = ref.get(res.data, 0, ref.refType(doubleArrayRR));
+				var f264View = new Float64Array(obj.buffer);
+				var mat_pointer = ref.readObject(obj, 0);
+				break;
+			case 2:
+				res.data.type = ref.coerceType('int **');
+				break;
+			case 3:
+				res.data.type = ref.coerceType('char **');
+				break;
+
+		}
         var mat_pointer = ref.readPointer(res.data, 0, res.nrows);
-        var ar = new Float64Array(ncols);
-        for (i = 0; i < res.nrows; i++)
+		for (i = 0; i < res.nrows; i++) {
+	//		mat_pointer[i].type = 
+			var buf = ref.readPointer(mat_pointer[i].deref(), 0, res.nrows);
+		}
             ref.readObject(mat_pointer[0])
         var tncols = res.ncols;
         var tnrows = res.nrows;
