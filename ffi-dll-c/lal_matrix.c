@@ -85,7 +85,7 @@ int matrix_set(matrix_t *matrix, element_t value)
 
 	switch (matrix->type) {
 	case DOUBLETYPE: {
-		printf("[ffi-dll-c] ");
+		printf("[ffi-dll-c] double *");
 		double dd = value.d;
 		for (size_t i = 0; i < matrix->nrows; i++) {
 			printf("%x ", matrix->ddata[i]);
@@ -101,25 +101,35 @@ int matrix_set(matrix_t *matrix, element_t value)
 		return 1;
 	}
 	case INTTYPE: {
+		printf("[ffi-dll-c] int64 *");
+		int64_t ii = value.i;
 		for (size_t i = 0; i < matrix->nrows; i++) {
+			printf("%x ", matrix->idata[i]);
 			if (!value.i)
 				memset(matrix->idata[i], 0, sizeof(int64_t)*matrix->ncols);
 			else
 				for (size_t j = 0; j < matrix->ncols; j++) {
-					matrix->idata[i][j] = value.i;
+					matrix->idata[i][j] = ii;// value.i;
+					ii--;
 				}
 		}
+		printf("\n");
 		return 1;
 	}
 	case CHARTYPE: {
+		printf("[ffi-dll-c] char *");
+		char cc = value.c;
 		for (size_t i = 0; i < matrix->nrows; i++) {
-			if (!value.i)
-				memset(matrix->cdata[i], 0, sizeof(int8_t)*matrix->ncols);
+			printf("%x ", matrix->cdata[i]);
+			if (!value.c)
+			memset(matrix->cdata[i], 0, sizeof(int8_t)*matrix->ncols);
 			else
 				for (size_t j = 0; j < matrix->ncols; j++) {
-					matrix->cdata[i][j] = value.c;
+					matrix->cdata[i][j] = cc;// value.c;
+					cc--;
 				}
 		}
+		printf("\n");
 		return 1;
 	}
 	}
