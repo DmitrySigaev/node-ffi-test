@@ -96,6 +96,13 @@ int matrix_set_double(struct tag_matrix_api *matrix, const double value)
 	return matrix_set((matrix_t *)matrix, el);
 }
 
+int matrix_set_char(struct tag_matrix_api *matrix, const char value)
+{
+	element_t el = { 0, CHARTYPE };
+	el.c = value;
+	return matrix_set((matrix_t *)matrix, el);
+}
+
 struct tagffiAPI LoadFFI(void)
 {
 	struct tagffiAPI FFI;
