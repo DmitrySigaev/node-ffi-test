@@ -7,6 +7,7 @@
 var ref = require('ref');
 var StructType = require('ref-struct');
 var ArrayType = require('ref-array');
+var UnionType = require('ref-union');
 var IntArray = ArrayType('int');
 var DoubleArray = ArrayType('double');
 var byte_ptr = ref.refType('byte');
@@ -21,12 +22,19 @@ var wchar = ('win32' == process.platform)?('uint16'):('uint32');
 var wchar_ptr = ref.refType(wchar);
 
 var byte_p_ptr = ref.refType(byte_ptr);
+var double_p_ptr = ref.refType(double_ptr);
+var int_p_ptr = ref.refType(int_ptr);
 
 var void_ptr = ref.refType('void');
 var void_p_ptr = ref.refType(void_ptr);
 var doubleArrayThree = ArrayType('double', 3);
 var DocArray = ArrayType('char', 1024 * 4);
 
+var ut = UnionType({
+    d: double_p_ptr,
+    i: int_p_ptr,
+    c: byte_p_ptr
+});
 
 var xyz = StructType({
 	x: 'float',
@@ -37,7 +45,7 @@ var xyz = StructType({
 var xyz_ptr = ref.refType(xyz);
 
 var matrix_utest = StructType({
-    data: void_p_ptr,
+    data: ut,
     nrows: 'size_t',
     ncols: 'size_t',
     type: 'int32'
@@ -86,7 +94,8 @@ module.exports = {
         "matrix_js_d": [matrix_utest_ptr, ["size_t", "size_t", "int32"]],
         "matrix_js": [matrix_utest, ["size_t", "size_t", "int32"]],
         "matrix_set_int": ["int", [matrix_utest_ptr,  "int"]],
-        "matrix_set_double": ["int", [matrix_utest_ptr, "double"]] 
+        "matrix_set_double": ["int", [matrix_utest_ptr, "double"]],
+        "matrix_set_char": ["int", [matrix_utest_ptr, "char"]] 
     },
 	out: {
 		"achar": ref.alloc('char'),
