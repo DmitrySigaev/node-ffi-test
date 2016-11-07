@@ -50,7 +50,7 @@ wchar_t wcharFunc(wchar_t inWchar, wchar_t *outWchar)
 	return inWchar;
 }
 
-int read_scoring_matrix_js(ptrdiff_t *mtx, const char *matrixstring, size_t len)
+int read_scoring_matrix_js(struct tag_scoring_matrix_api * mtx, const char *matrixstring, size_t len)
 {
 	return read_scoring_matrix((scoring_matrix_t *)mtx, matrixstring, len);
 }
