@@ -9,6 +9,8 @@
 #include <string.h>
 #include "base-type-exports-c.h"
 #include "lal_scoring_matrix.h"
+#include "lal_typedefs.h"
+#include "sw.h"
 
 void voidFunc( void )
 {
@@ -101,6 +103,17 @@ int matrix_set_char(struct tag_matrix_api *matrix, const char value)
 	element_t el = { 0, CHARTYPE };
 	el.c = value;
 	return matrix_set((matrix_t *)matrix, el);
+}
+
+struct score_matrix_api sw_directions_js(struct  search_swag_profile_api const * sp, struct sequence_api const *xseq, struct sequence_api const *yseq)
+{
+	printf("[ffi-dll-c] call sw_directions in f: %s,l: %d\n", __FILE__, __LINE__);
+	printf("[ffi-dll-c] call sw_directions:val %s, in f: %s,l: %d\n", xseq->seq, __FILE__, __LINE__);
+	printf("[ffi-dll-c] call sw_directions:val %s, in f: %s,l: %d\n", yseq->seq, __FILE__, __LINE__);
+	struct score_matrix_api *sm;
+	score_matrix_t smt = sw_directions((const search_swag_profile_t *)sp, (const sequence_t *)xseq, (const sequence_t *)yseq);
+	sm = (struct score_matrix_api *)&smt;
+	return *sm;
 }
 
 struct tagffiAPI LoadFFI(void)

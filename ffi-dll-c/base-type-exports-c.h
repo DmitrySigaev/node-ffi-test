@@ -51,6 +51,25 @@ struct tag_scoring_matrix_api {
 
 FFIEXPORT int read_scoring_matrix_js(struct tag_scoring_matrix_api * mtx, const char *matrixstring, size_t len);
 
+struct  search_swag_profile_api {
+	double gapOpen;
+	double gapExt;
+	struct tag_scoring_matrix_api *mtx;
+};
+
+struct sequence_api {
+	size_t ID;
+	char * seq;
+	size_t len;
+};
+
+struct score_matrix_api {
+	struct tag_matrix_api score;
+	struct tag_matrix_api directions;
+};
+
+FFIEXPORT struct score_matrix_api sw_directions_js(struct  search_swag_profile_api const * sp, struct sequence_api const *xseq, struct sequence_api const *yseq);
+
 #define CALLBACKFFI
 typedef void (CALLBACKFFI *FFIPROC)(void);
 
