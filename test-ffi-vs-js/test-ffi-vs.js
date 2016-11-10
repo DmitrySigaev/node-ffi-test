@@ -43,7 +43,12 @@ V -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0  2.0 -1.0 -1.0   \
 W -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0  2.0 -1.0   \n \
 Y -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0  2.0";
 
-var ret = test.read_scoring_matrix(gaptest_utest);
+var substitution = test.read_substitution_matrix(gaptest_utest);
+var profile = test.set_profile(-1, 0, substitution);
+var seq1 = "CTTCCTACGTTGGGTCATAGTAGTGCGGCGTGGGCAATGCCTACGGAGGGGTGGAGCAACTGGCGCTATCACTTCTACCATCGTCTGCAGCGTACGA";
+var seq2 = "tcgtacgctgcagacgatggtagaagtgatagcgccagttgctccacccctccgtaggcattgcccacgccgcactactatgacccaacgtaggaagttg";
+
+var res = test.sw_directions(profile, seq1, seq2);
 
 test.EXPECT("';' == test.charFunc('\u263B', out)", out2);
 test.EXPECT("';' == out.pop()", out2);

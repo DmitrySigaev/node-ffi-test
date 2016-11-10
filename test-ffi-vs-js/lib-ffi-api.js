@@ -18,7 +18,7 @@ var double_ptr = ref.refType('double');
 var bool_ptr = ref.refType('bool');
 var size_t_ptr = ref.refType('size_t');
 
-var wchar = ('win32' == process.platform)?('uint16'):('uint32');
+var wchar = ('win32' == process.platform) ? ('uint16') : ('uint32');
 var wchar_ptr = ref.refType(wchar);
 
 var byte_p_ptr = ref.refType(byte_ptr);
@@ -68,6 +68,29 @@ var scoring_matrix_utest = StructType({
 var scoring_matrix_utest_ptr = ref.refType(scoring_matrix_utest);
 var matrix_utest_ptr = ref.refType(matrix_utest);
 
+
+var search_swag_profile_utest = StructType({
+	gapOpen: 'double',
+	gapExt: 'double',
+	mtx: scoring_matrix_utest_ptr
+});
+
+var search_swag_profile_utest_ptr = ref.refType(search_swag_profile_utest);
+
+var sequence_utest = StructType({
+	ID: 'size_t',
+	seq: 'string',
+	len: 'size_t'
+});
+
+var sequence_utest_ptr = ref.refType(sequence_utest);
+
+var score_matrix_utest = StructType({
+	score: matrix_utest,
+	directions: matrix_utest
+});
+
+
 module.exports = {
 	api_cpp: {
 		"voidFunc": ["void", []],
@@ -76,9 +99,9 @@ module.exports = {
 		"doubleFunc": ["double", ["double", double_ptr]],
 		"boolFunc": ["bool", ["bool", bool_ptr]],
 		"wcharFunc": [wchar, [wchar, wchar_ptr]],
-		"tmpXYZ": [xyz_ptr, ["float", "float", "float"]], 
-		"testSerialize": ["int", ["string", byte_p_ptr, int_ptr]], 
-		"testUnserialize": ["string", [byte_ptr, "int"]], 
+		"tmpXYZ": [xyz_ptr, ["float", "float", "float"]],
+		"testSerialize": ["int", ["string", byte_p_ptr, int_ptr]],
+		"testUnserialize": ["string", [byte_ptr, "int"]],
 		"tmpUnserialize": ["string", []],
 		"intArray": ["int", ["int", IntArray]],
 		"read_scoring_matrix_js": ["int", [scoring_matrix_utest_ptr, "string", "size_t"]]
@@ -96,7 +119,8 @@ module.exports = {
 		"matrix_set_int": ["int", [matrix_utest_ptr, "int"]],
 		"matrix_set_double": ["int", [matrix_utest_ptr, "double"]],
 		"matrix_set_char": ["int", [matrix_utest_ptr, "char"]],
-		"read_scoring_matrix_js": ["int", [scoring_matrix_utest_ptr, "string", "size_t"]]
+		"read_scoring_matrix_js": ["int", [scoring_matrix_utest_ptr, "string", "size_t"]],
+		"sw_directions_js": [score_matrix_utest, [search_swag_profile_utest_ptr, sequence_utest_ptr, sequence_utest_ptr]]
 	},
 	out: {
 		"achar": ref.alloc('char'),
@@ -113,10 +137,14 @@ module.exports = {
 	},
 	type: {
 		"wchar": wchar,
-		"xyz": xyz, 
+		"xyz": xyz,
 		"byte_ptr": byte_ptr,
 		"IntArray": IntArray,
 		"DoubleArray": DoubleArray,
-		"scoring_matrix": scoring_matrix_utest
+		"substitution_matrix": scoring_matrix_utest,
+		"sequence": sequence_utest,
+		"score_matrix": score_matrix_utest,
+		"matrix": matrix_utest,
+		"search_profile": search_swag_profile_utest
 	}
 };

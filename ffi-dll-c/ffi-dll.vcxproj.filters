@@ -27,6 +27,15 @@
     <ClCompile Include="lal_tables.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="lal_encoding.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gc_sw.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sw.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="base-type-exports-c.h">
@@ -42,6 +51,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="lal_tables.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gc_sw.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lal_encoding.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sw.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lal_typedefs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

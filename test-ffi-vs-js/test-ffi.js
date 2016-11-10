@@ -104,9 +104,9 @@ test_ffi.prototype.unserialize = function (array) {
 	return res;
 };
 
-test_ffi.prototype.read_scoring_matrix = function (string) {
+test_ffi.prototype.read_substitution_matrix = function (string) {
 	if (this._lib.read_scoring_matrix_js) {
-		var sm = new this._type.scoring_matrix;
+		var sm = new this._type.substitution_matrix;
 	//	var pointer = this._out.scoring_matrix_alloc;
 		var res = this._lib.read_scoring_matrix_js(sm.ref(), string, string.length);
 		var doc = sm.Doc.buffer.readCString();
@@ -204,6 +204,49 @@ test_ffi.prototype.matrix_js_degug = function () {
 	}
 };
 
+test_ffi.prototype.matrix_to_array = function (mtx) {
+	if (mtx && mtx.data) {
+		var arr = [];
+		switch (mtx.type) {
+			case 1:
+				for (var i = 0; i < mtx.nrows; i++) {
+					var doubleArrayT = ArrayType(ref.refType('double'), mtx.ncols);
+					var obj1 = ref.get(mtx.data.d, (i << 3), ref.refType(doubleArrayT));
+					var f64View = new Float64Array(obj1.buffer);
+					var row = [];
+					for (var j = 0; j < mtx.ncols; j++)
+						row.push(f64View[j]);
+					arr.push(row.slice());
+				}
+				break;
+			case 2:
+				for (var i = 0; i < mtx.nrows; i++) {
+					var intArrayT = ArrayType(ref.refType('int64'), mtx.ncols);
+					var obj1 = ref.get(mtx.data.d, (i << 3), ref.refType(intArrayT));
+					var row = [];
+					for (var j = 0; j < mtx.ncols; j++)
+						row.push(ref.readInt64(obj1, (j << 3)));
+					arr.push(row.slice());
+				}
+				break;
+			case 4:
+				for (var i = 0; i < mtx.nrows; i++) {
+					var charArrayT = ArrayType(ref.refType('char'), mtx.ncols);
+					var obj1 = ref.get(mtx.data.d, (i << 3), ref.refType(charArrayT));
+					var i8View = new Int8Array(obj1.buffer, 0, mtx.ncols);
+					var row = [];
+					for (var j = 0; j < mtx.ncols; j++)
+						row.push(i8View[j]);
+					arr.push(row.slice());
+				}
+				break;
+		}
+		return arr;
+	} else {
+		return 0;
+	}
+}
+
 test_ffi.prototype.matrix_js = function () {
 	if (this._lib.matrix_js) {
 //		console.log('data endianness: ' + ref.endianness);
@@ -211,43 +254,7 @@ test_ffi.prototype.matrix_js = function () {
 		var out = this._lib.matrix_set_int(res.ref(), -1);
 		var out2 = this._lib.matrix_set_double(res.ref(), -1.1);
 		var out3 = this._lib.matrix_set_char(res.ref(), -1);
-		var arr = [];
-		
-		switch (res.type) {
-			case 1:
-				for (var i = 0; i < res.nrows; i++) {
-					var doubleArrayT = ArrayType(ref.refType('double'), res.ncols);
-					var obj1 = ref.get(res.data.d, (i << 3), ref.refType(doubleArrayT));
-					var f64View = new Float64Array(obj1.buffer);
-					var row = [];
-					for (var j = 0; j < res.ncols; j++)
-						row.push(f64View[j]);
-					arr.push(row.slice());
-				}
-				break;
-			case 2:
-				for (var i = 0; i < res.nrows; i++) {
-					var intArrayT = ArrayType(ref.refType('int64'), res.ncols);
-					var obj1 = ref.get(res.data.d, (i << 3), ref.refType(intArrayT));
-					var row = [];
-					for (var j = 0; j < res.ncols; j++)
-						row.push(ref.readInt64(obj1, (j << 3)));
-					arr.push(row.slice());
-				}
-				break;
-			case 4:
-				for (var i = 0; i < res.nrows; i++) {
-					var charArrayT = ArrayType(ref.refType('char'), res.ncols);
-					var obj1 = ref.get(res.data.d, (i << 3), ref.refType(charArrayT));
-					var i8View = new Int8Array(obj1.buffer, 0, res.ncols); 
-					var row = [];
-					for (var j = 0; j < res.ncols; j++)
-						row.push(i8View[j]);
-					arr.push(row.slice());
-				}
-				break;
-		}
-		return arr;
+		return this.matrix_to_array(res);
 	} else {
 		return 0;
 	}
@@ -268,6 +275,23 @@ test_ffi.prototype.matrix_js_d = function () {
 	} else {
 		return 0;
 	}
+};
+
+
+test_ffi.prototype.sw_directions = function (sp, xstring, ystring ) {
+	if (this._lib.sw_directions_js) {
+		var xseq = new this._type.sequence({ ID: 0, seq: xstring, len: xstring.length });
+		var yseq = new this._type.sequence({ ID: 1, seq: ystring, len: ystring.length });
+		var res = this._lib.sw_directions_js(sp.ref(), xseq.ref(), yseq.ref());
+		return [this.matrix_to_array(res.score), this.matrix_to_array(res.derections)];
+	} else {
+		return 0;
+	}
+};
+
+test_ffi.prototype.set_profile = function (gapOpen, gapExt, substitution) {
+	var mtx_ptr = (!substitution[0]) ? (0) : (substitution[1].ref());
+	return new this._type.search_profile({ gapOpen: gapOpen, gapExt: gapExt, mtx: mtx_ptr });
 };
 
 test_ffi.prototype.EXPECT = function (x, out) {

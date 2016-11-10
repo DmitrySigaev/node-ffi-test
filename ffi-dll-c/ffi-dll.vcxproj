@@ -150,16 +150,23 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="base-type-exports.c" />
+    <ClCompile Include="gc_sw.c" />
+    <ClCompile Include="lal_encoding.c" />
     <ClCompile Include="lal_matrix.c" />
     <ClCompile Include="lal_scoring_matrix.c" />
     <ClCompile Include="lal_tables.c" />
+    <ClCompile Include="sw.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="base-type-exports-c.h" />
+    <ClInclude Include="gc_sw.h" />
+    <ClInclude Include="lal_encoding.h" />
     <ClInclude Include="lal_matrix.h" />
     <ClInclude Include="lal_report.h" />
     <ClInclude Include="lal_scoring_matrix.h" />
     <ClInclude Include="lal_tables.h" />
+    <ClInclude Include="lal_typedefs.h" />
+    <ClInclude Include="sw.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
