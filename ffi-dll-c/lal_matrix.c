@@ -9,6 +9,7 @@ Contact: Dmitry Sigaev <dima.sigaev@gmail.com>
 #include <malloc.h>
 #include <string.h>
 #include "lal_matrix.h"
+#include "lal_debuglogs.h"
 
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
@@ -75,20 +76,20 @@ matrix_t matrix(const size_t nrows, const size_t ncols, enum MATTYPE type)
 
 int matrix_set_debug_decrease(matrix_t *matrix, element_t value)
 {
-	printf("[ffi-dll-c] call matrix_set, type %d, in f: %s,l: %d\n", value.type, __FILE__, __LINE__);
+	dbg_print("[ffi-dll-c] call matrix_set, type %d, in f: %s,l: %d\n", value.type, __FILE__, __LINE__);
 	if (!matrix) return 0;
-	printf("[ffi-dll-c] call matrix_set, mx %d, in f: %s,l: %d\n", !matrix, __FILE__, __LINE__);
+	dbg_print("[ffi-dll-c] call matrix_set, mx %d, in f: %s,l: %d\n", !matrix, __FILE__, __LINE__);
 	if (!matrix->ddata) return  0;
-	printf("[ffi-dll-c] call matrix_set, mx->d %d, address: %x in f: %s,l: %d\n", !matrix->ddata, matrix->ddata, __FILE__, __LINE__);
+	dbg_print("[ffi-dll-c] call matrix_set, mx->d %d, address: %x in f: %s,l: %d\n", !matrix->ddata, matrix->ddata, __FILE__, __LINE__);
 	if (matrix->type != value.type) return 0;
-	printf("[ffi-dll-c] call matrix_set, mx->t %d, in f: %s,l: %d\n", !matrix->type != value.type, __FILE__, __LINE__);
+	dbg_print("[ffi-dll-c] call matrix_set, mx->t %d, in f: %s,l: %d\n", !matrix->type != value.type, __FILE__, __LINE__);
 
 	switch (matrix->type) {
 	case DOUBLETYPE: {
-		printf("[ffi-dll-c] double *");
+		dbg_print("[ffi-dll-c] double *");
 		double dd = value.d;
 		for (size_t i = 0; i < matrix->nrows; i++) {
-			printf("%x ", matrix->ddata[i]);
+			dbg_print("%x ", matrix->ddata[i]);
 			if(!value.d)
 				memset(matrix->ddata[i], 0, sizeof(double)*matrix->ncols);
 			else
@@ -97,14 +98,14 @@ int matrix_set_debug_decrease(matrix_t *matrix, element_t value)
 					dd--;
 				}
 		}
-		printf("\n");
+		dbg_print("\n");
 		return 1;
 	}
 	case INTTYPE: {
-		printf("[ffi-dll-c] int64 *");
+		dbg_print("[ffi-dll-c] int64 *");
 		int64_t ii = value.i;
 		for (size_t i = 0; i < matrix->nrows; i++) {
-			printf("%x ", matrix->idata[i]);
+			dbg_print("%x ", matrix->idata[i]);
 			if (!value.i)
 				memset(matrix->idata[i], 0, sizeof(int64_t)*matrix->ncols);
 			else
@@ -113,14 +114,14 @@ int matrix_set_debug_decrease(matrix_t *matrix, element_t value)
 					ii--;
 				}
 		}
-		printf("\n");
+		dbg_print("\n");
 		return 1;
 	}
 	case CHARTYPE: {
-		printf("[ffi-dll-c] char *");
+		dbg_print("[ffi-dll-c] char *");
 		char cc = value.c;
 		for (size_t i = 0; i < matrix->nrows; i++) {
-			printf("%x ", matrix->cdata[i]);
+			dbg_print("%x ", matrix->cdata[i]);
 			if (!value.c)
 			memset(matrix->cdata[i], 0, sizeof(int8_t)*matrix->ncols);
 			else
@@ -129,7 +130,7 @@ int matrix_set_debug_decrease(matrix_t *matrix, element_t value)
 					cc--;
 				}
 		}
-		printf("\n");
+		dbg_print("\n");
 		return 1;
 	}
 	}
@@ -138,19 +139,19 @@ int matrix_set_debug_decrease(matrix_t *matrix, element_t value)
 
 int matrix_set_debug(matrix_t *matrix, element_t value)
 {
-	printf("[ffi-dll-c] call matrix_set, type %d, in f: %s,l: %d\n", value.type, __FILE__, __LINE__);
+	dbg_print("[ffi-dll-c] call matrix_set, type %d, in f: %s,l: %d\n", value.type, __FILE__, __LINE__);
 	if (!matrix) return 0;
-	printf("[ffi-dll-c] call matrix_set, mx %d, in f: %s,l: %d\n", !matrix, __FILE__, __LINE__);
+	dbg_print("[ffi-dll-c] call matrix_set, mx %d, in f: %s,l: %d\n", !matrix, __FILE__, __LINE__);
 	if (!matrix->ddata) return  0;
-	printf("[ffi-dll-c] call matrix_set, mx->d %d, address: %x in f: %s,l: %d\n", !matrix->ddata, matrix->ddata, __FILE__, __LINE__);
+	dbg_print("[ffi-dll-c] call matrix_set, mx->d %d, address: %x in f: %s,l: %d\n", !matrix->ddata, matrix->ddata, __FILE__, __LINE__);
 	if (matrix->type != value.type) return 0;
-	printf("[ffi-dll-c] call matrix_set, mx->t %d, in f: %s,l: %d\n", !matrix->type != value.type, __FILE__, __LINE__);
+	dbg_print("[ffi-dll-c] call matrix_set, mx->t %d, in f: %s,l: %d\n", !matrix->type != value.type, __FILE__, __LINE__);
 
 	switch (matrix->type) {
 	case DOUBLETYPE: {
-		printf("[ffi-dll-c] double *");
+		dbg_print("[ffi-dll-c] double *");
 		for (size_t i = 0; i < matrix->nrows; i++) {
-			printf("%x ", matrix->ddata[i]);
+			dbg_print("%x ", matrix->ddata[i]);
 			if (!value.d)
 				memset(matrix->ddata[i], 0, sizeof(double)*matrix->ncols);
 			else
@@ -158,13 +159,13 @@ int matrix_set_debug(matrix_t *matrix, element_t value)
 					matrix->ddata[i][j] = value.d;
 				}
 		}
-		printf("\n");
+		dbg_print("\n");
 		return 1;
 	}
 	case INTTYPE: {
-		printf("[ffi-dll-c] int64 *");
+		dbg_print("[ffi-dll-c] int64 *");
 		for (size_t i = 0; i < matrix->nrows; i++) {
-			printf("%x ", matrix->idata[i]);
+			dbg_print("%x ", matrix->idata[i]);
 			if (!value.i)
 				memset(matrix->idata[i], 0, sizeof(int64_t)*matrix->ncols);
 			else
@@ -172,13 +173,13 @@ int matrix_set_debug(matrix_t *matrix, element_t value)
 					matrix->idata[i][j] = value.i;
 				}
 		}
-		printf("\n");
+		dbg_print("\n");
 		return 1;
 	}
 	case CHARTYPE: {
-		printf("[ffi-dll-c] char *");
+		dbg_print("[ffi-dll-c] char *");
 		for (size_t i = 0; i < matrix->nrows; i++) {
-			printf("%x ", matrix->cdata[i]);
+			dbg_print("%x ", matrix->cdata[i]);
 			if (!value.c)
 				memset(matrix->cdata[i], 0, sizeof(int8_t)*matrix->ncols);
 			else
@@ -186,14 +187,12 @@ int matrix_set_debug(matrix_t *matrix, element_t value)
 					matrix->cdata[i][j] =  value.c;
 				}
 		}
-		printf("\n");
+		dbg_print("\n");
 		return 1;
 	}
 	}
 	return 0;
 }
-
-#define dbg_print
 
 int matrix_set(matrix_t *matrix, element_t value)
 {
@@ -353,31 +352,31 @@ void print_matrix(const matrix_t *matrix)
 		double score = matrix->ddata[0][0];
 		for (size_t i = 0; i < matrix->nrows; i++) {
 			for (size_t j = 0; j < matrix->ncols; j++) {
-				printf(" %2.2f", matrix->ddata[i][j]);
+				dbg_print(" %2.2f", matrix->ddata[i][j]);
 			}
-			printf(" \n");
+			dbg_print(" \n");
 		}
 	}break;
 	case INTTYPE: {
 		int64_t score = matrix->idata[0][0];
 		for (size_t i = 0; i < matrix->nrows; i++) {
 			for (size_t j = 0; j < matrix->ncols; j++) {
-				printf(" %lld", matrix->idata[i][j]);
+				dbg_print(" %lld", matrix->idata[i][j]);
 			}
-			printf(" \n");
+			dbg_print(" \n");
 		}
 	}
 	case CHARTYPE: {
 		int8_t score = matrix->cdata[0][0];
 		for (size_t i = 0; i < matrix->nrows; i++) {
 			for (size_t j = 0; j < matrix->ncols; j++) {
-				printf(" %c", matrix->cdata[i][j]);
+				dbg_print(" %c", matrix->cdata[i][j]);
 			}
-			printf(" \n");
+			dbg_print(" \n");
 		}
 	}
 	}
-	printf(" \n");
+	dbg_print(" \n");
 }
 
 void free_matrix(matrix_t *matrix)
