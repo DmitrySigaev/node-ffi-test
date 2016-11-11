@@ -9,12 +9,39 @@ Contact: Dmitry Sigaev <dima.sigaev@gmail.com>
 #include <string.h>
 #include "lal_matrix.h"
 #include "lal_report.h"
+#include "lal_debuglogs.h"
+
 #include "sw.h"
 
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define SCORE(a, b, c, d) (((a) == (b)) ? (c) : (d))
+
+#if defined(RANGE_DETECTION)
 #define VDTABLE(a, b) (sp->mtx->sc_double_matrix.ddata[(a)][(b)])
 #define VITABLE(a, b) (sp->mtx->sc_int_matrix.idata[(a)][(b)])
+#else
+static double vdtable(matrix_t *substitution, size_t a, size_t b) {
+	if (a >= substitution->nrows && b >= substitution->ncols) {
+		static_report_error("data range corruption: please, check input sequences for substitution matrix");
+		return SCORE(a, b, 1.0, -1.0);
+	}
+	else {
+		return substitution->ddata[a][b];
+	}
+}
+
+static int64_t vitable(matrix_t *substitution, size_t a, size_t b) {
+	if (a >= substitution->nrows && b >= substitution->ncols) {
+		static_report_error("data range corruption: please, check input sequences for substitution matrix");
+		return SCORE(a, b, 1, -1);
+	}
+	else {
+		return substitution->idata[a][b];
+	}
+}
+#define VDTABLE(a, b) (vdtable (&sp->mtx->sc_double_matrix, (a), (b)))
+#define VITABLE(a, b) (vitable (&sp->mtx->sc_int_matrix, (a),(b)))
+#endif
 /*
  * Sequence alignments are used in different area of computer science.
  * Main feature of alignment is a gap function because complexity of
@@ -263,8 +290,8 @@ region_t sw_alignment_swipe(const search_swag_profile_t * sp, const sequence_t *
 
 
 score_matrix_t sw_directions(const search_swag_profile_t * sp, const sequence_t *xseq, const sequence_t *yseq) {
-	printf("[sw] call sw_directions:val %s, in f: %s,l: %d\n", xseq->seq, __FILE__, __LINE__);
-	printf("[sw] call sw_directions:val %s, in f: %s,l: %d\n", yseq->seq, __FILE__, __LINE__);
+	dbg_print("[sw] call sw_directions:val %s, in f: %s,l: %d\n", xseq->seq, __FILE__, __LINE__);
+	dbg_print("[sw] call sw_directions:val %s, in f: %s,l: %d\n", yseq->seq, __FILE__, __LINE__);
 	double h; /* current value */
 	double n; /* diagonally previous value */
 	double e; /* value in left cell */
