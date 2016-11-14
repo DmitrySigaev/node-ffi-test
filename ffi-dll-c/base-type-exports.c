@@ -11,6 +11,9 @@
 #include "lal_scoring_matrix.h"
 #include "lal_typedefs.h"
 #include "sw.h"
+#include "lal_tables.h"
+#include "lal_encoding.h"
+
 
 void voidFunc( void )
 {
@@ -114,6 +117,10 @@ struct score_matrix_api sw_directions_js(struct  search_swag_profile_api const *
 	score_matrix_t smt = sw_directions((const search_swag_profile_t *)sp, (const sequence_t *)xseq, (const sequence_t *)yseq);
 	sm = (struct score_matrix_api *)&smt;
 	return *sm;
+}
+
+void encode_seq_js(struct sequence_api const *s, struct sequence_api const *d) {
+	seq2encodedseq(*(sequence_t *)s, *(sequence_t *)d, lal_encode31);
 }
 
 struct tagffiAPI LoadFFI(void)

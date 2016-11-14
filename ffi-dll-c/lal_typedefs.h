@@ -8,6 +8,7 @@ Contact: Dmitry Sigaev <dima.sigaev@gmail.com>
 #define _LAL_TYPEDEFS_H_
 
 #include <stdint.h>
+
 #include "lal_scoring_matrix.h"
 /**
  *  Structure of a sequence

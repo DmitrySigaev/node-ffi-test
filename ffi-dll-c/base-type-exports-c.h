@@ -69,6 +69,7 @@ struct score_matrix_api {
 };
 
 FFIEXPORT struct score_matrix_api sw_directions_js(struct  search_swag_profile_api const * sp, struct sequence_api const *xseq, struct sequence_api const *yseq);
+FFIEXPORT void encode_seq_js(struct sequence_api const *s, struct sequence_api const *d);
 
 #define CALLBACKFFI
 typedef void (CALLBACKFFI *FFIPROC)(void);

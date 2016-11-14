@@ -12,6 +12,7 @@ Contact: Dmitry Sigaev <dima.sigaev@gmail.com>
 #include <assert.h>
 
 #include "lal_report.h"
+#include "lal_debuglogs.h"
 #include "lal_matrix.h"
 #include "lal_tables.h"
 #include "lal_scoring_matrix.h"
@@ -348,7 +349,7 @@ void update_gap_scoring_matrix(scoring_matrix_t *mtx, double gapOpen, double gap
 	mtx->scaleback = 1.0 / result;
 	mtx->gapOpen = gapOpen;
 	mtx->gapExtend = gapExtend;
-	printf("s=%f, go=%f, ge=%f \n", result, gapOpen, gapExtend);
+	dbg_print("s=%f, go=%f, ge=%f \n", result, gapOpen, gapExtend);
 }
 
 void free_scoring_matrix(scoring_matrix_t *mtx)
