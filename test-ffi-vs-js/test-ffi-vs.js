@@ -49,6 +49,14 @@ var seq1 = "CTTCCTACGTTGGGTCATAGTAGTGCGGCGTGGGCAATGCCTACGGAGGGGTGGAGCAACTGGCGCTA
 var seq2 = "tcgtacgctgcagacgatggtagaagtgatagcgccagttgctccacccctccgtaggcattgcccacgccgcactactatgacccaacgtaggaagttg";
 
 var res = test.sw_directions(profile, seq1, seq2);
+//var score = Math.max.apply(null, res[0]);
+var score = res[0][0][0];
+for (var i = 0; i < res[0].length; i++) {
+	elementArray = res[0][i];
+	if (score < Math.max.apply(Math, elementArray)) {
+		score = Math.max.apply(Math, elementArray);
+	}
+}
 
 test.EXPECT("';' == test.charFunc('\u263B', out)", out2);
 test.EXPECT("';' == out.pop()", out2);

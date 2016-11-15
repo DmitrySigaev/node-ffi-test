@@ -120,7 +120,8 @@ module.exports = {
 		"matrix_set_double": ["int", [matrix_utest_ptr, "double"]],
 		"matrix_set_char": ["int", [matrix_utest_ptr, "char"]],
 		"read_scoring_matrix_js": ["int", [scoring_matrix_utest_ptr, "string", "size_t"]],
-		"sw_directions_js": [score_matrix_utest, [search_swag_profile_utest_ptr, sequence_utest_ptr, sequence_utest_ptr]]
+		"sw_directions_js": [score_matrix_utest, [search_swag_profile_utest_ptr, sequence_utest_ptr, sequence_utest_ptr]],
+		"encode_seq_js": ["void", [sequence_utest_ptr, sequence_utest_ptr]]
 	},
 	out: {
 		"achar": ref.alloc('char'),
