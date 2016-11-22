@@ -5,6 +5,7 @@
  */
 var path = require('path');
 var local = path.join.bind(path, __dirname);
+fs = require('fs');
 
 var test = require(local('test-ffi'));
 test.voidFunc();
@@ -45,10 +46,19 @@ Y -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0  2.0";
 
 var substitution = test.read_substitution_matrix(gaptest_utest);
 var profile = test.set_profile(-1, 0, substitution);
-var seq1 = "CTTCCTACGTTGGGTCATAGTAGTGCGGCGTGGGCAATGCCTACGGAGGGGTGGAGCAACTGGCGCTATCACTTCTACCATCGTCTGCAGCGTACGA";
-var seq2 = "tcgtacgctgcagacgatggtagaagtgatagcgccagttgctccacccctccgtaggcattgcccacgccgcactactatgacccaacgtaggaagttg";
-
+//var seq1 = "CTTCCTACGTTGGGTCATAGTAGTGCGGCGTGGGCAATGCCTACGGAGGGGTGGAGCAACTGGCGCTATCACTTCTACCATCGTCTGCAGCGTACGA";
+//var seq2 = "tcgtacgctgcagacgatggtagaagtgatagcgccagttgctccacccctccgtaggcattgcccacgccgcactactatgacccaacgtaggaagttg";
+var seq1 = "CAACTTCCTGGCGCTATCACTTCTACCATCGTCTGCAGCGT";
+var seq2 = "acgatggtagaagtgatagcgccagttgctccacccct";
 var res = test.sw_directions(profile, seq1, seq2);
+var full_object = { score: res[0], trace: res[1], seq1: seq1, seq2: seq2 };
+var score_table = JSON.stringify(full_object);
+fs.writeFile('score_table.txt', score_table, function (err) {
+	if (err)
+		return console.log(err);
+	console.log('Hello World > helloworld.txt');
+});
+
 //var score = Math.max.apply(null, res[0]);
 var score = res[0][0][0];
 for (var i = 0; i < res[0].length; i++) {

@@ -124,6 +124,7 @@ int64_t sw_constant_gap_int(const search_swcg_profile_int_t * sp, const sequence
 	free_matrix(&score_mat);
 	return score.i;
 }
+
 /*
  * Sequence alignments with constant and linear gap penalties can be computed in time O(n*m) for two
  * sequences of lingth m and n. With affine gap penalties the time increases to O(n*m*(n+m)),
