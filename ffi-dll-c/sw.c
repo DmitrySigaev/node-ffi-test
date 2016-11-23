@@ -288,7 +288,7 @@ region_t sw_alignment_swipe(const search_swag_profile_t * sp, const sequence_t *
 #define LAL_MASK_GAP_OPEN_LEFT (1<<3)
 #define LAL_MASK_GAP_EXT_UP    (1<<4)
 #define LAL_MASK_GAP_EXT_LEFT  (1<<5)
-
+#define LAL_MASK_ZERO          (1<<6)
 
 score_matrix_t sw_directions(const search_swag_profile_t * sp, const sequence_t *xseq, const sequence_t *yseq) {
 	dbg_print("[sw] call sw_directions:val %s, in f: %s,l: %d\n", xseq->seq, __FILE__, __LINE__);
@@ -300,7 +300,7 @@ score_matrix_t sw_directions(const search_swag_profile_t * sp, const sequence_t 
 	double * scoprev_upprev = malloc(2 * xseq->len * sizeof(double)); /* scoprev_upprev holds in the first column the scores of the previous column and in the second column the gap-values of the previous column */
 	double *su_p; /* pointer to element of scoprev_upprev */
 	matrix_t score_mat = matrix(yseq->len + 1, xseq->len + 1, DOUBLETYPE); // todo: there is a bug. we have to use calloc instead of malloc 
-	matrix_t directions_mat = matrix(yseq->len, xseq->len, CHARTYPE); /* */
+	matrix_t directions_mat = matrix(yseq->len + 1, xseq->len + 1, CHARTYPE); /* */
 	if (!score_mat.ddata) return (score_matrix_t) { 0, 0 };
 	if (!directions_mat.ddata) { free_matrix(&score_mat); return (score_matrix_t) { 0, 0 }; }
 
@@ -315,12 +315,14 @@ score_matrix_t sw_directions(const search_swag_profile_t * sp, const sequence_t 
 		h = 0;   /* value in first cell of line */
 
 		for (size_t i = 0; i < xseq->len; i++) {
+			double score_max = 0.0, score_up = 0.0, score_left = 0.0, score_mid = 0.0;
+			int direct;
 			element_t el_direction = (element_t) { 0, CHARTYPE };
 			element_t el_score = (element_t) { 0, DOUBLETYPE };
 			double v;
 			n = *su_p;
 			e = *(su_p + 1);
-			el_direction.c = (yseq->seq[j] == xseq->seq[i]) ? (LAL_MASK_MATCH) : (LAL_MASK_MISMATCH);
+			direct = (yseq->seq[j] == xseq->seq[i]) ? (LAL_MASK_MATCH) : (LAL_MASK_MISMATCH);
 			if (!sp->mtx) {
 				v = SCORE(yseq->seq[j], xseq->seq[i], 1.0, -1.0);
 			}
@@ -332,40 +334,60 @@ score_matrix_t sw_directions(const search_swag_profile_t * sp, const sequence_t 
 
 			/* stow for gap opening */
 			if (f > h) {
-				el_direction.c |= LAL_MASK_GAP_OPEN_UP;
+				el_direction.c = LAL_MASK_GAP_OPEN_UP;
 				h = f;
 			}
 			if (e > h) {
 				h = e;
-				el_direction.c |= LAL_MASK_GAP_OPEN_LEFT;
+				el_direction.c = LAL_MASK_GAP_OPEN_LEFT;
 			}
+			
 			if (h < 0) {
 				h = 0;
+				el_direction.c = LAL_MASK_ZERO;
 			}
 
 			*su_p = h;
+ 			score_mid = h;
 
 			/* stow for gap extensions */
 			h += sp->gapOpen + sp->gapExt;
 			e += sp->gapExt;
 			f += sp->gapExt;
 
+			score_up = f;
+			score_left = e;
+
 			if (f > h) {
-				el_direction.c = LAL_MASK_GAP_EXT_UP;
+				el_direction.c |= LAL_MASK_GAP_OPEN_UP; /*LAL_MASK_GAP_EXT_UP*/
 			}
 			else {
 				f = h;
 			}
 
 			if (e > h) {
-				el_direction.c |= LAL_MASK_GAP_EXT_LEFT;
+				el_direction.c |= LAL_MASK_GAP_OPEN_LEFT;/*LAL_MASK_GAP_EXT_LEFT; */
 			}
 			else {
 				e = h;
 			}
-			matrix_or_bitwise(&directions_mat, j, i, el_direction); /*can be changed on set_value method*/
-			el_score.d = h;
-			matrix_set_value(&score_mat, j, i, el_score);
+
+			// reset 
+			el_direction.c = 0;
+			score_max = MAX(score_mid, MAX(score_up, MAX(score_left, 0.0)));
+			if (score_max == score_mid)
+				el_direction.c = direct;
+			if (score_max == score_left)
+				el_direction.c |= (1 << 2);
+			if (score_max == score_up)
+				el_direction.c |= (1 << 3);
+			if (score_max == 0)
+				el_direction.c |= (1 << 6);
+
+			matrix_or_bitwise(&directions_mat, j + 1, i + 1, el_direction); /*can be changed on set_value method*/
+			el_score.d = score_max;
+;
+			matrix_set_value(&score_mat, j + 1, i + 1, el_score);
 
 			/* next round of swapping */
 			*(su_p + 1) = e;
@@ -376,5 +398,5 @@ score_matrix_t sw_directions(const search_swag_profile_t * sp, const sequence_t 
 
 	free(scoprev_upprev);
 
-	return (score_matrix_t){ score_mat, directions_mat };
+	return (score_matrix_t) { score_mat, directions_mat };
 }
