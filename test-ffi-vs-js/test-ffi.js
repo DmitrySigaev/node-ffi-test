@@ -293,6 +293,21 @@ test_ffi.prototype.sw_directions = function (sp, xstring, ystring ) {
 	}
 };
 
+test_ffi.prototype.sw_genc = function (sp, xstring, ystring) {
+	if (this._lib.sw_directions_js) {
+		var xseq = new this._type.sequence({ ID: 0, seq: xstring, len: xstring.length });
+		var yseq = new this._type.sequence({ ID: 1, seq: ystring, len: ystring.length });
+		var exseq = new this._type.sequence({ ID: 0, seq: xstring + 'e', len: xstring.length });
+		var eyseq = new this._type.sequence({ ID: 1, seq: ystring + 'e', len: ystring.length });
+		this._lib.encode_seq_js(xseq.ref(), exseq.ref());
+		this._lib.encode_seq_js(yseq.ref(), eyseq.ref());
+		var res = this._lib.sw_genc_js(sp.ref(), exseq.ref(), eyseq.ref());
+		return res;
+	} else {
+		return 0;
+	}
+};
+
 test_ffi.prototype.set_profile = function (gapOpen, gapExt, substitution) {
 	var mtx_ptr = (!substitution[0]) ? (0) : (substitution[1].ref());
 	return new this._type.search_profile({ gapOpen: gapOpen, gapExt: gapExt, mtx: mtx_ptr });

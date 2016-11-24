@@ -31,37 +31,37 @@ var doubleArrayThree = ArrayType('double', 3);
 var DocArray = ArrayType('char', 1024 * 4);
 
 var ut = UnionType({
-	d: double_p_ptr,
-	i: int_p_ptr,
-	c: byte_p_ptr
+    d: double_p_ptr,
+    i: int_p_ptr,
+    c: byte_p_ptr
 });
 
 var xyz = StructType({
-	x: 'float',
-	y: 'float',
-	z: 'float'
+    x: 'float',
+    y: 'float',
+    z: 'float'
 });
 
 var xyz_ptr = ref.refType(xyz);
 
 var matrix_utest = StructType({
-	data: ut,
-	nrows: 'size_t',
-	ncols: 'size_t',
-	type: 'int32'
+    data: ut,
+    nrows: 'size_t',
+    ncols: 'size_t',
+    type: 'int32'
 });
 
 var matrix_utest_ptr = ref.refType(matrix_utest);
 
 var scoring_matrix_utest = StructType({
-	sc_double_matrix: matrix_utest,
-	sc_int_matrix: matrix_utest,
-	scale: 'double',
-	scaleback: 'double',
-	man2mip: doubleArrayThree,
-	gapOpen: 'double',
-	gapExtend: 'double',
-	Doc: DocArray
+    sc_double_matrix: matrix_utest,
+    sc_int_matrix: matrix_utest,
+    scale: 'double',
+    scaleback: 'double',
+    man2mip: doubleArrayThree,
+    gapOpen: 'double',
+    gapExtend: 'double',
+    Doc: DocArray
 });
 
 
@@ -70,82 +70,83 @@ var matrix_utest_ptr = ref.refType(matrix_utest);
 
 
 var search_swag_profile_utest = StructType({
-	gapOpen: 'double',
-	gapExt: 'double',
-	mtx: scoring_matrix_utest_ptr
+    gapOpen: 'double',
+    gapExt: 'double',
+    mtx: scoring_matrix_utest_ptr
 });
 
 var search_swag_profile_utest_ptr = ref.refType(search_swag_profile_utest);
 
 var sequence_utest = StructType({
-	ID: 'size_t',
-	seq: 'string',
-	len: 'size_t'
+    ID: 'size_t',
+    seq: 'string',
+    len: 'size_t'
 });
 
 var sequence_utest_ptr = ref.refType(sequence_utest);
 
 var score_matrix_utest = StructType({
-	score: matrix_utest,
-	directions: matrix_utest
+    score: matrix_utest,
+    directions: matrix_utest
 });
 
 
 module.exports = {
-	api_cpp: {
-		"voidFunc": ["void", []],
-		"charFunc": ["char", ["char", char_ptr]],
-		"floatFunc": ["float", ["float", float_ptr]],
-		"doubleFunc": ["double", ["double", double_ptr]],
-		"boolFunc": ["bool", ["bool", bool_ptr]],
-		"wcharFunc": [wchar, [wchar, wchar_ptr]],
-		"tmpXYZ": [xyz_ptr, ["float", "float", "float"]],
-		"testSerialize": ["int", ["string", byte_p_ptr, int_ptr]],
-		"testUnserialize": ["string", [byte_ptr, "int"]],
-		"tmpUnserialize": ["string", []],
-		"intArray": ["int", ["int", IntArray]],
-		"read_scoring_matrix_js": ["int", [scoring_matrix_utest_ptr, "string", "size_t"]]
-	},
-	api_c: {
-		"voidFunc": ["void", []],
-		"charFunc": ["char", ["char", char_ptr]],
-		"floatFunc": ["float", ["float", float_ptr]],
-		"doubleFunc": ["double", ["double", double_ptr]],
-		"boolFunc": ["bool", ["bool", bool_ptr]],
-		"wcharFunc": [wchar, [wchar, wchar_ptr]],
-		"matrix_js_i": [int_ptr, ["size_t", "size_t", "int32"]],
-		"matrix_js_d": [matrix_utest_ptr, ["size_t", "size_t", "int32"]],
-		"matrix_js": [matrix_utest, ["size_t", "size_t", "int32"]],
-		"matrix_set_int": ["int", [matrix_utest_ptr, "int"]],
-		"matrix_set_double": ["int", [matrix_utest_ptr, "double"]],
-		"matrix_set_char": ["int", [matrix_utest_ptr, "char"]],
-		"read_scoring_matrix_js": ["int", [scoring_matrix_utest_ptr, "string", "size_t"]],
-		"sw_directions_js": [score_matrix_utest, [search_swag_profile_utest_ptr, sequence_utest_ptr, sequence_utest_ptr]],
-		"encode_seq_js": ["void", [sequence_utest_ptr, sequence_utest_ptr]]
-	},
-	out: {
-		"achar": ref.alloc('char'),
-		"afloat": ref.alloc('float'),
-		"adouble": ref.alloc('double'),
-		"abool": ref.alloc('bool'),
-		"awchar": ref.alloc(wchar),
-		"aint": ref.alloc('int'),
-		"apint": ref.alloc(int_ptr),
-		"apbyte": ref.alloc(byte_ptr),
-		"read": ref.readPointer,
-		"alloc": ref.alloc,
-		"scoring_matrix_alloc": ref.alloc(scoring_matrix_utest_ptr)
-	},
-	type: {
-		"wchar": wchar,
-		"xyz": xyz,
-		"byte_ptr": byte_ptr,
-		"IntArray": IntArray,
-		"DoubleArray": DoubleArray,
-		"substitution_matrix": scoring_matrix_utest,
-		"sequence": sequence_utest,
-		"score_matrix": score_matrix_utest,
-		"matrix": matrix_utest,
-		"search_profile": search_swag_profile_utest
-	}
+    api_cpp: {
+        "voidFunc": ["void", []],
+        "charFunc": ["char", ["char", char_ptr]],
+        "floatFunc": ["float", ["float", float_ptr]],
+        "doubleFunc": ["double", ["double", double_ptr]],
+        "boolFunc": ["bool", ["bool", bool_ptr]],
+        "wcharFunc": [wchar, [wchar, wchar_ptr]],
+        "tmpXYZ": [xyz_ptr, ["float", "float", "float"]],
+        "testSerialize": ["int", ["string", byte_p_ptr, int_ptr]],
+        "testUnserialize": ["string", [byte_ptr, "int"]],
+        "tmpUnserialize": ["string", []],
+        "intArray": ["int", ["int", IntArray]],
+        "read_scoring_matrix_js": ["int", [scoring_matrix_utest_ptr, "string", "size_t"]]
+    },
+    api_c: {
+        "voidFunc": ["void", []],
+        "charFunc": ["char", ["char", char_ptr]],
+        "floatFunc": ["float", ["float", float_ptr]],
+        "doubleFunc": ["double", ["double", double_ptr]],
+        "boolFunc": ["bool", ["bool", bool_ptr]],
+        "wcharFunc": [wchar, [wchar, wchar_ptr]],
+        "matrix_js_i": [int_ptr, ["size_t", "size_t", "int32"]],
+        "matrix_js_d": [matrix_utest_ptr, ["size_t", "size_t", "int32"]],
+        "matrix_js": [matrix_utest, ["size_t", "size_t", "int32"]],
+        "matrix_set_int": ["int", [matrix_utest_ptr, "int"]],
+        "matrix_set_double": ["int", [matrix_utest_ptr, "double"]],
+        "matrix_set_char": ["int", [matrix_utest_ptr, "char"]],
+        "read_scoring_matrix_js": ["int", [scoring_matrix_utest_ptr, "string", "size_t"]],
+        "sw_directions_js": [score_matrix_utest, [search_swag_profile_utest_ptr, sequence_utest_ptr, sequence_utest_ptr]],
+        "encode_seq_js": ["void", [sequence_utest_ptr, sequence_utest_ptr]],
+        "sw_genc_js": ["double", [search_swag_profile_utest_ptr, sequence_utest_ptr, sequence_utest_ptr]]
+    },
+    out: {
+        "achar": ref.alloc('char'),
+        "afloat": ref.alloc('float'),
+        "adouble": ref.alloc('double'),
+        "abool": ref.alloc('bool'),
+        "awchar": ref.alloc(wchar),
+        "aint": ref.alloc('int'),
+        "apint": ref.alloc(int_ptr),
+        "apbyte": ref.alloc(byte_ptr),
+        "read": ref.readPointer,
+        "alloc": ref.alloc,
+        "scoring_matrix_alloc": ref.alloc(scoring_matrix_utest_ptr)
+    },
+    type: {
+        "wchar": wchar,
+        "xyz": xyz,
+        "byte_ptr": byte_ptr,
+        "IntArray": IntArray,
+        "DoubleArray": DoubleArray,
+        "substitution_matrix": scoring_matrix_utest,
+        "sequence": sequence_utest,
+        "score_matrix": score_matrix_utest,
+        "matrix": matrix_utest,
+        "search_profile": search_swag_profile_utest
+    }
 };
