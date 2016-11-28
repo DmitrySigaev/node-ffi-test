@@ -11,5 +11,5 @@ Contact: Dmitry Sigaev <dima.sigaev@gmail.com>
 #include "lal_typedefs.h"
 
 double sw_gencore(const search_swag_profile_t * sp, const sequence_t * dseq, const sequence_t * qseq);
-
+score_matrix_t sw_gencore_m(const search_swag_profile_t * sp, const sequence_t * dseq, const sequence_t * qseq);
 #endif /* _GC_SW_H_ */
