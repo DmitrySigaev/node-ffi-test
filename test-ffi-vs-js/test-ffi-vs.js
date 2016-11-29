@@ -50,7 +50,7 @@ var profile = test.set_profile(-1, 0, substitution);
 //var seq2 = "tcgtacgctgcagacgatggtagaagtgatagcgccagttgctccacccctccgtaggcattgcccacgccgcactactatgacccaacgtaggaagttg";
 var seq2 = "CAACTTCCTGGCGCTATCACTTCTACCATCGTCTGCAGCGT";
 var seq1 = "acgatggtagaagtgatagcgccagttgctccacccct";
-var res = test.sw_genc(profile, seq1, seq2);
+var res = test.sw_genc_m(profile, seq1, seq2);
 
 //var res = test.sw_directions(profile, seq1, seq2);
 
