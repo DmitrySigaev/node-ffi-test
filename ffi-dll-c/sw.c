@@ -386,7 +386,6 @@ score_matrix_t sw_directions(const search_swag_profile_t * sp, const sequence_t 
 
 			matrix_or_bitwise(&directions_mat, j + 1, i + 1, el_direction); /*can be changed on set_value method*/
 			el_score.d = score_max;
-;
 			matrix_set_value(&score_mat, j + 1, i + 1, el_score);
 
 			/* next round of swapping */
