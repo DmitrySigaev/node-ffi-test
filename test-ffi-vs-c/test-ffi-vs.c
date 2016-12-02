@@ -63,6 +63,7 @@ typedef struct tag_score_matrix {
 }score_matrix_utest;
 
 score_matrix_utest (*sw_directions_f_js)(struct  search_swag_profile_api const * sp, struct sequence_api const *xseq, struct sequence_api const *yseq);
+score_matrix_utest (*sw_genc_m_f_js)(struct  search_swag_profile_api const * sp, struct sequence_api const *xseq, struct sequence_api const *yseq);
 mat_t (*matrix_f_js)(const size_t nrows, const size_t ncols, int type);
 matrix_utest (*matrix_f_js2)(const size_t nrows, const size_t ncols, int type);
 matrix_utest * (*matrix_fd_js)(const size_t nrows, const size_t ncols, int type);
@@ -133,6 +134,7 @@ bool testFFIAPI(struct tagffiAPI*ffiAPIin)
 	encode_seq_f_js(&inseq2, &enseq2);
 	search_profile_utest sp = { -1, 0, (!status) ? (NULL) : (&mtx) };
 	score_matrix_utest sd = sw_directions_f_js(&sp, &enseq1, &enseq2);
+	score_matrix_utest sdgc = sw_genc_m_f_js(&sp, &enseq1, &enseq2);
 
 //	element_t score = find_max(&sd.score);
 //	ck_assert_int_eq((int)score.d, 33); /* Max score */ // ok
@@ -182,7 +184,8 @@ int main(int argc, char **argv)
 		matrix_fd_js = (FFIPROC)GetProcAddress(hinstLib, "matrix_js_d");
 		matrix_fi_js = (FFIPROC)GetProcAddress(hinstLib, "matrix_js_i");
 		encode_seq_f_js = (FFIPROC)GetProcAddress(hinstLib, "encode_seq_js");
-		sw_directions_f_js = (FFIPROC)GetProcAddress(hinstLib, "sw_genc_m_js");
+		sw_directions_f_js = (FFIPROC)GetProcAddress(hinstLib, "sw_directions_js");
+		sw_genc_m_f_js = (FFIPROC)GetProcAddress(hinstLib, "sw_genc_m_js");
 		testFFIAPI(&ffiAPI);
 		fFreeResult = FreeLibrary(hinstLib);
 	}

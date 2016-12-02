@@ -130,9 +130,9 @@ double sw_genc_js(struct  search_swag_profile_api const * sp, struct sequence_ap
 
 struct score_matrix_api sw_genc_m_js(struct  search_swag_profile_api const * sp, struct sequence_api const *xseq, struct sequence_api const *yseq)
 {
-	printf("[ffi-dll-c] call sw_directions in f: %s,l: %d\n", __FILE__, __LINE__);
-	printf("[ffi-dll-c] call sw_directions:val %s, in f: %s,l: %d\n", xseq->seq, __FILE__, __LINE__);
-	printf("[ffi-dll-c] call sw_directions:val %s, in f: %s,l: %d\n", yseq->seq, __FILE__, __LINE__);
+	printf("[ffi-dll-c] call sw_genc_m_js in f: %s,l: %d\n", __FILE__, __LINE__);
+	printf("[ffi-dll-c] call sw_genc_m_js:val %s, in f: %s,l: %d\n", xseq->seq, __FILE__, __LINE__);
+	printf("[ffi-dll-c] call sw_genc_m_js:val %s, in f: %s,l: %d\n", yseq->seq, __FILE__, __LINE__);
 	struct score_matrix_api *sm;
 	score_matrix_t smt = sw_gencore_m((const search_swag_profile_t *)sp, (const sequence_t *)xseq, (const sequence_t *)yseq);
 	sm = (struct score_matrix_api *)&smt;

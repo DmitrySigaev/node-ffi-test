@@ -583,7 +583,7 @@ be done in the very end. */
 
 
 
-score_matrix_t MS_Score_SW_M(seqtype* nseq, ms_profile_t *prof, int profLen, int seqLen) {
+score_matrix_t MS_Score_SW_M(const search_swag_profile_t * sp, const sequence_t * dseq, const sequence_t * qseq, seqtype* nseq, ms_profile_t *prof, int profLen, int seqLen) {
 	register int x = 0, y = 0; /* x - coordinate in seq, y - coord in profile */
 
 	register scoretype xskipmatch = 0; /* insert state */
@@ -610,9 +610,9 @@ score_matrix_t MS_Score_SW_M(seqtype* nseq, ms_profile_t *prof, int profLen, int
 #endif
 	element_t el_direction = (element_t) { 0, CHARTYPE };
 	element_t el_score = (element_t) { 0, DOUBLETYPE };
-
-	matrix_t score_mat = matrix(seqLen, profLen, DOUBLETYPE); // todo: there is a bug. we have to use calloc instead of malloc 
-	matrix_t directions_mat = matrix(seqLen, profLen, CHARTYPE); /* */
+	                             /*ошибка: profLen+1, а нужно profLen */
+	matrix_t score_mat = matrix(profLen+1, seqLen+1, DOUBLETYPE); // todo: there is a bug. we have to use calloc instead of malloc 
+	matrix_t directions_mat = matrix(profLen+1, seqLen+1, CHARTYPE); /* */
 	if (!score_mat.ddata) return (score_matrix_t) { 0, 0 };
 	if (!directions_mat.ddata) { free_matrix(&score_mat); return (score_matrix_t) { 0, 0 }; }
 
@@ -634,12 +634,32 @@ score_matrix_t MS_Score_SW_M(seqtype* nseq, ms_profile_t *prof, int profLen, int
 	nseq++;
 
 	prev_line = (prev_line_t *)calloc((seqLen + 1), sizeof(prev_line_t));
-
+	/*-----------*/ //sd
+	double *prev_score = (double *)calloc((dseq->len + 1), sizeof(double));
+	char *prev_nseq = (char *)calloc((dseq->len + 1), sizeof(char));
+	double *prev_yskip = (double *)calloc((dseq->len + 1), sizeof(double));
+	double max_score_perv = 0.0;
+	double d_quality;
+	double d_lastquality;
+	double d_xskipmatch;
+	double d_yskipmatch;
+	/*-----------*/
 	prev_line[seqLen].nseq = -1; /* end of sequence token */
 
 								 /* init prev_line by the scores for first line in the profile */
 	for (x = 0, pre = prev_line, prof_line_p = prof->data; x < seqLen; x++, pre++)
 	{
+		/*---------------*/
+		double v;
+		if (!sp->mtx)
+			v = SCORE(qseq->seq[0], dseq->seq[x], 1.0, -1.0);
+		else
+			v = VDTABLE(qseq->seq[0], dseq->seq[x]);
+		prev_score[x] = v; /*pre->prequal */
+		max_score_perv = (v > max_score_perv) ? v : max_score_perv;
+		prev_nseq[x] = dseq->seq[x];
+		prev_yskip[x] = -10000.0;
+		/*-------------- */
 		pre->nseq = nseq[x];
 		pre->prequal = prof_line_p[pre->nseq];
 		/*if( pre->prequal<0 ) pre->prequal=0;
@@ -647,10 +667,12 @@ score_matrix_t MS_Score_SW_M(seqtype* nseq, ms_profile_t *prof, int profLen, int
 		pre->yskipmatch = MS_SCORE_MININF;
 	}
 
+	x = 0; //sd
 	/* loop on profile lines 1..(profLen-1) */
 	/* prof_line_p already set to prof->data */
 	for (y = 1; y < profLen; y++)
 	{
+		double v; //sd
 		pre = prev_line; /* pointer to line of state scores in DP matrix */
 
 						 /* gap penalties with '1' for line 'n' are kept in line 'n-1' */
@@ -659,11 +681,28 @@ score_matrix_t MS_Score_SW_M(seqtype* nseq, ms_profile_t *prof, int profLen, int
 
 		/* next line */
 		prof_line_p += prof->line_size;
+		{ //sd
+			char prof_ch = qseq->seq[y];
+
+			if (!sp->mtx)
+				v = SCORE(prof_ch, prev_nseq[x], 1.0, -1.0);
+			else
+				v = VDTABLE(prof_ch, prev_nseq[x]);
+
+			//quality == v;
+			d_quality = (v > max_score_perv) ? v : max_score_perv;
+			d_lastquality = d_quality;
+			d_xskipmatch = -10000.0;
+			x++;
+
+		}
+
 
 		quality = prof_line_p[pre->nseq];
 		/*if(quality<0) quality=0;
 		else*/ checkbest_m(quality, 1, y + 1, max_v);
 		lastquality = quality;
+
 
 		xskipmatch = MS_SCORE_MININF;
 		penopen = prof_line_p[MS_SW_OFFSET_GAPOP];
@@ -681,6 +720,19 @@ score_matrix_t MS_Score_SW_M(seqtype* nseq, ms_profile_t *prof, int profLen, int
 			score = prof_line_p[pre->nseq]; /* profile value for match */
 			quality = pre->prequal;
 			yskipmatch = pre->yskipmatch;
+
+			{ //sd
+				char prof_ch = qseq->seq[y];
+
+				if (!sp->mtx)
+					v = SCORE(prof_ch, prev_nseq[x], 1.0, -1.0);
+				else
+					v = VDTABLE(prof_ch, prev_nseq[x]);
+
+				//score == v;               // score = prof_line_p[pre->nseq];
+				d_quality = prev_score[x]; // quality = pre->prequal;
+				d_yskipmatch = prev_yskip[x]; // yskipmatch = pre->yskipmatch;
+			}
 
 #if _COUNT
 			count0++;
@@ -868,6 +920,11 @@ score_matrix_t MS_Score_SW_M(seqtype* nseq, ms_profile_t *prof, int profLen, int
 	max_v.y--;
 
 	free(prev_line);
+	/* ----------- */ // sd
+	free(prev_score);
+	free(prev_nseq);
+	free(prev_yskip);
+	/* ----------- */ 
 
 	{
 #if _COUNT    
@@ -976,7 +1033,7 @@ score_matrix_t sw_gencore_m(const search_swag_profile_t * sp, const sequence_t *
 		ms_sequence[r + 1] = dseq->seq[r];
 	}
 	inpf_t max_v;
-	score_matrix_t max_s = MS_Score_SW_M(ms_sequence, ms_profile, prof_length, dseq->len + 1);
+	score_matrix_t max_s = MS_Score_SW_M(sp, dseq, qseq, ms_sequence, ms_profile, prof_length, dseq->len + 1);
 	//	max_v.score = ((float)(max_s.score)) * ms_profile->scaleback;
 	//	max_v.x = max_s.x;
 	//	max_v.y = max_s.y;
