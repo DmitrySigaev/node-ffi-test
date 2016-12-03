@@ -192,6 +192,88 @@ double sw_affine_gap(const search_swag_profile_t * sp, const sequence_t * dseq, 
 	return score.d;
 }
 
+/*
+* Sequence alignments with constant and linear gap penalties can be computed in time O(n*m) for two
+* sequences of lingth m and n. With affine gap penalties the time increases to O(n*m*(n+m)),
+* since for each cell the algorithm has to checkif a gap is extended or a new one is opened.
+* In 1982 Gotoh described a method to compute optimal sequence alignments, with affine gap
+* penalties, in time O(n*m). His version uses two additional matrices(E and F) to keep track of open gap.
+* E keeps track of gaps in the query sequence and F if gaps in the database sequence.
+* The values in E are calculated as the maximum of the previous value in H plus the costs Q for opening
+* a gap an the previous balue in E plus the costs T for extending a gap.  The values in F are
+* computed the same way, except for gaps in the other sequence. The values in H are computed like
+* in the Smith-Waterman with linear gap costs, except the value in E and F are used ad the gap costs.
+*/
+double sw_affine_gap_sigaev(const search_swag_profile_t * sp, const sequence_t * dseq, const sequence_t * qseq)
+{
+	double d_last, u_last, l_last, e_last, f_last;
+	double d_new, u_new, l_new, e_new, f_new;
+	double v;
+	matrix_t score_mat = matrix(dseq->len + 1, qseq->len + 1, DOUBLETYPE); // todo: there is a bug. we have to use calloc instead of malloc 
+	matrix_t ee = matrix(dseq->len + 1, qseq->len + 1, DOUBLETYPE);        // todo: there is a bug. we have to use calloc instead of malloc 
+	matrix_t ff = matrix(dseq->len + 1, qseq->len + 1, DOUBLETYPE);        // todo: there is a bug. we have to use calloc instead of malloc 
+	if (!score_mat.ddata) return 0.0;
+	if (!ee.ddata) { free_matrix(&score_mat); return 0.0; }
+	if (!ff.ddata) { free_matrix(&ee); return 0.0; }
+
+	for (size_t i = 0; i <= dseq->len; i++) {
+		for (size_t j = 0; j <= qseq->len; j++) {
+			// This is the first row / column which is all zeros
+			if (i == 0 || j == 0) {
+				if (i == 0)
+					ee.ddata[i][j] = 0;
+				if (j == 0)
+					ff.ddata[i][j] = 0;
+				score_mat.ddata[i][j] = 0;
+				continue;
+			}
+			else {
+				e_last = ee.ddata[i][j - 1];
+				f_last = ff.ddata[i - 1][j];
+				d_last = score_mat.ddata[i - 1][j - 1];
+				u_last = score_mat.ddata[i - 1][j];
+				l_last = score_mat.ddata[i][j - 1];
+			}
+			if (!sp->mtx)
+				v = SCORE(dseq->seq[i - 1], qseq->seq[j - 1], 1.0, -1.0);
+			else
+				v = VDTABLE(dseq->seq[i - 1], qseq->seq[j - 1]);
+			d_new = d_last + v;
+			u_new = u_last + sp->gapOpen;
+			l_new = l_last + sp->gapOpen;
+			e_new = e_last + sp->gapExt;
+			f_new = f_last + sp->gapExt;
+	//		ee.ddata[i][j] = MAX(e_new, l_new);
+	//		ff.ddata[i][j] = MAX(f_new, u_new);
+
+			if(e_new == d_new)
+				ee.ddata[i][j] = l_new;
+			else
+				ee.ddata[i][j] = MAX(e_new, l_new);
+			if (f_new == d_new)
+				ff.ddata[i][j] = u_new;
+			else
+				ff.ddata[i][j] = MAX(f_new, u_new);
+
+			score_mat.ddata[i][j] = MAX(MAX(d_new, ee.ddata[i][j]), MAX(ff.ddata[i][j], 0));
+	/*		if (d_new == e_new)
+				ee.ddata[i][j] = l_new;
+			if (d_new == f_new)
+				ff.ddata[i][j] = u_new;
+				*/
+
+		}
+	}
+
+	element_t score = find_max(&score_mat);
+	//	print_matrix(&score_mat);
+	//	print_matrix(&ee);
+	//	print_matrix(&ff);
+	free_matrix(&score_mat);
+	free_matrix(&ee);
+	free_matrix(&ff);
+	return score.d;
+}
 region_t sw_alignment_swipe(const search_swag_profile_t * sp, const sequence_t *xseq, const sequence_t *yseq) {
 	region_t region;
 	double score = 0; /* score of direct path*/
