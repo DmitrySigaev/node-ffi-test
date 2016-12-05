@@ -65,11 +65,33 @@ for (var i = 0; i < res[0].length; i++) {
 
 var full_object = { score: score, scorematrix: res[0], directions: res[1], seq1: seq2, seq2: seq1 };
 var score_table = JSON.stringify(full_object);
-fs.writeFile('score_table.txt', score_table, function (err) {
+fs.writeFile('score_table_gc.txt', score_table, function (err) {
     if (err)
         return console.log(err);
-    console.log('Hello World > helloworld.txt');
+    console.log('score table from sw_genc > score_table_gc.txt');
 });
+
+//var res = test.sw_genc_m(profile, seq1, seq2);
+
+var res = test.sw_directions(profile, seq1, seq2);
+
+//var score = Math.max.apply(null, res[0]);
+var score = res[0][0][0];
+for (var i = 0; i < res[0].length; i++) {
+	elementArray = res[0][i];
+	if (score < Math.max.apply(Math, elementArray)) {
+		score = Math.max.apply(Math, elementArray);
+	}
+}
+
+var full_object = { score: score, scorematrix: res[0], directions: res[1], seq1: seq2, seq2: seq1 };
+var score_table = JSON.stringify(full_object);
+fs.writeFile('score_table_swd.txt', score_table, function (err) {
+	if (err)
+		return console.log(err);
+	console.log('score table from sw_directions > score_table_swd.txt');
+});
+
 
 
 test.EXPECT("';' == test.charFunc('\u263B', out)", out2);

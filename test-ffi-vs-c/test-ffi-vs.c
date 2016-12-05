@@ -136,7 +136,7 @@ bool testFFIAPI(struct tagffiAPI*ffiAPIin)
 	score_matrix_utest sd = sw_directions_f_js(&sp, &enseq1, &enseq2);
 	score_matrix_utest sdgc = sw_genc_m_f_js(&sp, &enseq1, &enseq2);
 
-//	element_t score = find_max(&sd.score);
+//  element_t score = find_max(&sd.score);
 //	ck_assert_int_eq((int)score.d, 33); /* Max score */ // ok
 
 
