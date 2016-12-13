@@ -639,6 +639,7 @@ score_matrix_t MS_Score_SW_M(const search_swag_profile_t * sp, const sequence_t 
 	char *prev_nseq = (char *)calloc((dseq->len + 1), sizeof(char));
 	double *prev_yskip = (double *)calloc((dseq->len + 1), sizeof(double));
 	double max_score_perv = 0.0;
+	double d_score;
 	double d_quality;
 	double d_lastquality;
 	double d_xskipmatch;
@@ -656,7 +657,7 @@ score_matrix_t MS_Score_SW_M(const search_swag_profile_t * sp, const sequence_t 
 		else
 			v = VDTABLE(qseq->seq[0], dseq->seq[x]);
 		prev_score[x] = v; /*pre->prequal */
-		max_score_perv = (v > max_score_perv) ? v : max_score_perv;
+		max_score_perv = (v > max_score_perv) ? v : max_score_perv; /*max_v ==  max_score_perv*/
 		prev_nseq[x] = dseq->seq[x];
 		prev_yskip[x] = -10000.0;
 		/*-------------- */
@@ -680,7 +681,7 @@ score_matrix_t MS_Score_SW_M(const search_swag_profile_t * sp, const sequence_t 
 		penext1 = prof_line_p[MS_SW_OFFSET_GAPEX1];
 
 		/* next line */
-		prof_line_p += prof->line_size;
+		prof_line_p += prof->line_size; /*sd: it's like y++*/
 		{ //sd
 			char prof_ch = qseq->seq[y];
 
@@ -689,11 +690,11 @@ score_matrix_t MS_Score_SW_M(const search_swag_profile_t * sp, const sequence_t 
 			else
 				v = VDTABLE(prof_ch, prev_nseq[x]);
 
-			//quality == v;
-			d_quality = (v > max_score_perv) ? v : max_score_perv;
+			d_quality = v;
+			max_score_perv = (v > max_score_perv) ? v : max_score_perv; /*checkbest_m(v, 1, y + 1, max_v);*/
 			d_lastquality = d_quality;
-			d_xskipmatch = -10000.0;
-			x++;
+			d_xskipmatch = -10000.0; /*xskipmatch = MS_SCORE_MININF;*/
+			x++; /* pre++*/
 
 		}
 
@@ -715,7 +716,7 @@ score_matrix_t MS_Score_SW_M(const search_swag_profile_t * sp, const sequence_t 
 		/* loop on sequence positions */
 		/* 1..(seqLen-1), but prequal and yskip are virtually one step behind:
 		0..(seqLen-2) */
-		while (pre->nseq >= 0)
+		while (pre->nseq >= 0 && x <= dseq->len)
 		{
 			score = prof_line_p[pre->nseq]; /* profile value for match */
 			quality = pre->prequal;
@@ -729,7 +730,7 @@ score_matrix_t MS_Score_SW_M(const search_swag_profile_t * sp, const sequence_t 
 				else
 					v = VDTABLE(prof_ch, prev_nseq[x]);
 
-				//score == v;               // score = prof_line_p[pre->nseq];
+				d_score = v;               // score = prof_line_p[pre->nseq];
 				d_quality = prev_score[x]; // quality = pre->prequal;
 				d_yskipmatch = prev_yskip[x]; // yskipmatch = pre->yskipmatch;
 			}
@@ -746,6 +747,100 @@ score_matrix_t MS_Score_SW_M(const search_swag_profile_t * sp, const sequence_t 
 
 #define _SWATS 1
 #if _SWATS
+
+			if (d_yskipmatch <= 0) {
+				if (d_xskipmatch <= 0) {
+					/* yskipmatch <= 0 and xskipmatch <= 0 */
+					if (d_quality <= 0) {
+						d_quality = 0;
+					} else {
+						if (d_quality > sp->gapOpen/*pentest*/) {
+							d_xskipmatch = d_quality + sp->gapOpen;
+							prev_yskip[x] = d_quality + sp->gapOpen /* gapOpenY == penopen1 */;
+						}
+						max_score_perv = (d_quality > max_score_perv) ? d_quality : max_score_perv; /* checkbest_m(quality, pre - prev_line, y, max_v) */
+					}
+				} else {
+					/* yskipmatch <= 0 && xskipmatch > 0 */     
+					// 1 - x
+					if (d_quality <= 0) {
+						d_quality = d_xskipmatch;
+						d_xskipmatch += sp->gapExt;
+					} else {
+						double d_bestjumpY = d_quality + sp->gapOpen; /*penopen1*/
+						prev_yskip[x] = d_bestjumpY;
+						if (d_quality < d_xskipmatch) { /* q<0 handled here */
+							d_quality = d_xskipmatch;
+							d_xskipmatch += sp->gapExt;  /* assuming penopen<penext @@ test input */
+						} else {
+							double bestjumpX = d_quality + sp->gapOpen;
+							d_xskipmatch += sp->gapExt;
+							if (bestjumpX > d_xskipmatch) d_xskipmatch = bestjumpX;
+							max_score_perv = (d_quality > max_score_perv) ? d_quality : max_score_perv; /* checkbest_m(quality, pre - prev_line, y, max_v) */
+						}
+					}
+
+				}
+			} else {
+				/* yskip > 0 */
+				if (d_xskipmatch <= 0) {
+					/* yest > 0 and xskipmatch <= 0 */
+					// 1 - y 
+					if (d_quality <= 0) {
+						d_quality = d_yskipmatch;
+						d_yskipmatch += sp->gapExt; // sp->gapExt1;
+					}
+					else {
+						double bestjumpX = d_quality + sp->gapOpen;
+						/*if (bestjump > 0)*/ d_xskipmatch = bestjumpX; /*becames > 0 or steal < 0 in case d_quality < sp->gapOpen */
+
+						if (d_quality < d_yskipmatch) { /* q<0 handled here */
+							d_quality = d_yskipmatch;
+							d_yskipmatch += sp->gapExt; // penext1; /* assuming penopen1<penext1 */
+						}
+						else {
+							double bestjumpY = d_quality + sp->gapOpen; // penopen1;
+							d_yskipmatch += sp->gapExt;
+							if (bestjumpY > d_yskipmatch) d_yskipmatch = bestjumpY;
+							max_score_perv = (d_quality > max_score_perv) ? d_quality : max_score_perv; /* checkbest_m(quality, pre - prev_line, y, max_v) */
+						}
+					}
+				} else {
+					/* xskipmatch > 0 && yskipmatch > 0 */
+					if (d_quality < d_xskipmatch) {
+						if (d_quality < d_yskipmatch) { /* q<0 handled here */
+							if (d_yskipmatch > d_xskipmatch)
+								d_quality = d_yskipmatch;
+							else
+								d_quality = d_xskipmatch;
+							d_yskipmatch += sp->gapExt; //penext1; /* assuming penopen1<penext1 */
+						}
+						else {
+							double bestjumpY = d_quality + sp->gapOpen;//penopen1;
+							d_yskipmatch += sp->gapExt;// penext1;
+							if (bestjumpY > d_yskipmatch) d_yskipmatch = bestjumpY;
+							d_quality = d_xskipmatch;
+						}
+						d_xskipmatch += sp->gapExt;// penext;  /* assuming penopen<penext */
+					} else {
+						/* quality>=xskipmatch */
+						double bestjumpX = d_quality + sp->gapOpen;
+						d_xskipmatch += sp->gapExt;
+						if (bestjumpX > d_xskipmatch) d_xskipmatch = bestjumpX;
+						if (d_quality < d_yskipmatch) {
+							d_quality = d_yskipmatch;
+							d_yskipmatch += sp->gapExt; // penext1; /* assuming penopen1<penext1 */
+						} else {
+							double bestjumpY = d_quality + sp->gapOpen;// penopen1;
+							d_yskipmatch += sp->gapExt;// penext1;
+							if (bestjumpY > d_yskipmatch) d_yskipmatch = bestjumpY;
+							max_score_perv = (d_quality > max_score_perv) ? d_quality : max_score_perv; /* checkbest_m(quality, pre - prev_line, y, max_v) */
+						}
+					} /* quality>=xskipmatch */
+				} /* yskipmatch test */
+				prev_yskip[x] = d_yskipmatch;
+			} /* xskipmatch test */
+
 			if (yskipmatch <= 0) {
 				if (xskipmatch <= 0) { /* yskipmatch <= 0 and xskipmatch <= 0 */
 
@@ -782,7 +877,6 @@ score_matrix_t MS_Score_SW_M(const search_swag_profile_t * sp, const sequence_t 
 							checkbest_m(quality, pre - prev_line, y, max_v)
 						}
 					}
-
 				}
 			}
 			else { /* yskip > 0 */
@@ -897,7 +991,13 @@ score_matrix_t MS_Score_SW_M(const search_swag_profile_t * sp, const sequence_t 
 			pre->yskipmatch = yskipmatch;
 			if (quality < 0) quality = 0;
 #endif /* _SWATS */
-
+			{ /* sd */
+				d_quality += d_score; 
+				prev_score[x] = d_lastquality;
+				x++;
+				d_lastquality = d_quality;
+				/*------------ sd */
+			}
 			quality += score;
 			/*optimize out @@ if(quality<0) quality=0;
 			else */
@@ -907,13 +1007,15 @@ score_matrix_t MS_Score_SW_M(const search_swag_profile_t * sp, const sequence_t 
 			lastquality = quality;
 		} /* sequence loop */
 		checkbest_m(quality, seqLen, y + 1, max_v)
+		max_score_perv = (d_quality > max_score_perv) ? d_quality : max_score_perv; /* checkbest_m(quality, seqLen, y+1, max_v) */
 
 	} /* profile loop */
 
 	for (x = 1, pre = prev_line + 1; x < seqLen; x++)
 	{
 		checkbest_m(pre->prequal, x, profLen, max_v)
-			pre++;
+		max_score_perv = (prev_score[x] > max_score_perv) ? prev_score[x] : max_score_perv; /* checkbest_m(quality, x, yprofLen, max_v) */
+		pre++;
 	}
 
 	/*max_v.x--;*//*since we skip the spare base at the beginning, we don't need to adjust the index anymore here */
@@ -925,7 +1027,11 @@ score_matrix_t MS_Score_SW_M(const search_swag_profile_t * sp, const sequence_t 
 	free(prev_nseq);
 	free(prev_yskip);
 	/* ----------- */ 
-
+	{ /*sd*/
+		element_t el = find_max(&score_mat);
+		if (max_score_perv != el.d)
+			printf("error");
+	}
 	{
 #if _COUNT    
 		float a1, a2, a3, a12, a13;
