@@ -656,7 +656,8 @@ score_matrix_t MS_Score_SW_M(const search_swag_profile_t * sp, const sequence_t 
 			v = SCORE(qseq->seq[0], dseq->seq[x], 1.0, -1.0);
 		else
 			v = VDTABLE(qseq->seq[0], dseq->seq[x]);
-		prev_score[x] = v; /*pre->prequal */
+		v = 0; // init first string as zero(local alignment)
+		prev_score[x] = v ; /*pre->prequal */
 		max_score_perv = (v > max_score_perv) ? v : max_score_perv; /*max_v ==  max_score_perv*/
 		prev_nseq[x] = dseq->seq[x];
 		prev_yskip[x] = -10000.0;
@@ -668,14 +669,12 @@ score_matrix_t MS_Score_SW_M(const search_swag_profile_t * sp, const sequence_t 
 		pre->yskipmatch = MS_SCORE_MININF;
 	}
 
-	x = 0; //sd
+
 	/* loop on profile lines 1..(profLen-1) */
 	/* prof_line_p already set to prof->data */
 	for (y = 1; y < profLen; y++)
 	{
-		double v; //sd
 		pre = prev_line; /* pointer to line of state scores in DP matrix */
-
 						 /* gap penalties with '1' for line 'n' are kept in line 'n-1' */
 		penopen1 = prof_line_p[MS_SW_OFFSET_GAPOP1];
 		penext1 = prof_line_p[MS_SW_OFFSET_GAPEX1];
@@ -683,7 +682,10 @@ score_matrix_t MS_Score_SW_M(const search_swag_profile_t * sp, const sequence_t 
 		/* next line */
 		prof_line_p += prof->line_size; /*sd: it's like y++*/
 		{ //sd
-			char prof_ch = qseq->seq[y];
+			char prof_ch = qseq->seq[y-1]; // the first line contains zeros
+			double v; 
+			x = 0; /*sd    --- pre = prev_line; /* pointer to line of state scores in DP matrix */
+
 
 			if (!sp->mtx)
 				v = SCORE(prof_ch, prev_nseq[x], 1.0, -1.0);
@@ -716,14 +718,15 @@ score_matrix_t MS_Score_SW_M(const search_swag_profile_t * sp, const sequence_t 
 		/* loop on sequence positions */
 		/* 1..(seqLen-1), but prequal and yskip are virtually one step behind:
 		0..(seqLen-2) */
-		while (pre->nseq >= 0 && x <= dseq->len)
+		while (pre->nseq >= 0 && x < dseq->len)
 		{
 			score = prof_line_p[pre->nseq]; /* profile value for match */
 			quality = pre->prequal;
 			yskipmatch = pre->yskipmatch;
 
 			{ //sd
-				char prof_ch = qseq->seq[y];
+				char prof_ch = qseq->seq[y-1];  // the first line contains zeros
+				double v;
 
 				if (!sp->mtx)
 					v = SCORE(prof_ch, prev_nseq[x], 1.0, -1.0);
