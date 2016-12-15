@@ -636,7 +636,7 @@ score_matrix_t MS_Score_SW_M(const search_swag_profile_t * sp, const sequence_t 
 	prev_line = (prev_line_t *)calloc((seqLen + 1), sizeof(prev_line_t));
 	/*-----------*/ //sd
 	double *prev_score = (double *)calloc((dseq->len + 1), sizeof(double));
-	char *prev_nseq = (char *)calloc((dseq->len + 1), sizeof(char));
+//	char *prev_nseq = (char *)calloc((dseq->len + 1), sizeof(char));
 	double *prev_yskip = (double *)calloc((dseq->len + 1), sizeof(double));
 	double max_score_perv = 0.0;
 	double d_score;
@@ -659,7 +659,7 @@ score_matrix_t MS_Score_SW_M(const search_swag_profile_t * sp, const sequence_t 
 		v = 0; // init first string as zero(local alignment)
 		prev_score[x] = v ; /*pre->prequal */
 		max_score_perv = (v > max_score_perv) ? v : max_score_perv; /*max_v ==  max_score_perv*/
-		prev_nseq[x] = dseq->seq[x];
+//		prev_nseq[x] = dseq->seq[x];
 		prev_yskip[x] = -10000.0;
 		/*-------------- */
 		pre->nseq = nseq[x];
@@ -685,12 +685,10 @@ score_matrix_t MS_Score_SW_M(const search_swag_profile_t * sp, const sequence_t 
 			char prof_ch = qseq->seq[y-1]; // the first line contains zeros
 			double v; 
 			x = 0; /*sd    --- pre = prev_line; /* pointer to line of state scores in DP matrix */
-
-
 			if (!sp->mtx)
-				v = SCORE(prof_ch, prev_nseq[x], 1.0, -1.0);
+				v = SCORE(prof_ch, dseq->seq[x], 1.0, -1.0);
 			else
-				v = VDTABLE(prof_ch, prev_nseq[x]);
+				v = VDTABLE(prof_ch, dseq->seq[x]);
 
 			d_quality = v;
 			max_score_perv = (v > max_score_perv) ? v : max_score_perv; /*checkbest_m(v, 1, y + 1, max_v);*/
@@ -729,9 +727,9 @@ score_matrix_t MS_Score_SW_M(const search_swag_profile_t * sp, const sequence_t 
 				double v;
 
 				if (!sp->mtx)
-					v = SCORE(prof_ch, prev_nseq[x], 1.0, -1.0);
+					v = SCORE(prof_ch, dseq->seq[x], 1.0, -1.0);
 				else
-					v = VDTABLE(prof_ch, prev_nseq[x]);
+					v = VDTABLE(prof_ch, dseq->seq[x]);
 
 				d_score = v;               // score = prof_line_p[pre->nseq];
 				d_quality = prev_score[x]; // quality = pre->prequal;
@@ -1027,7 +1025,7 @@ score_matrix_t MS_Score_SW_M(const search_swag_profile_t * sp, const sequence_t 
 	free(prev_line);
 	/* ----------- */ // sd
 	free(prev_score);
-	free(prev_nseq);
+//	free(prev_nseq);
 	free(prev_yskip);
 	/* ----------- */ 
 	{ /*sd*/
