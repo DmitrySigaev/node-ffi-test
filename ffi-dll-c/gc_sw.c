@@ -651,19 +651,14 @@ score_matrix_t MS_Score_SW_M(const search_swag_profile_t * sp, const sequence_t 
 	for (x = 0, pre = prev_line, prof_line_p = prof->data; x < seqLen; x++, pre++)
 	{
 		/*---------------*/
-		double v;
-		if (!sp->mtx)
-			v = SCORE(qseq->seq[0], dseq->seq[x], 1.0, -1.0);
-		else
-			v = VDTABLE(qseq->seq[0], dseq->seq[x]);
-		v = 0; // init first string as zero(local alignment)
-		prev_score[x] = v ; /*pre->prequal */
-		max_score_perv = (v > max_score_perv) ? v : max_score_perv; /*max_v ==  max_score_perv*/
+		// init first string as zero(local alignment) or  MS_SCORE_MININF was before
+		prev_score[x] = 0 ; /*pre->prequal */
+		max_score_perv = 0;
 //		prev_nseq[x] = dseq->seq[x];
 		prev_yskip[x] = -10000.0;
 		/*-------------- */
 		pre->nseq = nseq[x];
-		pre->prequal = prof_line_p[pre->nseq];
+		pre->prequal = prof_line_p[pre->nseq]; /* MS_SCORE_MININF*/
 		/*if( pre->prequal<0 ) pre->prequal=0;
 		else */ checkbest_m(pre->prequal, x + 1, 1, max_v);
 		pre->yskipmatch = MS_SCORE_MININF;
