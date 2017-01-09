@@ -132,7 +132,7 @@ bool testFFIAPI(struct tagffiAPI*ffiAPIin)
 	sequence_utest enseq2 = { 2, malloc(len2 + 1), len2 };
 	encode_seq_f_js(&inseq1, &enseq1);
 	encode_seq_f_js(&inseq2, &enseq2);
-	search_profile_utest sp = { -1, 0, (!status) ? (NULL) : (&mtx) };
+	search_profile_utest sp = { -1.6, -0.3, (!status) ? (NULL) : (&mtx) };
 	score_matrix_utest sd = sw_directions_f_js(&sp, &enseq1, &enseq2);
 	score_matrix_utest sdgc = sw_genc_m_f_js(&sp, &enseq1, &enseq2);
 

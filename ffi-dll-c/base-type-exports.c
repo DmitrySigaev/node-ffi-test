@@ -134,7 +134,7 @@ struct score_matrix_api sw_genc_m_js(struct  search_swag_profile_api const * sp,
 	printf("[ffi-dll-c] call sw_genc_m_js:val %s, in f: %s,l: %d\n", xseq->seq, __FILE__, __LINE__);
 	printf("[ffi-dll-c] call sw_genc_m_js:val %s, in f: %s,l: %d\n", yseq->seq, __FILE__, __LINE__);
 	struct score_matrix_api *sm;
-	score_matrix_t smt = sw_gencore_m((const search_swag_profile_t *)sp, (const sequence_t *)xseq, (const sequence_t *)yseq);
+	score_matrix_t smt = sw_genc_directions((const search_swag_profile_t *)sp, (const sequence_t *)xseq, (const sequence_t *)yseq);
 	sm = (struct score_matrix_api *)&smt;
 	return *sm;
 }

@@ -192,6 +192,7 @@ double sw_affine_gap(const search_swag_profile_t * sp, const sequence_t * dseq, 
 	return score.d;
 }
 
+
 /*
 * Sequence alignments with constant and linear gap penalties can be computed in time O(n*m) for two
 * sequences of lingth m and n. With affine gap penalties the time increases to O(n*m*(n+m)),
@@ -205,6 +206,71 @@ double sw_affine_gap(const search_swag_profile_t * sp, const sequence_t * dseq, 
 * in the Smith-Waterman with linear gap costs, except the value in E and F are used ad the gap costs.
 */
 double sw_affine_gap_sigaev(const search_swag_profile_t * sp, const sequence_t * dseq, const sequence_t * qseq)
+{
+	double v;
+	matrix_t h = matrix(dseq->len + 1, qseq->len + 1, DOUBLETYPE); // todo: there is a bug. we have to use calloc instead of malloc 
+	matrix_t ee = matrix(dseq->len + 1, qseq->len + 1, DOUBLETYPE);        // todo: there is a bug. we have to use calloc instead of malloc 
+	matrix_t ff = matrix(dseq->len + 1, qseq->len + 1, DOUBLETYPE);        // todo: there is a bug. we have to use calloc instead of malloc 
+	if (!h.ddata) return 0.0;
+	if (!ee.ddata) { free_matrix(&h); return 0.0; }
+	if (!ff.ddata) { free_matrix(&ee); return 0.0; }
+
+	double *hri0 = malloc((dseq->len + 1) * sizeof(double));
+	double *fri0 = malloc((dseq->len + 1) * sizeof(double));
+
+	for (size_t j = 0; j < dseq->len + 1; j++) {
+		hri0[j] = 0;
+		fri0[j] = 0;
+	}
+
+	double er = 0;
+	for (size_t i = 0; i <= dseq->len; i++) {
+		double hr = 0;
+		for (size_t j = 0; j <= qseq->len; j++) {
+			// This is the first row / column which is all zeros
+			if (i == 0 || j == 0) {
+				continue;
+			}
+
+			if (!sp->mtx)
+				v = SCORE(dseq->seq[i - 1], qseq->seq[j - 1], 1.0, -1.0);
+			else
+				v = VDTABLE(dseq->seq[i - 1], qseq->seq[j - 1]);
+
+			double mx_new = hri0[j] + sp->gapOpen;
+			double my_new = hr + sp->gapOpen;
+			hr = hri0[j] = h.ddata[i][j] = MAX(MAX(hri0[j - 1] + v, er + v), MAX(fri0[j - 1] + v, 0));
+			er = ee.ddata[i][j] = MAX(er + sp->gapExt, my_new);
+			fri0[j] = ff.ddata[i][j] = MAX(fri0[j] + sp->gapExt, mx_new);
+
+		}
+	}
+
+	element_t score = find_max(&h);
+	//	print_matrix(&h);
+	//	print_matrix(&ee);
+	//	print_matrix(&ff);
+	free_matrix(&h);
+	free_matrix(&ee);
+	free_matrix(&ff);
+	free(hri0);
+	free(fri0);
+	return score.d;
+}
+
+/*
+* Sequence alignments with constant and linear gap penalties can be computed in time O(n*m) for two
+* sequences of lingth m and n. With affine gap penalties the time increases to O(n*m*(n+m)),
+* since for each cell the algorithm has to checkif a gap is extended or a new one is opened.
+* In 1982 Gotoh described a method to compute optimal sequence alignments, with affine gap
+* penalties, in time O(n*m). His version uses two additional matrices(E and F) to keep track of open gap.
+* E keeps track of gaps in the query sequence and F if gaps in the database sequence.
+* The values in E are calculated as the maximum of the previous value in H plus the costs Q for opening
+* a gap an the previous balue in E plus the costs T for extending a gap.  The values in F are
+* computed the same way, except for gaps in the other sequence. The values in H are computed like
+* in the Smith-Waterman with linear gap costs, except the value in E and F are used ad the gap costs.
+*/
+double sw_affine_gap_sigaev2(const search_swag_profile_t * sp, const sequence_t * dseq, const sequence_t * qseq)
 {
 	double d_last, u_last, l_last, e_last, f_last;
 	double d_new, u_new, l_new, e_new, f_new;
@@ -274,6 +340,8 @@ double sw_affine_gap_sigaev(const search_swag_profile_t * sp, const sequence_t *
 	free_matrix(&ff);
 	return score.d;
 }
+
+
 region_t sw_alignment_swipe(const search_swag_profile_t * sp, const sequence_t *xseq, const sequence_t *yseq) {
 	region_t region;
 	double score = 0; /* score of direct path*/
@@ -481,3 +549,104 @@ score_matrix_t sw_directions(const search_swag_profile_t * sp, const sequence_t 
 
 	return (score_matrix_t) { score_mat, directions_mat };
 }
+
+
+score_matrix_t sw_genc_directions(const search_swag_profile_t * sp, const sequence_t * dseq, const sequence_t * qseq) {
+	dbg_print("[sw] call sw_genc_directions:val %s, in f: %s,l: %d\n", dseq->seq, __FILE__, __LINE__);
+	dbg_print("[sw] call sw_genc_directions:val %s, in f: %s,l: %d\n", qseq->seq, __FILE__, __LINE__);
+	double v;
+	matrix_t h = matrix(dseq->len + 1, qseq->len + 1, DOUBLETYPE); // todo: there is a bug. we have to use calloc instead of malloc 
+	matrix_t ee = matrix(dseq->len + 1, qseq->len + 1, DOUBLETYPE);        // todo: there is a bug. we have to use calloc instead of malloc 
+	matrix_t ff = matrix(dseq->len + 1, qseq->len + 1, DOUBLETYPE);        // todo: there is a bug. we have to use calloc instead of malloc 
+	matrix_t directions_mat = matrix(dseq->len + 1, qseq->len + 1, CHARTYPE); /* */
+
+	if (!h.ddata) return(score_matrix_t) { 0, 0 };
+	if (!ee.ddata) { free_matrix(&h); return (score_matrix_t) { 0, 0 };}
+	if (!ff.ddata) { free_matrix(&ee); free_matrix(&h); return (score_matrix_t) { 0, 0 };}
+	if (!directions_mat.ddata) { free_matrix(&ff); free_matrix(&ee); free_matrix(&h); return (score_matrix_t) { 0, 0 }; }
+
+	matrix_set(&h, (element_t) { 0, DOUBLETYPE });
+	matrix_set(&ee, (element_t) { 0, DOUBLETYPE });
+	matrix_set(&ff, (element_t) { 0, DOUBLETYPE });
+	matrix_set(&directions_mat, (element_t) { 0, CHARTYPE });
+
+	double *hr0 = malloc((dseq->len + 1) * sizeof(double));
+	double *fr0 = malloc((dseq->len + 1) * sizeof(double));
+	double *hr1 = malloc((dseq->len + 1) * sizeof(double));
+	double *fr1 = malloc((dseq->len + 1) * sizeof(double));
+
+	for (size_t j = 0; j <= dseq->len + 1; j++) {
+		hr0[j] = 0;
+		fr0[j] = 0;
+		hr1[j] = 0;
+		fr1[j] = 0;
+	}
+
+	double *hr0p = hr0;
+	double *fr0p = fr0;
+	double *hr1p = hr1;
+	double *fr1p = fr1;
+
+	for (size_t i = 1; i <= dseq->len; i++) {
+		double er = 0;
+		double ern0 = -sp->gapExt;
+		double hr = 0;
+		for (size_t j = 1; j <= qseq->len; j++) {
+			double ern;
+			if (!sp->mtx)
+				v = SCORE(dseq->seq[i - 1], qseq->seq[j - 1], 1.0, -1.0);
+			else
+				v = VDTABLE(dseq->seq[i - 1], qseq->seq[j - 1]);
+			element_t el = (element_t) { 0, DOUBLETYPE };
+			double  mx_new = hr0p[j + 1] + sp->gapOpen;
+			ern0 = MAX(ern0 + sp->gapExt, hr0p[j - 1] + sp->gapOpen);
+			ern = el.d = MAX(er + sp->gapExt, hr + sp->gapOpen);
+			matrix_set_value(&ee, i, j, el);
+			hr = MAX(hr0p[j], MAX(ern0, fr0p[j - 1]));
+			hr += v;
+			hr = MAX(hr, 0);
+			hr1p[j + 1] = el.d = hr;
+			matrix_set_value(&h, i, j, el);
+			fr1p[j] = el.d = MAX(fr0p[j] + sp->gapExt, mx_new);
+			matrix_set_value(&ff, i, j, el);
+			er = ern;
+
+			{
+				element_t el_direction = (element_t) { 0, CHARTYPE };
+				if (hr == (hr0p[j] + v /* == m_new */) && v > 0) /*m_new*/
+					el_direction.c |= (1 << 1);// #define LAL_MASK_MATCH         (1<<1)
+				if (hr == (hr0p[j] + v) && v <= 0) /* m_new */
+					el_direction.c |= (1 << 0);// #define LAL_MASK_MISMATCH      (1<<0)
+				if (hr == fr0p[j - 1] + v)
+					el_direction.c |= (1 << 2); // #define LAL_MASK_GAP_OPEN_LEFT (1<<3)
+				if (hr == ern0 + v)
+					el_direction.c |= (1 << 3);// #define LAL_MASK_GAP_OPEN_UP   (1<<2)
+				if (hr == 0)
+					el_direction.c |= (1 << 6); // #define LAL_MASK_ZERO          (1<<6)
+			}
+		}
+		/*
+		for (size_t j = 0; j <= dseq->len; j++) {
+			fr0[j] = fr1[j];
+		}
+		for (size_t j = 0; j <= dseq->len + 1; j++) {
+			hr0[j] = hr1[j];
+		}
+		*/
+		double *tf = fr0p;
+		double *th = hr0p;
+		fr0p = fr1p;
+		hr0p = hr1p;
+		fr1p = tf;
+		hr1p = th;
+	}
+	element_t score = find_max(&h);
+	free_matrix(&ee);
+	free_matrix(&ff);
+	free(hr0);
+	free(fr0);
+	free(hr1);
+	free(fr1);
+	return (score_matrix_t) { h, directions_mat };
+}
+
