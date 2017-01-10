@@ -309,10 +309,10 @@ double sw_affine_gap_sigaev2(const search_swag_profile_t * sp, const sequence_t 
 			l_new = l_last + sp->gapOpen;
 			e_new = e_last + sp->gapExt;
 			f_new = f_last + sp->gapExt;
-	//		ee.ddata[i][j] = MAX(e_new, l_new);
-	//		ff.ddata[i][j] = MAX(f_new, u_new);
+			//		ee.ddata[i][j] = MAX(e_new, l_new);
+			//		ff.ddata[i][j] = MAX(f_new, u_new);
 
-			if(e_new == d_new)
+			if (e_new == d_new)
 				ee.ddata[i][j] = l_new;
 			else
 				ee.ddata[i][j] = MAX(e_new, l_new);
@@ -322,11 +322,11 @@ double sw_affine_gap_sigaev2(const search_swag_profile_t * sp, const sequence_t 
 				ff.ddata[i][j] = MAX(f_new, u_new);
 
 			score_mat.ddata[i][j] = MAX(MAX(d_new, ee.ddata[i][j]), MAX(ff.ddata[i][j], 0));
-	/*		if (d_new == e_new)
-				ee.ddata[i][j] = l_new;
-			if (d_new == f_new)
-				ff.ddata[i][j] = u_new;
-				*/
+			/*		if (d_new == e_new)
+						ee.ddata[i][j] = l_new;
+					if (d_new == f_new)
+						ff.ddata[i][j] = u_new;
+						*/
 
 		}
 	}
@@ -491,14 +491,14 @@ score_matrix_t sw_directions(const search_swag_profile_t * sp, const sequence_t 
 				h = e;
 				el_direction.c = LAL_MASK_GAP_OPEN_LEFT;
 			}
-			
+
 			if (h < 0) {
 				h = 0;
 				el_direction.c = LAL_MASK_ZERO;
 			}
 
 			*su_p = h;
- 			score_mid = h;
+			score_mid = h;
 
 			/* stow for gap extensions */
 			h += sp->gapOpen + sp->gapExt;
@@ -552,8 +552,8 @@ score_matrix_t sw_directions(const search_swag_profile_t * sp, const sequence_t 
 
 
 score_matrix_t sw_genc_directions(const search_swag_profile_t * sp, const sequence_t * dseq, const sequence_t * qseq) {
-	dbg_print("[sw] call sw_genc_directions:val %s, in f: %s,l: %d\n", dseq->seq, __FILE__, __LINE__);
-	dbg_print("[sw] call sw_genc_directions:val %s, in f: %s,l: %d\n", qseq->seq, __FILE__, __LINE__);
+	dbg_print("[sw] call sw_genc_directions: len %zd, in f: %s,l: %d\n", dseq->len, __FILE__, __LINE__);
+	dbg_print("[sw] call sw_genc_directions: len %zd, in f: %s,l: %d\n", qseq->len, __FILE__, __LINE__);
 	double v;
 	matrix_t h = matrix(dseq->len + 1, qseq->len + 1, DOUBLETYPE); // todo: there is a bug. we have to use calloc instead of malloc 
 	matrix_t ee = matrix(dseq->len + 1, qseq->len + 1, DOUBLETYPE);        // todo: there is a bug. we have to use calloc instead of malloc 
@@ -561,8 +561,8 @@ score_matrix_t sw_genc_directions(const search_swag_profile_t * sp, const sequen
 	matrix_t directions_mat = matrix(dseq->len + 1, qseq->len + 1, CHARTYPE); /* */
 
 	if (!h.ddata) return(score_matrix_t) { 0, 0 };
-	if (!ee.ddata) { free_matrix(&h); return (score_matrix_t) { 0, 0 };}
-	if (!ff.ddata) { free_matrix(&ee); free_matrix(&h); return (score_matrix_t) { 0, 0 };}
+	if (!ee.ddata) { free_matrix(&h); return (score_matrix_t) { 0, 0 }; }
+	if (!ff.ddata) { free_matrix(&ee); free_matrix(&h); return (score_matrix_t) { 0, 0 }; }
 	if (!directions_mat.ddata) { free_matrix(&ff); free_matrix(&ee); free_matrix(&h); return (score_matrix_t) { 0, 0 }; }
 
 	matrix_set(&h, (element_t) { 0, DOUBLETYPE });
@@ -570,12 +570,16 @@ score_matrix_t sw_genc_directions(const search_swag_profile_t * sp, const sequen
 	matrix_set(&ff, (element_t) { 0, DOUBLETYPE });
 	matrix_set(&directions_mat, (element_t) { 0, CHARTYPE });
 
-	double *hr0 = malloc((dseq->len + 1) * sizeof(double));
-	double *fr0 = malloc((dseq->len + 1) * sizeof(double));
-	double *hr1 = malloc((dseq->len + 1) * sizeof(double));
-	double *fr1 = malloc((dseq->len + 1) * sizeof(double));
+	double *hr0 = malloc((qseq->len + 2) * sizeof(double));
+	if (!hr0) { free_matrix(&ff); free_matrix(&ee); free_matrix(&h); free_matrix(&directions_mat); return (score_matrix_t) { 0, 0 }; }
+	double *fr0 = malloc((qseq->len + 2) * sizeof(double));
+	if (!fr0) { free_matrix(&ff); free_matrix(&ee); free_matrix(&h); free_matrix(&directions_mat); free(hr0); return (score_matrix_t) { 0, 0 }; }
+	double *hr1 = malloc((qseq->len + 2) * sizeof(double));
+	if (!hr1) { free_matrix(&ff); free_matrix(&ee); free_matrix(&h); free_matrix(&directions_mat); free(hr0); free(fr0); return (score_matrix_t) { 0, 0 }; }
+	double *fr1 = malloc((qseq->len + 2) * sizeof(double));
+	if (!fr1) { free_matrix(&ff); free_matrix(&ee); free_matrix(&h); free_matrix(&directions_mat); free(hr0); free(fr0); free(hr1); return (score_matrix_t) { 0, 0 }; }
 
-	for (size_t j = 0; j <= dseq->len + 1; j++) {
+	for (size_t j = 0; j < qseq->len + 2; j++) {
 		hr0[j] = 0;
 		fr0[j] = 0;
 		hr1[j] = 0;
@@ -587,11 +591,11 @@ score_matrix_t sw_genc_directions(const search_swag_profile_t * sp, const sequen
 	double *hr1p = hr1;
 	double *fr1p = fr1;
 
-	for (size_t i = 1; i <= dseq->len; i++) {
+	for (size_t i = 1; i < dseq->len + 1; i++) {
 		double er = 0;
 		double ern0 = -sp->gapExt;
 		double hr = 0;
-		for (size_t j = 1; j <= qseq->len; j++) {
+		for (size_t j = 1; j < qseq->len + 1; j++) {
 			double ern;
 			if (!sp->mtx)
 				v = SCORE(dseq->seq[i - 1], qseq->seq[j - 1], 1.0, -1.0);
@@ -625,14 +629,6 @@ score_matrix_t sw_genc_directions(const search_swag_profile_t * sp, const sequen
 					el_direction.c |= (1 << 6); // #define LAL_MASK_ZERO          (1<<6)
 			}
 		}
-		/*
-		for (size_t j = 0; j <= dseq->len; j++) {
-			fr0[j] = fr1[j];
-		}
-		for (size_t j = 0; j <= dseq->len + 1; j++) {
-			hr0[j] = hr1[j];
-		}
-		*/
 		double *tf = fr0p;
 		double *th = hr0p;
 		fr0p = fr1p;
@@ -641,6 +637,8 @@ score_matrix_t sw_genc_directions(const search_swag_profile_t * sp, const sequen
 		hr1p = th;
 	}
 	element_t score = find_max(&h);
+	dbg_print("[sw] call sw_genc_directions: score %f, in f: %s,l: %d\n", score.d, __FILE__, __LINE__);
+
 	free_matrix(&ee);
 	free_matrix(&ff);
 	free(hr0);
