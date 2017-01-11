@@ -205,7 +205,7 @@ double sw_affine_gap(const search_swag_profile_t * sp, const sequence_t * dseq, 
 * computed the same way, except for gaps in the other sequence. The values in H are computed like
 * in the Smith-Waterman with linear gap costs, except the value in E and F are used ad the gap costs.
 */
-double sw_affine_gap_sigaev(const search_swag_profile_t * sp, const sequence_t * dseq, const sequence_t * qseq)
+double sw_affine_gap_fail(const search_swag_profile_t * sp, const sequence_t * dseq, const sequence_t * qseq)
 {
 	double v;
 	matrix_t h = matrix(dseq->len + 1, qseq->len + 1, DOUBLETYPE); // todo: there is a bug. we have to use calloc instead of malloc 
@@ -648,3 +648,67 @@ score_matrix_t sw_genc_directions(const search_swag_profile_t * sp, const sequen
 	return (score_matrix_t) { h, directions_mat };
 }
 
+double sw_genc_sigaev(const search_swag_profile_t * sp, const sequence_t * dseq, const sequence_t * qseq) {
+	dbg_print("[sw] call sw_genc_sigaev: len %zd, in f: %s,l: %d\n", dseq->len, __FILE__, __LINE__);
+	dbg_print("[sw] call sw_genc_sigaev: len %zd, in f: %s,l: %d\n", qseq->len, __FILE__, __LINE__);
+	double v;
+
+	double *hr0 = malloc((qseq->len + 2) * sizeof(double));
+	if (!hr0) { return 0.0; }
+	double *fr0 = malloc((qseq->len + 2) * sizeof(double));
+	if (!fr0) { free(hr0); return 0.0; }
+	double *hr1 = malloc((qseq->len + 2) * sizeof(double));
+	if (!hr1) { free(hr0); free(fr0); return 0.0; }
+	double *fr1 = malloc((qseq->len + 2) * sizeof(double));
+	if (!fr1) { free(hr0); free(fr0); free(hr1); 0.0; }
+
+	for (size_t j = 0; j < qseq->len + 2; j++) {
+		hr0[j] = 0;
+		fr0[j] = 0;
+		hr1[j] = 0;
+		fr1[j] = 0;
+	}
+
+	double *hr0p = hr0;
+	double *fr0p = fr0;
+	double *hr1p = hr1;
+	double *fr1p = fr1;
+
+	double score = 0.0;
+
+	for (size_t i = 1; i < dseq->len + 1; i++) {
+		double er = 0;
+		double ern0 = -sp->gapExt;
+		double hr = 0;
+		for (size_t j = 1; j < qseq->len + 1; j++) {
+			double ern;
+			if (!sp->mtx)
+				v = SCORE(dseq->seq[i - 1], qseq->seq[j - 1], 1.0, -1.0);
+			else
+				v = VDTABLE(dseq->seq[i - 1], qseq->seq[j - 1]);
+			double  mx_new = hr0p[j + 1] + sp->gapOpen;
+			ern0 = MAX(ern0 + sp->gapExt, hr0p[j - 1] + sp->gapOpen);
+			ern = MAX(er + sp->gapExt, hr + sp->gapOpen);
+			hr = MAX(hr0p[j], MAX(ern0, fr0p[j - 1]));
+			hr += v;
+			hr = MAX(hr, 0);
+			hr1p[j + 1] = hr;
+			fr1p[j] = MAX(fr0p[j] + sp->gapExt, mx_new);
+			er = ern;
+			score = MAX(score, hr);
+		}
+		double *tf = fr0p;
+		double *th = hr0p;
+		fr0p = fr1p;
+		hr0p = hr1p;
+		fr1p = tf;
+		hr1p = th;
+	}
+	dbg_print("[sw] call sw_genc_directions: score %f, in f: %s,l: %d\n", score, __FILE__, __LINE__);
+
+	free(hr0);
+	free(fr0);
+	free(hr1);
+	free(fr1);
+	return score;
+}

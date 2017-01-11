@@ -128,6 +128,10 @@ double sw_genc_js(struct  search_swag_profile_api const * sp, struct sequence_ap
 	return sw_gencore((const search_swag_profile_t *)sp, (const sequence_t *)xseq, (const sequence_t *)yseq);
 }
 
+double sw_genc_js_sigaev(struct  search_swag_profile_api const * sp, struct sequence_api const *xseq, struct sequence_api const *yseq) {
+	return sw_genc_sigaev((const search_swag_profile_t *)sp, (const sequence_t *)xseq, (const sequence_t *)yseq);
+}
+
 struct score_matrix_api sw_genc_m_js(struct  search_swag_profile_api const * sp, struct sequence_api const *xseq, struct sequence_api const *yseq)
 {
 	printf("[ffi-dll-c] call sw_genc_m_js in f: %s,l: %d\n", __FILE__, __LINE__);

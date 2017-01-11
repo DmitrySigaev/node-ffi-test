@@ -63,6 +63,7 @@ for (var i = 0; i < res[0].length; i++) {
 	}
 }
 
+
 var full_object = { score: score, scorematrix: res[0], directions: res[1], seq1: seq2, seq2: seq1 };
 var score_table = JSON.stringify(full_object);
 fs.writeFile('score_table_gc.txt', score_table, function (err) {
@@ -92,7 +93,7 @@ fs.writeFile('score_table_swd.txt', score_table, function (err) {
 	console.log('score table from sw_directions > score_table_swd.txt');
 });
 
-
+var res = test.sw_genc_sigaev(profile, seq1, seq2);
 
 test.EXPECT("';' == test.charFunc('\u263B', out)", out2);
 test.EXPECT("';' == out.pop()", out2);
