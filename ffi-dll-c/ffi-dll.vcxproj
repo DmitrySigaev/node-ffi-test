@@ -153,6 +153,7 @@
     <ClCompile Include="gc_sw.c" />
     <ClCompile Include="lal_encoding.c" />
     <ClCompile Include="lal_matrix.c" />
+    <ClCompile Include="lal_readfasta.c" />
     <ClCompile Include="lal_scoring_matrix.c" />
     <ClCompile Include="lal_tables.c" />
     <ClCompile Include="sw.c" />
@@ -163,6 +164,7 @@
     <ClInclude Include="lal_debuglogs.h" />
     <ClInclude Include="lal_encoding.h" />
     <ClInclude Include="lal_matrix.h" />
+    <ClInclude Include="lal_readfasta.h" />
     <ClInclude Include="lal_report.h" />
     <ClInclude Include="lal_scoring_matrix.h" />
     <ClInclude Include="lal_tables.h" />
