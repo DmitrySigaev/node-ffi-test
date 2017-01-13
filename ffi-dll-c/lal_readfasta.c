@@ -20,6 +20,31 @@ static FILE * fp = NULL; /* fasta file descriptor */
 static size_t sequences = LAL_MAX_READ_REST_SEQUENCE; /* calculate how many sequence the fasta file contains.*/
 static char * seqdata = NULL;  /* continuous flow of seqences*/
 
+static inline void fasta_data_realloc(size_t *current, size_t new_size) {
+	while (new_size >= *current) {
+		*current += LAL_SIZE_OF_CHUNK;
+		seqdata = realloc(seqdata, *current);
+	}
+}
+
+static int fasta_read_header(char line[LAL_FASTA_LINE_ALLOC], size_t * dataalloc, size_t *datalen) {
+	/* read header */
+	if (line[0] != '>') {
+		report_error("improper fasta file format");
+		return 1;
+	}
+
+	size_t headerlen = strlen(line);
+
+	// fgets stops at \n
+	if (line[headerlen - 1] == '\n') {
+		line[headerlen - 1] = 0;
+		headerlen--;
+	}
+	headerlen--; // without the leading '>'
+	return 0;
+}
+
 
 /*
  * The fasta_open function shall open the fasta file whose filename is the string pointed to by filename, and associates a stream with it.
