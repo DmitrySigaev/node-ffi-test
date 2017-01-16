@@ -10,6 +10,7 @@ Contact: Dmitry Sigaev <dima.sigaev@gmail.com>
 #include <stdint.h>
 
 #include "lal_report.h"
+#include "lal_typedefs.h"
 
 /* currently we limit the size of readed sequences */
 #define LAL_MAX_READ_REST_SEQUENCE INT_MAX
@@ -19,6 +20,7 @@ Contact: Dmitry Sigaev <dima.sigaev@gmail.com>
 static FILE * fp = NULL; /* fasta file descriptor */
 static size_t sequences = LAL_MAX_READ_REST_SEQUENCE; /* calculate how many sequence the fasta file contains.*/
 static char * seqdata = NULL;  /* continuous flow of seqences*/
+static sequence_t  *seqindex = NULL; /*array of sequence_t that corespond to number of sequences*/
 
 static inline void fasta_data_realloc(size_t *current, size_t new_size) {
 	while (new_size >= *current) {
@@ -61,6 +63,25 @@ void fasta_open(const char * filename) {
 		return;
 	}
 	sequences = 0;
+}
+
+static int fasta_create_index(void) {
+	seqindex = malloc(sequences * sizeof(sequence_t));
+	if (!seqindex) {
+		return -1;
+	}
+	sequence_t * seq_iterator = seqindex;
+
+	char * data_iterator = seqdata;
+	for (size_t i = 0; i < sequences; i++) {
+		seq_iterator->ID = i;
+		seq_iterator->seq = data_iterator;
+		seq_iterator->len = strlen(data_iterator);
+		data_iterator += seq_iterator->len + 1;
+		seq_iterator++;
+	}
+
+	return 0;
 }
 
 void fasta_read(void) {
