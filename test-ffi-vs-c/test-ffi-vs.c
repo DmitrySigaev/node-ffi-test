@@ -71,6 +71,8 @@ int * (*matrix_fi_js)(const size_t nrows, const size_t ncols, int type);
 void(*encode_seq_f_js)(struct sequence_api const *s, struct sequence_api const *d);
 void(*fasta_open_f_js)(const char * filename);
 void(*fasta_close_f_js)(void);
+void(*fasta_read_f_js)(void);
+
 
 #define MAX_LINE_LEN_UTEST  1024
 #define MAX_DOC_LEN_UTEST   (MAX_LINE_LEN_UTEST*4)
@@ -122,7 +124,9 @@ bool testFFIAPI(struct tagffiAPI*ffiAPIin)
 	int *imx = matrix_fi_js(10, 10, 1);
 
 	fasta_open_f_js("fasta.fasta");
+	fasta_read_f_js();
 	fasta_close_f_js();
+	fasta_read_f_js();
 
 	int status = read_scoring_matrix_f_js(&mtx, gaptest_utest, strlen(gaptest_utest));
 	char seq1[] = { "CAACTTCCTGGCGCTATCACTTCTACCATCGTCTGCAGCGT" };
@@ -192,6 +196,7 @@ int main(int argc, char **argv)
 		sw_genc_m_f_js = (FFIPROC)GetProcAddress(hinstLib, "sw_genc_m_js");
 		fasta_open_f_js = (FFIPROC)GetProcAddress(hinstLib, "fasta_open_js");
 		fasta_close_f_js = (FFIPROC)GetProcAddress(hinstLib, "fasta_close_js");
+		fasta_read_f_js = (FFIPROC)GetProcAddress(hinstLib, "fasta_read_js");
 		testFFIAPI(&ffiAPI);
 		fFreeResult = FreeLibrary(hinstLib);
 	}

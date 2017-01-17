@@ -78,6 +78,7 @@ FFIEXPORT double sw_genc_js_sigaev(struct  search_swag_profile_api const * sp, s
 
 FFIEXPORT void fasta_open_js(const char * filename);
 FFIEXPORT void fasta_close_js(void);
+FFIEXPORT void fasta_read_js(void);
 
 #define CALLBACKFFI
 typedef void (CALLBACKFFI *FFIPROC)(void);

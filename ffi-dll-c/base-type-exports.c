@@ -153,7 +153,10 @@ void fasta_close_js(void)
 	fasta_close();
 }
 
-
+void fasta_read_js(void)
+{
+	fasta_read();
+}
 
 struct tagffiAPI LoadFFI(void)
 {
