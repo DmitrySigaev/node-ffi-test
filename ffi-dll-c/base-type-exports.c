@@ -14,7 +14,7 @@
 #include "gc_sw.h"
 #include "lal_tables.h"
 #include "lal_encoding.h"
-
+#include "lal_readfasta.h"
 
 void voidFunc( void )
 {
@@ -141,6 +141,16 @@ struct score_matrix_api sw_genc_m_js(struct  search_swag_profile_api const * sp,
 	score_matrix_t smt = sw_genc_directions((const search_swag_profile_t *)sp, (const sequence_t *)xseq, (const sequence_t *)yseq);
 	sm = (struct score_matrix_api *)&smt;
 	return *sm;
+}
+
+void fasta_open_js(const char * filename)
+{
+	fasta_open(filename);
+}
+
+void fasta_close_js(void)
+{
+	fasta_close();
 }
 
 

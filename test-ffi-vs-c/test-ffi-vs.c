@@ -62,13 +62,15 @@ typedef struct tag_score_matrix {
 	struct tag_matrix_api directions;
 }score_matrix_utest;
 
-score_matrix_utest (*sw_directions_f_js)(struct  search_swag_profile_api const * sp, struct sequence_api const *xseq, struct sequence_api const *yseq);
-score_matrix_utest (*sw_genc_m_f_js)(struct  search_swag_profile_api const * sp, struct sequence_api const *xseq, struct sequence_api const *yseq);
-mat_t (*matrix_f_js)(const size_t nrows, const size_t ncols, int type);
-matrix_utest (*matrix_f_js2)(const size_t nrows, const size_t ncols, int type);
+score_matrix_utest(*sw_directions_f_js)(struct  search_swag_profile_api const * sp, struct sequence_api const *xseq, struct sequence_api const *yseq);
+score_matrix_utest(*sw_genc_m_f_js)(struct  search_swag_profile_api const * sp, struct sequence_api const *xseq, struct sequence_api const *yseq);
+mat_t(*matrix_f_js)(const size_t nrows, const size_t ncols, int type);
+matrix_utest(*matrix_f_js2)(const size_t nrows, const size_t ncols, int type);
 matrix_utest * (*matrix_fd_js)(const size_t nrows, const size_t ncols, int type);
 int * (*matrix_fi_js)(const size_t nrows, const size_t ncols, int type);
-void (*encode_seq_f_js)(struct sequence_api const *s, struct sequence_api const *d);
+void(*encode_seq_f_js)(struct sequence_api const *s, struct sequence_api const *d);
+void(*fasta_open_f_js)(const char * filename);
+void(*fasta_close_f_js)(void);
 
 #define MAX_LINE_LEN_UTEST  1024
 #define MAX_DOC_LEN_UTEST   (MAX_LINE_LEN_UTEST*4)
@@ -119,6 +121,8 @@ bool testFFIAPI(struct tagffiAPI*ffiAPIin)
 	matrix_utest *dmx = matrix_fd_js(10, 10, 1);
 	int *imx = matrix_fi_js(10, 10, 1);
 
+	fasta_open_f_js("fasta.fasta");
+	fasta_close_f_js();
 
 	int status = read_scoring_matrix_f_js(&mtx, gaptest_utest, strlen(gaptest_utest));
 	char seq1[] = { "CAACTTCCTGGCGCTATCACTTCTACCATCGTCTGCAGCGT" };
@@ -136,8 +140,8 @@ bool testFFIAPI(struct tagffiAPI*ffiAPIin)
 	score_matrix_utest sd = sw_directions_f_js(&sp, &enseq1, &enseq2);
 	score_matrix_utest sdgc = sw_genc_m_f_js(&sp, &enseq1, &enseq2);
 
-//  element_t score = find_max(&sd.score);
-//	ck_assert_int_eq((int)score.d, 33); /* Max score */ // ok
+	//  element_t score = find_max(&sd.score);
+	//	ck_assert_int_eq((int)score.d, 33); /* Max score */ // ok
 
 
 	memcpy(pffiAPI, ffiAPIin, sizeof(struct tagffiAPI));
@@ -152,7 +156,7 @@ bool testFFIAPI(struct tagffiAPI*ffiAPIin)
 	WEXPECT(t, 0x263B == wout);
 	EXPECT(t, true == bout);
 	EXPECT(t, true == ffiAPI.read_scoring_matrix_func((struct tag_scoring_matrix_t *)&mtx, gaptest_utest, strlen(gaptest_utest)));
-	if(read_scoring_matrix_f)
+	if (read_scoring_matrix_f)
 		EXPECT(t, true == read_scoring_matrix_f((struct tag_scoring_matrix_t *)&mtx, gaptest_utest, strlen(gaptest_utest)));
 	if (read_scoring_matrix_f_js)
 		EXPECT(t, true == read_scoring_matrix_f_js((ptrdiff_t *)&mtx, gaptest_utest, strlen(gaptest_utest)));
@@ -174,8 +178,8 @@ int main(int argc, char **argv)
 	if (hinstLib != NULL)
 	{
 		struct tagffiAPI ffiAPI;
-		struct tagffiAPI(* lffi)(void);
-	    lffi = (struct tagffiAPI(*)(void))GetProcAddress(hinstLib, "LoadFFI");
+		struct tagffiAPI(*lffi)(void);
+		lffi = (struct tagffiAPI(*)(void))GetProcAddress(hinstLib, "LoadFFI");
 		ffiAPI = lffi();
 		read_scoring_matrix_f = (FFIPROC)GetProcAddress(hinstLib, "read_scoring_matrix");
 		read_scoring_matrix_f_js = (FFIPROC)GetProcAddress(hinstLib, "read_scoring_matrix_js");
@@ -186,6 +190,8 @@ int main(int argc, char **argv)
 		encode_seq_f_js = (FFIPROC)GetProcAddress(hinstLib, "encode_seq_js");
 		sw_directions_f_js = (FFIPROC)GetProcAddress(hinstLib, "sw_directions_js");
 		sw_genc_m_f_js = (FFIPROC)GetProcAddress(hinstLib, "sw_genc_m_js");
+		fasta_open_f_js = (FFIPROC)GetProcAddress(hinstLib, "fasta_open_js");
+		fasta_close_f_js = (FFIPROC)GetProcAddress(hinstLib, "fasta_close_js");
 		testFFIAPI(&ffiAPI);
 		fFreeResult = FreeLibrary(hinstLib);
 	}

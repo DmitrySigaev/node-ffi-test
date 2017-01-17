@@ -114,6 +114,9 @@ void fasta_close(void) {
 	if (seqdata)
 		free(seqdata);
 	seqdata = NULL;
+	if (seqindex)
+		free(seqindex);
+	seqindex = NULL;
 	sequences = LAL_MAX_READ_REST_SEQUENCE;
 	fp = NULL;
 }

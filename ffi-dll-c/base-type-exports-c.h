@@ -76,6 +76,9 @@ FFIEXPORT struct score_matrix_api sw_genc_m_js(struct  search_swag_profile_api c
 
 FFIEXPORT double sw_genc_js_sigaev(struct  search_swag_profile_api const * sp, struct sequence_api const *xseq, struct sequence_api const *yseq);
 
+FFIEXPORT void fasta_open_js(const char * filename);
+FFIEXPORT void fasta_close_js(void);
+
 #define CALLBACKFFI
 typedef void (CALLBACKFFI *FFIPROC)(void);
 
