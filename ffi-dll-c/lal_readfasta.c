@@ -21,6 +21,9 @@ static FILE * fp = NULL; /* fasta file descriptor */
 static size_t sequences = LAL_MAX_READ_REST_SEQUENCE; /* calculate how many sequence the fasta file contains.*/
 static char * seqdata = NULL;  /* continuous flow of seqences*/
 static sequence_t  *seqindex = NULL; /*array of sequence_t that corespond to number of sequences*/
+static size_t symbol_residues = 0;  /* the whole set of symbols*/
+static size_t longest = 0; /*contains the length of the longest sequence.*/
+
 
 static inline void fasta_data_realloc(size_t *current, size_t new_size) {
 	while (new_size >= *current) {
@@ -105,6 +108,72 @@ void fasta_read(void) {
 	seqdata = malloc(data_alloc); /* todo: stress testing: Customers may use the software on computers that have significantly fewer computational resources */
 	/* Stress testing tries to break the system under test by overwhelming its resources or by taking resources away from it (in which case it is sometimes called negative testing). The main purpose of this process is to make sure that the system fails and recovers gracefully—a quality known as recoverability. */
 	size_t datalen = 0;
+
+	longest = 0;
+	sequences = 0;
+	symbol_residues = 0;
+	char line[LAL_FASTA_LINE_ALLOC];
+
+	line[0] = 0;
+	if (NULL == fgets(line, LAL_FASTA_LINE_ALLOC, fp)) {
+		/* If a read error occurs, the error indicator (ferror) is set and a null pointer is also returned (but the contents pointed by str may have changed).*/
+		report_error("some read error occur");
+		return;
+	}
+
+	/* currently we limit the size of readed sequences */
+	while (line[0] && (symbol_residues < LAL_MAX_READ_REST_SEQUENCE)) {
+		if (fasta_read_header(line, &data_alloc, &datalen)) {
+			return;
+		}
+
+		/* get next line */
+		line[0] = 0;
+		if (NULL == fgets(line, LAL_FASTA_LINE_ALLOC, fp)) {
+			/* If a read error occurs, the error indicator (ferror) is set and a null pointer is also returned (but the contents pointed by str may have changed).*/
+			report_error("some read error occur");
+			break;
+		}
+		/* read sequence */
+		size_t seqbegin = datalen;
+		// reads until the next sequence header is found
+		while (line[0] && (line[0] != '>')) {
+			char c;
+			char * p = line;
+			while ((c = *p++)) {
+				// there should check for illegal characters
+				if (c != '\n') {
+					fasta_data_realloc(&data_alloc, datalen);
+					*(seqdata + datalen) = c;
+					datalen++;
+				}
+			}
+
+			/* get next line */
+			line[0] = 0;
+			if (NULL == fgets(line, LAL_FASTA_LINE_ALLOC, fp)) {
+				/* If a read error occurs, the error indicator (ferror) is set and a null pointer is also returned (but the contents pointed by str may have changed).*/
+				break;
+			}
+		}
+
+		fasta_data_realloc(&data_alloc, datalen);
+
+		size_t length = datalen - seqbegin;
+
+		symbol_residues += length;
+
+		if (length > longest)
+			longest = length;
+
+		*(seqdata + datalen) = '\0'; /* end of line \0 */
+		datalen++;
+
+		sequences++;
+	}
+
+	/* does indices */
+	fasta_create_index();
 
 	fclose(fp);
 	fp = NULL;
