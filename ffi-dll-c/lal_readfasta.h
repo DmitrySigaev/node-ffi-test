@@ -11,4 +11,6 @@ void fasta_open( const char * filename );
 void fasta_read( void );
 void fasta_close( void );
 
+size_t fasta_get_sequence_count(void);
+
 #endif /* #define _LAL_READFASTA_H_ */

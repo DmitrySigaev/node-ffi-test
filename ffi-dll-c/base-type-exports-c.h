@@ -80,6 +80,8 @@ FFIEXPORT void fasta_open_js(const char * filename);
 FFIEXPORT void fasta_close_js(void);
 FFIEXPORT void fasta_read_js(void);
 
+FFIEXPORT size_t fasta_get_sequence_count_js(void);
+
 #define CALLBACKFFI
 typedef void (CALLBACKFFI *FFIPROC)(void);
 

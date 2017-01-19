@@ -16,7 +16,7 @@
 #include "lal_encoding.h"
 #include "lal_readfasta.h"
 
-void voidFunc( void )
+void voidFunc(void)
 {
 	printf("[ffi-dll-c] call voidFunc in f: %s,l: %d\n", __FILE__, __LINE__);
 }
@@ -76,7 +76,7 @@ struct tag_matrix_api * matrix_js_d(const size_t nrows, const size_t ncols, int 
 	struct tag_matrix_api *mat = malloc(sizeof(matrix_t));
 	matrix_t mx = matrix(nrows, ncols, type);
 	memcpy(mat, &mx, sizeof(matrix_t));
-	return mat; 
+	return mat;
 }
 
 int * matrix_js_i(const size_t nrows, const size_t ncols, int type)
@@ -156,6 +156,10 @@ void fasta_close_js(void)
 void fasta_read_js(void)
 {
 	fasta_read();
+}
+
+size_t fasta_get_sequence_count_js(void) {
+	return fasta_get_sequence_count();
 }
 
 struct tagffiAPI LoadFFI(void)
