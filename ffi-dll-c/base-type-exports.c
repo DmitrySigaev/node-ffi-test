@@ -162,6 +162,10 @@ size_t fasta_get_sequence_count_js(void) {
 	return fasta_get_sequence_count();
 }
 
+size_t fasta_get_symbol_count_js(void) {
+	return fasta_get_symbol_count();
+}
+
 struct tagffiAPI LoadFFI(void)
 {
 	struct tagffiAPI FFI;

@@ -202,3 +202,16 @@ size_t fasta_get_sequence_count(void) {
 	}
 	return sequences; /* calculate how many sequence the fasta file contains.*/
 }
+
+/* calculate how many symbols at the whole set of sequences the fasta file contains.*/
+size_t fasta_get_symbol_count(void) {
+	switch (sequences) {
+	case LAL_MAX_READ_REST_SEQUENCE:
+		report_error("please, open a fasta file before using fasta_read function");
+	case 0:
+		report_error("please, call fasta_read function before");
+		return 0;
+		break;
+	}
+	return symbol_residues; /* calculate how many symbols at the whole set of sequences the fasta file contains.*/
+}
