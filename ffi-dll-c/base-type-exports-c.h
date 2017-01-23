@@ -84,6 +84,7 @@ FFIEXPORT size_t fasta_get_sequence_count_js(void);
 FFIEXPORT size_t fasta_get_symbol_count_js(void);
 FFIEXPORT size_t fasta_get_longest_sequence_js(void);
 FFIEXPORT size_t fasta_get_longest_sequence_js(void);
+FFIEXPORT struct sequence_api const * fasta_get_longest_seq_struct_js(void);
 
 #define CALLBACKFFI
 typedef void (CALLBACKFFI *FFIPROC)(void);

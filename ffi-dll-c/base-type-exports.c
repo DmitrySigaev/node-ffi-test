@@ -170,6 +170,10 @@ size_t fasta_get_longest_sequence_js(void) {
 	return fasta_get_longest_sequence();
 }
 
+struct sequence_api const * fasta_get_longest_seq_struct_js(void) {
+	return (struct sequence_api const *)fasta_get_longest_seq_struct();
+}
+
 struct tagffiAPI LoadFFI(void)
 {
 	struct tagffiAPI FFI;

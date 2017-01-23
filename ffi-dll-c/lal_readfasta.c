@@ -167,11 +167,12 @@ void fasta_read(void) {
 		*(seqdata + datalen) = '\0'; /* end of line \0 */
 		datalen++;
 
-		sequences++;
 		if (length > longest) {
 			longest = length;
 			longest_index = sequences;
 		}
+
+		sequences++;
 	}
 
 	/* does indices */
