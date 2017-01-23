@@ -166,6 +166,10 @@ size_t fasta_get_symbol_count_js(void) {
 	return fasta_get_symbol_count();
 }
 
+size_t fasta_get_longest_sequence_js(void) {
+	return fasta_get_longest_sequence();
+}
+
 struct tagffiAPI LoadFFI(void)
 {
 	struct tagffiAPI FFI;

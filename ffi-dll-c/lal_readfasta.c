@@ -23,6 +23,8 @@ static char * seqdata = NULL;  /* continuous flow of seqences*/
 static sequence_t  *seqindex = NULL; /*array of sequence_t that corespond to number of sequences*/
 static size_t symbol_residues = 0;  /* the whole set of symbols*/
 static size_t longest = 0; /*contains the length of the longest sequence.*/
+static size_t longest_index = 0; /*contains the index of the longest sequence.*/
+
 
 
 static inline void fasta_data_realloc(size_t *current, size_t new_size) {
@@ -162,14 +164,14 @@ void fasta_read(void) {
 		size_t length = datalen - seqbegin;
 
 		symbol_residues += length;
-
-		if (length > longest)
-			longest = length;
-
 		*(seqdata + datalen) = '\0'; /* end of line \0 */
 		datalen++;
 
 		sequences++;
+		if (length > longest) {
+			longest = length;
+			longest_index = sequences;
+		}
 	}
 
 	/* does indices */
@@ -215,3 +217,30 @@ size_t fasta_get_symbol_count(void) {
 	}
 	return symbol_residues; /* calculate how many symbols at the whole set of sequences the fasta file contains.*/
 }
+
+/* returns the length of the longest sequence.*/
+size_t fasta_get_longest_sequence(void) {
+	switch (sequences) {
+	case LAL_MAX_READ_REST_SEQUENCE:
+		report_error("please, open a fasta file before using fasta_read function");
+	case 0:
+		report_error("please, call fasta_read function before");
+		return 0;
+		break;
+	}
+	return longest; /* returns the length of the longest sequence.*/
+}
+
+/* returns the longest sequence structure .*/
+sequence_t * fasta_get_longest_seq_struct(void) {
+	switch (sequences) {
+	case LAL_MAX_READ_REST_SEQUENCE:
+		report_error("please, open a fasta file before using fasta_read function");
+	case 0:
+		report_error("please, call fasta_read function before");
+		return NULL;
+		break;
+	}
+	return seqindex + longest_index; /* returns the longest sequence structure .*/
+}
+
