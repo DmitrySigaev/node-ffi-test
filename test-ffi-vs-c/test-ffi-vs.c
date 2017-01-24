@@ -76,6 +76,7 @@ size_t(*fasta_get_sequence_count_f_js)(void);
 size_t(*fasta_get_symbol_count_f_js)(void);
 size_t(*fasta_get_longest_sequence_f_js)(void);
 struct sequence_api const *(*fasta_get_longest_seq_struct_f_js)(void);
+struct sequence_api const *(*fasta_get_seq_struct_f_js)(size_t seqno);
 
 #define MAX_LINE_LEN_UTEST  1024
 #define MAX_DOC_LEN_UTEST   (MAX_LINE_LEN_UTEST*4)
@@ -132,13 +133,16 @@ bool testFFIAPI(struct tagffiAPI*ffiAPIin)
 	EXPECT(t, 9 == fasta_get_symbol_count_f_js());
 	EXPECT(t, 5 == fasta_get_longest_sequence_f_js());
 	EXPECT(t, 5 == fasta_get_longest_seq_struct_f_js()->len);
+	EXPECT(t, NULL == fasta_get_seq_struct_f_js(2));
+	EXPECT(t, 5 == fasta_get_seq_struct_f_js(1)->len);
 	fasta_close_f_js();
 	fasta_read_f_js();
 	EXPECT(t, 0 == fasta_get_sequence_count_f_js());
 	EXPECT(t, 0 == fasta_get_symbol_count_f_js());
 	EXPECT(t, 0 == fasta_get_longest_sequence_f_js());
 	EXPECT(t, NULL == fasta_get_longest_seq_struct_f_js());
-	//	size_t longs = fasta_get_longest_sequence_f_js();
+	EXPECT(t, NULL == fasta_get_seq_struct_f_js(10));
+	EXPECT(t, NULL == fasta_get_seq_struct_f_js(1));
 
 
 
@@ -215,6 +219,7 @@ int main(int argc, char **argv)
 		fasta_get_symbol_count_f_js = (FFIPROC)GetProcAddress(hinstLib, "fasta_get_symbol_count_js");
 		fasta_get_longest_sequence_f_js = (FFIPROC)GetProcAddress(hinstLib, "fasta_get_longest_sequence_js");
 		fasta_get_longest_seq_struct_f_js = (FFIPROC)GetProcAddress(hinstLib, "fasta_get_longest_seq_struct_js");
+		fasta_get_seq_struct_f_js = (FFIPROC)GetProcAddress(hinstLib, "fasta_get_seq_struct_js");
 		testFFIAPI(&ffiAPI);
 		fFreeResult = FreeLibrary(hinstLib);
 	}

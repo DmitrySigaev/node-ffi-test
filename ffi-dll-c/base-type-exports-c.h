@@ -8,12 +8,12 @@
 #define __BASE_TYPE_EXPORTS_C_H__ 
 
 #if defined(FFIDLL_EXPORTS)
-	#define FFIEXPORT extern __declspec(dllexport)
+#define FFIEXPORT extern __declspec(dllexport)
 #else
-	#define FFIEXPORT extern __declspec(dllimport)
+#define FFIEXPORT extern __declspec(dllimport)
 #endif
 
-FFIEXPORT void voidFunc( void );
+FFIEXPORT void voidFunc(void);
 FFIEXPORT char charFunc(char inChar, char *outChar);
 FFIEXPORT float floatFunc(float inFloat, float *outFloat);
 FFIEXPORT double doubleFunc(double inDouble, double *outDouble);
@@ -85,6 +85,7 @@ FFIEXPORT size_t fasta_get_symbol_count_js(void);
 FFIEXPORT size_t fasta_get_longest_sequence_js(void);
 FFIEXPORT size_t fasta_get_longest_sequence_js(void);
 FFIEXPORT struct sequence_api const * fasta_get_longest_seq_struct_js(void);
+FFIEXPORT struct sequence_api const * fasta_get_seq_struct_js(size_t seqno);
 
 #define CALLBACKFFI
 typedef void (CALLBACKFFI *FFIPROC)(void);
@@ -94,10 +95,10 @@ struct tagffiAPI
 	FFIPROC voidFunc;
 	char(*charFunc)(char, char *);
 	float(*floatFunc)(float, float *);
-	double (*doubleFunc)(double, double *);
+	double(*doubleFunc)(double, double *);
 	bool(*boolFunc)(bool, bool *);
 	wchar_t(*wcharFunc)(wchar_t, wchar_t *);
-	int (* read_scoring_matrix_func)(struct tag_scoring_matrix_t *mtx, const char *matrixstring, size_t len);
+	int(*read_scoring_matrix_func)(struct tag_scoring_matrix_t *mtx, const char *matrixstring, size_t len);
 };
 FFIEXPORT struct tagffiAPI LoadFFI(void);
 

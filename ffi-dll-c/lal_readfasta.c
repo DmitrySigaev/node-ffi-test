@@ -245,3 +245,12 @@ sequence_t * fasta_get_longest_seq_struct(void) {
 	return seqindex + longest_index; /* returns the longest sequence structure .*/
 }
 
+/* returns the sequence structure corresponds to the seqno .*/
+sequence_t * fasta_get_seq_struct(size_t seqno) {
+	if (seqno >= fasta_get_sequence_count()) {
+		report_error("please, check seqno param");
+		return NULL;
+	}
+	return seqindex + seqno; /* returns the sequence structure corresponds to the seqno .*/
+}
+
