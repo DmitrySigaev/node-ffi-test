@@ -76,9 +76,10 @@ FFIEXPORT struct score_matrix_api sw_genc_m_js(struct  search_swag_profile_api c
 
 FFIEXPORT double sw_genc_js_sigaev(struct  search_swag_profile_api const * sp, struct sequence_api const *xseq, struct sequence_api const *yseq);
 
-FFIEXPORT void fasta_open_js(const char * filename);
-FFIEXPORT void fasta_close_js(void);
-FFIEXPORT void fasta_read_js(void);
+FFIEXPORT int lal_seq_base_create_js(void);
+FFIEXPORT void lal_seq_base_close_js(void);
+FFIEXPORT int lal_add_fasta_js(const char * pathname);
+FFIEXPORT int lal_add_string_js(const char * string);
 
 FFIEXPORT size_t fasta_get_sequence_count_js(void);
 FFIEXPORT size_t fasta_get_symbol_count_js(void);

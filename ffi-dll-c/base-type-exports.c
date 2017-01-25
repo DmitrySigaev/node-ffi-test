@@ -143,19 +143,20 @@ struct score_matrix_api sw_genc_m_js(struct  search_swag_profile_api const * sp,
 	return *sm;
 }
 
-void fasta_open_js(const char * filename)
-{
-	fasta_open(filename);
+int lal_seq_base_create_js(void) {
+	return lal_seq_base_create();
 }
 
-void fasta_close_js(void)
-{
-	fasta_close();
+void lal_seq_base_close_js(void) {
+	lal_seq_base_close();
 }
 
-void fasta_read_js(void)
-{
-	fasta_read();
+int lal_add_fasta_js(const char * pathname) {
+	return add_fasta(pathname);
+}
+
+int lal_add_string_js(const char * string) {
+	return add_string(string);
 }
 
 size_t fasta_get_sequence_count_js(void) {

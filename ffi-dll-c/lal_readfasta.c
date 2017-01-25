@@ -17,14 +17,14 @@ Contact: Dmitry Sigaev <dima.sigaev@gmail.com>
 #define LAL_FASTA_LINE_ALLOC 4096
 #define LAL_SIZE_OF_CHUNK 1048576 // 1MB
 /* local variables */
-static FILE * fp = NULL; /* fasta file descriptor */
 static size_t sequences = LAL_MAX_READ_REST_SEQUENCE; /* calculate how many sequence the fasta file contains.*/
 static char * seqdata = NULL;  /* continuous flow of seqences*/
 static sequence_t  *seqindex = NULL; /*array of sequence_t that corespond to number of sequences*/
 static size_t symbol_residues = 0;  /* the whole set of symbols*/
 static size_t longest = 0; /*contains the length of the longest sequence.*/
 static size_t longest_index = 0; /*contains the index of the longest sequence.*/
-
+static size_t data_alloc = LAL_SIZE_OF_CHUNK;
+size_t current_datalen = 0;
 
 
 static inline void fasta_data_realloc(size_t *current, size_t new_size) {
@@ -34,7 +34,7 @@ static inline void fasta_data_realloc(size_t *current, size_t new_size) {
 	}
 }
 
-static int fasta_read_header(char line[LAL_FASTA_LINE_ALLOC], size_t * dataalloc, size_t *datalen) {
+static int fasta_read_header(char line[LAL_FASTA_LINE_ALLOC]) {
 	/* read header */
 	if (line[0] != '>') {
 		report_error("improper fasta file format");
@@ -52,25 +52,22 @@ static int fasta_read_header(char line[LAL_FASTA_LINE_ALLOC], size_t * dataalloc
 	return 0;
 }
 
-
-/*
- * The fasta_open function shall open the fasta file whose filename is the string pointed to by filename, and associates a stream with it.
-*/
-void fasta_open(const char * filename) {
-	if (filename) {
-		if (NULL == (fp = fopen(filename, "r"))) { /* Open a file for reading*/
-			report_error("the file does not exist or cannot be read");
-			return;
-		}
+int lal_seq_base_create(void) {
+	/* allocate space */
+	if (NULL == (seqdata = malloc(data_alloc))) {
+		/* todo: stress testing: Customers may use the software on computers that have significantly fewer computational resources */
+		/* Stress testing tries to break the system under test by overwhelming its resources or by taking resources away from it (in which case it is sometimes called negative testing). The main purpose of this process is to make sure that the system fails and recovers gracefully—a quality known as recoverability. */
+		return 0;
 	}
-	else {
-		report_error("please, check the string pointed to filename");
-		return;
-	}
+	longest = 0;
 	sequences = 0;
+	symbol_residues = 0;
+	return 1;
 }
 
-static int fasta_create_index(void) {
+static int fasta_update_index(void) {
+	if (seqindex)
+		free(seqindex);
 	seqindex = malloc(sequences * sizeof(sequence_t));
 	if (!seqindex) {
 		return -1;
@@ -89,44 +86,35 @@ static int fasta_create_index(void) {
 	return 0;
 }
 
-void fasta_read(void) {
-	switch (sequences) {
-	case LAL_MAX_READ_REST_SEQUENCE:
-		report_error("please, open a fasta file before using fasta_read function");
-		return;
-	case 0:
-		break;
-	default:
-		report_error("the fast file alredy readed");
-
-	}
-	if (NULL == fp) {
-		report_error("please, check the fasta file descriptor");
-		return;
-	}
-
-	/* allocate space */
-	size_t data_alloc = LAL_SIZE_OF_CHUNK;
-	seqdata = malloc(data_alloc); /* todo: stress testing: Customers may use the software on computers that have significantly fewer computational resources */
-	/* Stress testing tries to break the system under test by overwhelming its resources or by taking resources away from it (in which case it is sometimes called negative testing). The main purpose of this process is to make sure that the system fails and recovers gracefully—a quality known as recoverability. */
-	size_t datalen = 0;
-
-	longest = 0;
-	sequences = 0;
-	symbol_residues = 0;
+/*
+* The fasta_open function shall open the fasta file whose filename is the string pointed to by filename, and associates a stream with it.
+*/
+int add_fasta(const char * filename) {
+	FILE * fp = NULL; /* fasta file descriptor */
+	size_t datalen = current_datalen;
 	char line[LAL_FASTA_LINE_ALLOC];
+	if (filename) {
+		if (NULL == (fp = fopen(filename, "r"))) { /* Open a file for reading*/
+			report_error("the file does not exist or cannot be read");
+			return 0;
+		}
+	}
+	else {
+		report_error("please, check the string pointed to filename");
+		return 0;
+	}
 
 	line[0] = 0;
 	if (NULL == fgets(line, LAL_FASTA_LINE_ALLOC, fp)) {
 		/* If a read error occurs, the error indicator (ferror) is set and a null pointer is also returned (but the contents pointed by str may have changed).*/
 		report_error("some read error occur");
-		return;
+		return 0;
 	}
 
 	/* currently we limit the size of readed sequences */
 	while (line[0] && (symbol_residues < LAL_MAX_READ_REST_SEQUENCE)) {
-		if (fasta_read_header(line, &data_alloc, &datalen)) {
-			return;
+		if (fasta_read_header(line)) {
+			return 0;
 		}
 
 		/* get next line */
@@ -176,13 +164,45 @@ void fasta_read(void) {
 	}
 
 	/* does indices */
-	fasta_create_index();
-
+	fasta_update_index();
+	current_datalen = datalen;
 	fclose(fp);
 	fp = NULL;
+	return 1;
 }
 
-void fasta_close(void) {
+int add_string(const char * string) {
+	size_t datalen = current_datalen;
+	char c;
+	char * p = string;
+	while ((c = *p++)) {
+		// there should check for illegal characters
+		if (c != '\n') {
+			fasta_data_realloc(&data_alloc, datalen);
+			*(seqdata + datalen) = c;
+			datalen++;
+		}
+	}
+
+	size_t length = datalen - current_datalen;
+	symbol_residues += length;
+	*(seqdata + datalen) = '\0'; /* end of line \0 */
+	datalen++;
+
+	if (length > longest) {
+		longest = length;
+		longest_index = sequences;
+	}
+
+	sequences++;
+
+	/* does indices */
+	fasta_update_index();
+	current_datalen = datalen;
+	return 1;
+}
+
+void lal_seq_base_close(void) {
 	if (seqdata)
 		free(seqdata);
 	seqdata = NULL;
@@ -190,7 +210,6 @@ void fasta_close(void) {
 		free(seqindex);
 	seqindex = NULL;
 	sequences = LAL_MAX_READ_REST_SEQUENCE;
-	fp = NULL;
 }
 
 /* calculate how many sequences the fasta file contains.*/
