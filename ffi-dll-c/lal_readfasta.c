@@ -172,34 +172,38 @@ int add_fasta(const char * filename) {
 }
 
 int add_string(const char * string) {
-	size_t datalen = current_datalen;
-	char c;
-	char * p = string;
-	while ((c = *p++)) {
-		// there should check for illegal characters
-		if (c != '\n') {
-			fasta_data_realloc(&data_alloc, datalen);
-			*(seqdata + datalen) = c;
-			datalen++;
+	if (string) {
+		size_t datalen = current_datalen;
+		char c;
+		char * p = string;
+		while ((c = *p++)) {
+			// there should check for illegal characters
+			if (c != '\n') {
+				fasta_data_realloc(&data_alloc, datalen);
+				*(seqdata + datalen) = c;
+				datalen++;
+			}
 		}
+
+		size_t length = datalen - current_datalen;
+		symbol_residues += length;
+		*(seqdata + datalen) = '\0'; /* end of line \0 */
+		datalen++;
+
+		if (length > longest) {
+			longest = length;
+			longest_index = sequences;
+		}
+
+		sequences++;
+
+		/* does indices */
+		fasta_update_index();
+		current_datalen = datalen;
+		return 1;
+	} else {
+		return 0;
 	}
-
-	size_t length = datalen - current_datalen;
-	symbol_residues += length;
-	*(seqdata + datalen) = '\0'; /* end of line \0 */
-	datalen++;
-
-	if (length > longest) {
-		longest = length;
-		longest_index = sequences;
-	}
-
-	sequences++;
-
-	/* does indices */
-	fasta_update_index();
-	current_datalen = datalen;
-	return 1;
 }
 
 void lal_seq_base_close(void) {
