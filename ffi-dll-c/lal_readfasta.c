@@ -90,89 +90,89 @@ static int fasta_update_index(void) {
 * The fasta_open function shall open the fasta file whose filename is the string pointed to by filename, and associates a stream with it.
 */
 int add_fasta(const char * filename) {
-	FILE * fp = NULL; /* fasta file descriptor */
-	size_t datalen = current_datalen;
-	char line[LAL_FASTA_LINE_ALLOC];
-	if (filename) {
+	if (filename && sequences < LAL_MAX_READ_REST_SEQUENCE) {
+		FILE * fp = NULL; /* fasta file descriptor */
+		size_t datalen = current_datalen;
+		char line[LAL_FASTA_LINE_ALLOC];
+
 		if (NULL == (fp = fopen(filename, "r"))) { /* Open a file for reading*/
 			report_error("the file does not exist or cannot be read");
 			return 0;
 		}
-	}
-	else {
-		report_error("please, check the string pointed to filename");
-		return 0;
-	}
 
-	line[0] = 0;
-	if (NULL == fgets(line, LAL_FASTA_LINE_ALLOC, fp)) {
-		/* If a read error occurs, the error indicator (ferror) is set and a null pointer is also returned (but the contents pointed by str may have changed).*/
-		report_error("some read error occur");
-		return 0;
-	}
-
-	/* currently we limit the size of readed sequences */
-	while (line[0] && (symbol_residues < LAL_MAX_READ_REST_SEQUENCE)) {
-		if (fasta_read_header(line)) {
-			return 0;
-		}
-
-		/* get next line */
 		line[0] = 0;
 		if (NULL == fgets(line, LAL_FASTA_LINE_ALLOC, fp)) {
 			/* If a read error occurs, the error indicator (ferror) is set and a null pointer is also returned (but the contents pointed by str may have changed).*/
 			report_error("some read error occur");
-			break;
+			return 0;
 		}
-		/* read sequence */
-		size_t seqbegin = datalen;
-		// reads until the next sequence header is found
-		while (line[0] && (line[0] != '>')) {
-			char c;
-			char * p = line;
-			while ((c = *p++)) {
-				// there should check for illegal characters
-				if (c != '\n') {
-					fasta_data_realloc(&data_alloc, datalen);
-					*(seqdata + datalen) = c;
-					datalen++;
-				}
+
+		/* currently we limit the size of readed sequences */
+		while (line[0] && (symbol_residues < LAL_MAX_READ_REST_SEQUENCE)) {
+			if (fasta_read_header(line)) {
+				return 0;
 			}
 
 			/* get next line */
 			line[0] = 0;
 			if (NULL == fgets(line, LAL_FASTA_LINE_ALLOC, fp)) {
 				/* If a read error occurs, the error indicator (ferror) is set and a null pointer is also returned (but the contents pointed by str may have changed).*/
+				report_error("some read error occur");
 				break;
 			}
+			/* read sequence */
+			size_t seqbegin = datalen;
+			// reads until the next sequence header is found
+			while (line[0] && (line[0] != '>')) {
+				char c;
+				char * p = line;
+				while ((c = *p++)) {
+					// there should check for illegal characters
+					if (c != '\n') {
+						fasta_data_realloc(&data_alloc, datalen);
+						*(seqdata + datalen) = c;
+						datalen++;
+					}
+				}
+
+				/* get next line */
+				line[0] = 0;
+				if (NULL == fgets(line, LAL_FASTA_LINE_ALLOC, fp)) {
+					/* If a read error occurs, the error indicator (ferror) is set and a null pointer is also returned (but the contents pointed by str may have changed).*/
+					break;
+				}
+			}
+
+			fasta_data_realloc(&data_alloc, datalen);
+
+			size_t length = datalen - seqbegin;
+
+			symbol_residues += length;
+			*(seqdata + datalen) = '\0'; /* end of line \0 */
+			datalen++;
+
+			if (length > longest) {
+				longest = length;
+				longest_index = sequences;
+			}
+
+			sequences++;
 		}
 
-		fasta_data_realloc(&data_alloc, datalen);
-
-		size_t length = datalen - seqbegin;
-
-		symbol_residues += length;
-		*(seqdata + datalen) = '\0'; /* end of line \0 */
-		datalen++;
-
-		if (length > longest) {
-			longest = length;
-			longest_index = sequences;
-		}
-
-		sequences++;
+		/* does indices */
+		fasta_update_index();
+		current_datalen = datalen;
+		fclose(fp);
+		fp = NULL;
+		return 1;
+	} else {
+		report_error("please, check the string pointed to filename or the database descriptor");
+		return 0;
 	}
-
-	/* does indices */
-	fasta_update_index();
-	current_datalen = datalen;
-	fclose(fp);
-	fp = NULL;
-	return 1;
 }
 
 int add_string(const char * string) {
-	if (string) {
+	if (string && sequences < LAL_MAX_READ_REST_SEQUENCE) {
 		size_t datalen = current_datalen;
 		char c;
 		char * p = string;
@@ -202,6 +202,7 @@ int add_string(const char * string) {
 		current_datalen = datalen;
 		return 1;
 	} else {
+		report_error("please, check the input string or the database descriptor");
 		return 0;
 	}
 }

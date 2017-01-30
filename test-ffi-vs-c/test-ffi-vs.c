@@ -149,7 +149,8 @@ bool testFFIAPI(struct tagffiAPI*ffiAPIin)
 	EXPECT(t, 3 == fasta_get_longest_seq_struct_f_js()->ID);
 
 	lal_seq_base_close_f_js();
-//	fasta_read_f_js();
+	EXPECT(t, 0 == lal_add_fasta_f_js("fasta.fasta"));
+	EXPECT(t, 0 == lal_add_string_f_js("ATAAAAAAAA"));
 	EXPECT(t, 0 == fasta_get_sequence_count_f_js());
 	EXPECT(t, 0 == fasta_get_symbol_count_f_js());
 	EXPECT(t, 0 == fasta_get_longest_sequence_f_js());
