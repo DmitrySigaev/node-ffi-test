@@ -343,6 +343,26 @@ test_ffi.prototype.set_profile = function (gapOpen, gapExt, substitution) {
 	return new this._type.search_profile({ gapOpen: gapOpen, gapExt: gapExt, mtx: mtx_ptr });
 };
 
+test_ffi.prototype.db_open = function () {
+	return this._lib.lal_seq_base_create_js();
+};
+
+test_ffi.prototype.db_close = function () {
+	this._lib.lal_seq_base_close_js();
+};
+
+test_ffi.prototype.load_fasta = function (string) {
+	return this._lib.lal_add_fasta_js(string);
+};
+
+test_ffi.prototype.load_string = function (string) {
+	return this._lib.lal_add_string_js(string);
+};
+
+test_ffi.prototype.get_records = function () {
+	return this._lib.fasta_get_sequence_count_js();
+};
+
 test_ffi.prototype.EXPECT = function (x, out) {
 	var out = out || [];
 	var code = new Function('test', 'out', "return (" + x + ");");

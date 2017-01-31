@@ -125,7 +125,11 @@ module.exports = {
         "sw_genc_js": ["double", [search_swag_profile_utest_ptr, sequence_utest_ptr, sequence_utest_ptr]],
         "sw_genc_js_sigaev": ["double", [search_swag_profile_utest_ptr, sequence_utest_ptr, sequence_utest_ptr]],
         "sw_genc_m_js": [score_matrix_utest, [search_swag_profile_utest_ptr, sequence_utest_ptr, sequence_utest_ptr]],
-        "fasta_open_js": ["void", ["string"]]
+        "lal_seq_base_create_js": ["int", []],
+        "lal_seq_base_close_js": ["void", []], 
+        "lal_add_fasta_js": ["int", ["string"]], 
+        "lal_add_string_js": ["int", ["string"]],
+        "fasta_get_sequence_count_js": ["size_t", []]
     },
     out: {
         "achar": ref.alloc('char'),

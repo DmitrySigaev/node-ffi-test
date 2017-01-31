@@ -175,7 +175,7 @@ int add_string(const char * string) {
 	if (string && sequences < LAL_MAX_READ_REST_SEQUENCE) {
 		size_t datalen = current_datalen;
 		char c;
-		char * p = string;
+		const char * p = string;
 		while ((c = *p++)) {
 			// there should check for illegal characters
 			if (c != '\n') {

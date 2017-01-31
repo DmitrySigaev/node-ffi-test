@@ -26,6 +26,16 @@ var str4 = test.matrix_js_i();
 */
 var out2 = [];
 
+
+var va1  = test.db_open();
+var va2 = test.load_string("ABCD");
+var va3 = test.load_string("ABCD3");
+var va2 = test.get_records();
+test.db_close();
+var va2 = test.load_string("ABCD");
+var va3 = test.load_string("ABCD3");
+var va2 = test.get_records();
+
 var gaptest_utest=  " #gaptest1.table                                          \n \
     A    B    C    D    G    H    K    M    R    S    T    U    V    W    Y    \n \
 A  2.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 -1.0   \n \
