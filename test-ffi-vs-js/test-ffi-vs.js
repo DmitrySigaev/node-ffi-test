@@ -26,15 +26,19 @@ var str4 = test.matrix_js_i();
 */
 var out2 = [];
 
+test.EXPECT("1 == test.db_open()");
+test.EXPECT("1 == test.load_string('ABCD')");
+test.EXPECT("1 == test.load_string('ABCD3')");
+test.EXPECT("2 == test.get_records()");
+test.EXPECT("undefined == test.db_close()");
+test.EXPECT("0 == test.load_string('ABCD')");
+test.EXPECT("0 == test.load_string('ABCD3')");
+test.EXPECT("0 == test.get_records()");
+test.EXPECT("1 == test.db_open()");
+test.EXPECT("1 == test.load_fasta('fasta.fasta')");
+test.EXPECT("2 == test.get_records()");
+test.EXPECT("undefined == test.db_close()");
 
-var va1  = test.db_open();
-var va2 = test.load_string("ABCD");
-var va3 = test.load_string("ABCD3");
-var va2 = test.get_records();
-test.db_close();
-var va2 = test.load_string("ABCD");
-var va3 = test.load_string("ABCD3");
-var va2 = test.get_records();
 
 var gaptest_utest=  " #gaptest1.table                                          \n \
     A    B    C    D    G    H    K    M    R    S    T    U    V    W    Y    \n \
