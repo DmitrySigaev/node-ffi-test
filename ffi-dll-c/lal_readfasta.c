@@ -215,6 +215,10 @@ void lal_seq_base_close(void) {
 		free(seqindex);
 	seqindex = NULL;
 	sequences = LAL_MAX_READ_REST_SEQUENCE;
+	current_datalen = 0;
+	symbol_residues = 0;  /* the whole set of symbols*/
+	longest = 0; /*contains the length of the longest sequence.*/
+	longest_index = 0; /*contains the index of the longest sequence.*/
 }
 
 /* calculate how many sequences the fasta file contains.*/

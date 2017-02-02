@@ -84,7 +84,6 @@ FFIEXPORT int lal_add_string_js(const char * string);
 FFIEXPORT size_t fasta_get_sequence_count_js(void);
 FFIEXPORT size_t fasta_get_symbol_count_js(void);
 FFIEXPORT size_t fasta_get_longest_sequence_js(void);
-FFIEXPORT size_t fasta_get_longest_sequence_js(void);
 FFIEXPORT struct sequence_api const * fasta_get_longest_seq_struct_js(void);
 FFIEXPORT struct sequence_api const * fasta_get_seq_struct_js(size_t seqno);
 

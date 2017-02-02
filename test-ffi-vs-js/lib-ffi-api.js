@@ -129,7 +129,11 @@ module.exports = {
         "lal_seq_base_close_js": ["void", []], 
         "lal_add_fasta_js": ["int", ["string"]], 
         "lal_add_string_js": ["int", ["string"]],
-        "fasta_get_sequence_count_js": ["size_t", []]
+        "fasta_get_sequence_count_js": ["size_t", []],
+        "fasta_get_symbol_count_js": ["size_t", []],
+        "fasta_get_longest_sequence_js": ["size_t", []],
+        "fasta_get_longest_seq_struct_js": [sequence_utest_ptr, []],
+        "fasta_get_seq_struct_js": [sequence_utest_ptr, ["size_t"]]
     },
     out: {
         "achar": ref.alloc('char'),

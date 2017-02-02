@@ -30,6 +30,9 @@ test.EXPECT("1 == test.db_open()");
 test.EXPECT("1 == test.load_string('ABCD')");
 test.EXPECT("1 == test.load_string('ABCD3')");
 test.EXPECT("2 == test.get_records()");
+test.EXPECT("'ABCD3' == test.get_longseq().seq");
+test.EXPECT("5 == test.get_longseq().length");
+test.EXPECT("1 == test.get_longseq().ID");
 test.EXPECT("undefined == test.db_close()");
 test.EXPECT("0 == test.load_string('ABCD')");
 test.EXPECT("0 == test.load_string('ABCD3')");
@@ -37,6 +40,11 @@ test.EXPECT("0 == test.get_records()");
 test.EXPECT("1 == test.db_open()");
 test.EXPECT("1 == test.load_fasta('fasta.fasta')");
 test.EXPECT("2 == test.get_records()");
+test.EXPECT("'AATG' == test.get_sequence(0).seq");
+test.EXPECT("4 == test.get_sequence(0).length");
+test.EXPECT("0 == test.get_sequence(0).ID");
+test.EXPECT("'' == test.get_sequence('A').seq");
+test.EXPECT("-1 == test.get_sequence('A').length");
 test.EXPECT("undefined == test.db_close()");
 
 

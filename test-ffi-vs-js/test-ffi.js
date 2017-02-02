@@ -107,7 +107,7 @@ test_ffi.prototype.unserialize = function (array) {
 test_ffi.prototype.read_substitution_matrix = function (string) {
 	if (this._lib.read_scoring_matrix_js) {
 		var sm = new this._type.substitution_matrix;
-	//	var pointer = this._out.scoring_matrix_alloc;
+		//	var pointer = this._out.scoring_matrix_alloc;
 		var res = this._lib.read_scoring_matrix_js(sm.ref(), string, string.length);
 		var doc = sm.Doc.buffer.readCString();
 		console.log('read substitution_matrix: doc' + doc);
@@ -140,16 +140,16 @@ test_ffi.prototype.matrix_js_degug = function () {
 				console.log('data address: obj1 ' + obj1.address().toString(16));
 				var obj2 = ref.get(res.data.d, 8, ref.coerceType('double *'));
 				console.log('data address: obj2 ' + obj2.address().toString(16));
-				
-				
+
+
 				var doubleArrayR = ArrayType(ref.refType('double'), res.ncols);
 				var obj1 = ref.get(res.data.d, 0, ref.refType(doubleArrayR));
 				var f64View = new Float64Array(obj1.buffer);
-				
+
 				var obj1 = ref.get(res.data.d, 8, ref.refType(doubleArrayR));
 				var f64View2 = new Float64Array(obj1.buffer);
-				
-				
+
+
 				var f64View2 = new Float64Array(obj2.buffer);
 				var doubleArrayRR = ArrayType(ref.refType(doubleArrayR), res.ncols);
 				//res.data.type = ref.refType(doubleArrayRR);
@@ -163,12 +163,12 @@ test_ffi.prototype.matrix_js_degug = function () {
 				console.log('data address: obj1 ' + obj1.address().toString(16));
 				var obj2 = ref.get(res.data.i, 8, ref.coerceType('int64 *'));
 				console.log('data address: obj2 ' + obj2.address().toString(16));
-				
-				
+
+
 				var int64ArrayR = ArrayType(ref.refType('int64'), res.ncols);
 				var obj1 = ref.get(res.data.i, 0, ref.refType(int64ArrayR));
 				var i64View = new Int32Array(obj1.buffer);
-				
+
 				var obj1 = ref.get(res.data.i, 8, ref.refType(int64ArrayR));
 				var i64View2 = new Int32Array(obj1.buffer);
 				break;
@@ -178,12 +178,12 @@ test_ffi.prototype.matrix_js_degug = function () {
 				console.log('data address: obj1 ' + obj1.address().toString(16));
 				var obj2 = ref.get(res.data.c, 8, ref.coerceType('char *'));
 				console.log('data address: obj2 ' + obj2.address().toString(16));
-				
-				
+
+
 				var charArrayR = ArrayType(ref.refType('char'), res.ncols);
 				var obj1 = ref.get(res.data.c, 0, ref.refType(charArrayR));
 				var i8View = new Int8Array(obj1.buffer, 0, res.ncols); // 3 is right length of output i8view 
-				
+
 				var obj1 = ref.get(res.data.c, 8, ref.refType(charArrayR));
 				var i8View2 = new Int8Array(obj1.buffer); //wrong length of output i8view
 				break;
@@ -249,7 +249,7 @@ test_ffi.prototype.matrix_to_array = function (mtx) {
 
 test_ffi.prototype.matrix_js = function () {
 	if (this._lib.matrix_js) {
-//		console.log('data endianness: ' + ref.endianness);
+		//		console.log('data endianness: ' + ref.endianness);
 		var res = this._lib.matrix_js(5, 3, 2);
 		var out = this._lib.matrix_set_int(res.ref(), -1);
 		var out2 = this._lib.matrix_set_double(res.ref(), -1.1);
@@ -278,7 +278,7 @@ test_ffi.prototype.matrix_js_d = function () {
 };
 
 
-test_ffi.prototype.sw_directions = function (sp, xstring, ystring ) {
+test_ffi.prototype.sw_directions = function (sp, xstring, ystring) {
 	if (this._lib.sw_directions_js) {
 		var xseq = new this._type.sequence({ ID: 0, seq: xstring, len: xstring.length });
 		var yseq = new this._type.sequence({ ID: 1, seq: ystring, len: ystring.length });
@@ -362,6 +362,33 @@ test_ffi.prototype.load_string = function (string) {
 test_ffi.prototype.get_records = function () {
 	return this._lib.fasta_get_sequence_count_js();
 };
+
+test_ffi.prototype.get_symbols = function () {
+	return this._lib.fasta_get_symbol_count_js();
+};
+
+test_ffi.prototype.get_length_of_longseq = function () {
+	return this._lib.fasta_get_longest_sequence_js();
+};
+
+test_ffi.prototype.get_longseq = function () {
+	var ref_seq = this._lib.fasta_get_longest_seq_struct_js();
+	return {
+		ID: ref_seq.deref().ID, length: ref_seq.deref().len, seq: ref_seq.deref().seq
+	};
+};
+
+test_ffi.prototype.get_sequence = function (id) {
+	if (Number.isInteger(id)) {
+		var ref_seq = this._lib.fasta_get_seq_struct_js(id);
+		return {
+			ID: ref_seq.deref().ID, length: ref_seq.deref().len, seq: ref_seq.deref().seq
+		};
+	} else {
+		return { ID: -1, length: -1, seq: "" };
+	}
+};
+
 
 test_ffi.prototype.EXPECT = function (x, out) {
 	var out = out || [];
