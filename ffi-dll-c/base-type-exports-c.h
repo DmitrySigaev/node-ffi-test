@@ -13,6 +13,8 @@
 #define FFIEXPORT extern __declspec(dllimport)
 #endif
 
+#include <stdint.h>
+
 FFIEXPORT void voidFunc(void);
 FFIEXPORT char charFunc(char inChar, char *outChar);
 FFIEXPORT float floatFunc(float inFloat, float *outFloat);
@@ -20,7 +22,14 @@ FFIEXPORT double doubleFunc(double inDouble, double *outDouble);
 FFIEXPORT bool boolFunc(bool inBool, bool *outBool);
 FFIEXPORT wchar_t wcharFunc(wchar_t inWchar, wchar_t *outWchar);
 
-
+struct tag_element_api {
+	union {
+		double d;
+		int64_t i;
+		int8_t  c;
+	};
+	enum MATTYPE type;
+};
 
 struct tag_matrix_api {
 	double **ddata;
@@ -28,7 +37,7 @@ struct tag_matrix_api {
 	size_t ncols;
 	int type;
 };
-
+FFIEXPORT struct tag_element_api find_max_js(struct tag_matrix_api *matrix);
 FFIEXPORT struct tag_matrix_api matrix_js(const size_t nrows, const size_t ncols, int type);
 FFIEXPORT struct tag_matrix_api *matrix_js_d(const size_t nrows, const size_t ncols, int type);
 FFIEXPORT int *matrix_js_i(const size_t nrows, const size_t ncols, int type);

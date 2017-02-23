@@ -61,6 +61,14 @@ int read_scoring_matrix_js(struct tag_scoring_matrix_api * mtx, const char *matr
 	return read_scoring_matrix((scoring_matrix_t *)mtx, matrixstring, len);
 }
 
+struct tag_element_api find_max_js(struct tag_matrix_api *matrix_js)
+{
+	struct tag_element_api *elm;
+	element_t el = find_max(matrix_js);
+	elm = (struct tag_element_api *)&el;
+	printf("[ffi-dll-c] call find_max_js:type %d, address %x,  in f: %s,l: %d\n", el.type, matrix_js->ddata, __FILE__, __LINE__);
+	return *elm;
+}
 
 struct tag_matrix_api matrix_js(const size_t nrows, const size_t ncols, int type)
 {
