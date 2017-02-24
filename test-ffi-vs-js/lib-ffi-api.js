@@ -31,6 +31,17 @@ var doubleArrayThree = ArrayType('double', 3);
 var DocArray = ArrayType('char', 1024 * 4);
 
 var ut = UnionType({
+	d: 'double',
+	i: 'int',
+	c: 'byte'
+});
+
+var el = StructType({
+	data: ut,
+	type: 'int'
+});
+
+var ut_p = UnionType({
     d: double_p_ptr,
     i: int_p_ptr,
     c: byte_p_ptr
@@ -45,7 +56,7 @@ var xyz = StructType({
 var xyz_ptr = ref.refType(xyz);
 
 var matrix_utest = StructType({
-    data: ut,
+    data: ut_p,
     nrows: 'size_t',
     ncols: 'size_t',
     type: 'int32'
@@ -133,7 +144,8 @@ module.exports = {
         "fasta_get_symbol_count_js": ["size_t", []],
         "fasta_get_longest_sequence_js": ["size_t", []],
         "fasta_get_longest_seq_struct_js": [sequence_utest_ptr, []],
-        "fasta_get_seq_struct_js": [sequence_utest_ptr, ["size_t"]]
+		"fasta_get_seq_struct_js": [sequence_utest_ptr, ["size_t"]],
+		"find_max_js":[ut,[ matrix_utest_ptr]]
     },
     out: {
         "achar": ref.alloc('char'),
