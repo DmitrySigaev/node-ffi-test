@@ -38,6 +38,15 @@ typedef struct tag_matrix_utest {
 	enum MATTYPE_UTEST type;
 } matrix_utest;
 
+typedef struct tag_element_utest {
+	union {
+		double d;
+		int64_t i;
+		int8_t  c;
+	};
+	enum MATTYPE_UTEST type;
+} element_utest;
+
 typedef struct tag_sequence_utest {
 	size_t ID;
 	char * seq;
@@ -62,6 +71,7 @@ typedef struct tag_score_matrix {
 	struct tag_matrix_api directions;
 }score_matrix_utest;
 
+element_utest (*find_max_f_js)(const matrix_utest *matrix);
 score_matrix_utest(*sw_directions_f_js)(struct  search_swag_profile_api const * sp, struct sequence_api const *xseq, struct sequence_api const *yseq);
 score_matrix_utest(*sw_genc_m_f_js)(struct  search_swag_profile_api const * sp, struct sequence_api const *xseq, struct sequence_api const *yseq);
 mat_t(*matrix_f_js)(const size_t nrows, const size_t ncols, int type);
@@ -176,7 +186,8 @@ bool testFFIAPI(struct tagffiAPI*ffiAPIin)
 	score_matrix_utest sd = sw_directions_f_js(&sp, &enseq1, &enseq2);
 	score_matrix_utest sdgc = sw_genc_m_f_js(&sp, &enseq1, &enseq2);
 
-	//  element_t score = find_max(&sd.score);
+	element_utest score = find_max_f_js(&sd.score);
+	EXPECT(t, 0 == score.type);
 	//	ck_assert_int_eq((int)score.d, 33); /* Max score */ // ok
 
 
@@ -235,6 +246,7 @@ int main(int argc, char **argv)
 		fasta_get_longest_sequence_f_js = (FFIPROC)GetProcAddress(hinstLib, "fasta_get_longest_sequence_js");
 		fasta_get_longest_seq_struct_f_js = (FFIPROC)GetProcAddress(hinstLib, "fasta_get_longest_seq_struct_js");
 		fasta_get_seq_struct_f_js = (FFIPROC)GetProcAddress(hinstLib, "fasta_get_seq_struct_js");
+		find_max_f_js = (FFIPROC)GetProcAddress(hinstLib, "find_max_js");
 		testFFIAPI(&ffiAPI);
 		fFreeResult = FreeLibrary(hinstLib);
 	}

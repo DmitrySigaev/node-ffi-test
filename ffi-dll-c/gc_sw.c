@@ -473,6 +473,8 @@ typedef struct inpf {
 
 double sw_gencore(const search_swag_profile_t * sp, const sequence_t * dseq, const sequence_t * qseq)
 {
+	dbg_print("[sw] call sw_gencore:val %s, in f: %s,l: %d\n", dseq->seq, __FILE__, __LINE__);
+	dbg_print("[sw] call sw_gencore:val %s, in f: %s,l: %d\n", qseq->seq, __FILE__, __LINE__);
 	int read_base = 16;
 	int line_size = 36;
 	float *data_from;
@@ -1050,8 +1052,8 @@ score_matrix_t MS_Score_SW_M(const search_swag_profile_t * sp, const sequence_t 
 
 score_matrix_t sw_gencore_m(const search_swag_profile_t * sp, const sequence_t * dseq, const sequence_t * qseq)
 {
-	dbg_print("[sw] call sw_directions:val %s, in f: %s,l: %d\n", dseq->seq, __FILE__, __LINE__);
-	dbg_print("[sw] call sw_directions:val %s, in f: %s,l: %d\n", qseq->seq, __FILE__, __LINE__);
+	dbg_print("[sw] call sw_gencore_m:val %s, in f: %s,l: %d\n", dseq->seq, __FILE__, __LINE__);
+	dbg_print("[sw] call sw_gencore_m:val %s, in f: %s,l: %d\n", qseq->seq, __FILE__, __LINE__);
 	int read_base = 16;
 	int line_size = 36;
 	float *data_from;
