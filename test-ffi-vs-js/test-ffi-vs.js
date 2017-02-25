@@ -77,14 +77,39 @@ var res = test.sw_genc_m(profile, seq1, seq2);
 //var res = test.sw_directions(profile, seq1, seq2);
 
 //var score = Math.max.apply(null, res[0]);
-var score = res[0][0][0];
-for (var i = 0; i < res[0].length; i++) {
-	elementArray = res[0][i];
-	if (score < Math.max.apply(Math, elementArray)) {
-		score = Math.max.apply(Math, elementArray);
-	}
-}
+var score = test.find_max(res);
+/*
+int status = read_scoring_matrix_f_js(&mtx, gaptest_utest, strlen(gaptest_utest));
+char seq1[] = { "CAACTTCCTGGCGCTATCACTTCTACCATCGTCTGCAGCGT"};
+size_t len1 = strlen(seq1);
+char seq2[] = { "acgatggtagaagtgatagcgccagttgctccacccct"};
+//char seq2[]={ "TCGTACGCTGCAGACGATGGTAGAAGTGATAGCGCCAGTTGCTCCACCCCTCCGTAGGCATTGCCCACGCCGCACTACTATGACCCAACGTAGGAAGTTG" };
+size_t len2 = strlen(seq2);
+sequence_utest inseq1 = { 1, ( char *)seq1, len1 };
+sequence_utest inseq2 = { 2, ( char *)seq2, len2 };
+sequence_utest enseq1 = { 1, malloc (len1 + 1), len1 };
+sequence_utest enseq2 = { 2, malloc (len2 + 1), len2 };
+encode_seq_f_js(&inseq1, &enseq1);
+encode_seq_f_js(&inseq2, &enseq2);
+search_profile_utest sp = { - 1.6, - 0.3, ( !status) ? (NULL) : (&mtx) };
+score_matrix_utest sd = sw_directions_f_js(&sp, &enseq1, &enseq2);
+score_matrix_utest sdgc = sw_genc_m_f_js(&sp, &enseq1, &enseq2);
 
+element_utest score = find_max_f_js(&sd.score);
+EXPECT(t, DOUBLETYPE == score.type);
+*/
+
+var sp = test.set_profile(-1.6, -0.3, substitution);
+//var seq1 = "CTTCCTACGTTGGGTCATAGTAGTGCGGCGTGGGCAATGCCTACGGAGGGGTGGAGCAACTGGCGCTATCACTTCTACCATCGTCTGCAGCGTACGA";
+//var seq2 = "tcgtacgctgcagacgatggtagaagtgatagcgccagttgctccacccctccgtaggcattgcccacgccgcactactatgacccaacgtaggaagttg";
+var seq2 = "CAACTTCCTGGCGCTATCACTTCTACCATCGTCTGCAGCGT";
+var seq1 = "acgatggtagaagtgatagcgccagttgctccacccct";
+//var res = test.sw_genc_m(sp, seq1, seq2);
+
+var res = test.sw_directions(sp, seq1, seq2);
+
+//var score = Math.max.apply(null, res[0]);
+var score = test.find_max(res);
 
 var full_object = { score: score, scorematrix: res[0], directions: res[1], seq1: seq2, seq2: seq1 };
 var score_table = JSON.stringify(full_object);

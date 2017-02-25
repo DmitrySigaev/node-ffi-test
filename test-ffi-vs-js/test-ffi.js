@@ -323,6 +323,21 @@ test_ffi.prototype.sw_genc_m = function (sp, xstring, ystring) {
 	}
 };
 
+test_ffi.prototype.find_max = function (res) {
+	if (Array.isArray(res)) {
+		var score = res[0][0][0];
+		for (var i = 0; i < res[0].length; i++) {
+			elementArray = res[0][i];
+			if (score < Math.max.apply(Math, elementArray)) {
+				score = Math.max.apply(Math, elementArray);
+			}
+		}
+		return score;
+	} else {
+		return 0;
+	}
+};
+
 test_ffi.prototype.sw_genc_sigaev = function (sp, xstring, ystring) {
 	if (this._lib.sw_genc_js_sigaev) {
 		var xseq = new this._type.sequence({ ID: 0, seq: xstring, len: xstring.length });

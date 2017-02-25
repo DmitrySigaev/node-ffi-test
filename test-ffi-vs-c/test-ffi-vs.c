@@ -187,7 +187,7 @@ bool testFFIAPI(struct tagffiAPI*ffiAPIin)
 	score_matrix_utest sdgc = sw_genc_m_f_js(&sp, &enseq1, &enseq2);
 
 	element_utest score = find_max_f_js(&sd.score);
-	EXPECT(t, 0 == score.type);
+	EXPECT(t, DOUBLETYPE == score.type);
 	//	ck_assert_int_eq((int)score.d, 33); /* Max score */ // ok
 
 
